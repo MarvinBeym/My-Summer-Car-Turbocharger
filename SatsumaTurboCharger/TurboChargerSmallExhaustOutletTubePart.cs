@@ -8,9 +8,9 @@ using ModApi.Attachable;
 namespace SatsumaTurboCharger
 {
 
-    public class TurboChargerExhaustInletTubePart : Part
+    public class TurboChargerSmallExhaustOutletTubePart : Part
     {
-        public TurboChargerExhaustInletTubePart(PartSaveInfo inPartSaveInfo, GameObject inPart, GameObject inParent, Trigger inPartTrigger, Vector3 inPartPosition, Quaternion inPartRotation) : base(inPartSaveInfo, inPart, inParent, inPartTrigger, inPartPosition, inPartRotation)
+        public TurboChargerSmallExhaustOutletTubePart(PartSaveInfo inPartSaveInfo, GameObject inPart, GameObject inParent, Trigger inPartTrigger, Vector3 inPartPosition, Quaternion inPartRotation) : base(inPartSaveInfo, inPart, inParent, inPartTrigger, inPartPosition, inPartRotation)
         {
 
         }
@@ -19,8 +19,8 @@ namespace SatsumaTurboCharger
         {
             installed = false, //Will make part installed
 
-            position = new Vector3(-17.0209141f, 0f, -3.04514241f), //Sets the spawn location -> where i can be found
-            rotation = Quaternion.Euler(-0.03519259f, -0.322451085f, 0.825269341f), // Rotation at spawn location
+            position = new Vector3(-16f, 0.25f, -5f), //Sets the spawn location -> where i can be found
+            rotation = Quaternion.Euler(0.009558563f, 0.00560776144f, 0.714553833f), // Rotation at spawn location
         };
 
         public override GameObject rigidPart

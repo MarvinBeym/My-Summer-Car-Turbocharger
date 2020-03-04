@@ -7,9 +7,9 @@ using ModApi.Attachable;
 
 namespace SatsumaTurboCharger
 {
-    public class TurboChargerPart : Part
+    public class TurboChargerSmallPart : Part
     {
-        public TurboChargerPart(PartSaveInfo inPartSaveInfo, GameObject inPart, GameObject inParent, Trigger inPartTrigger, Vector3 inPartPosition, Quaternion inPartRotation) : base(inPartSaveInfo, inPart, inParent, inPartTrigger, inPartPosition, inPartRotation)
+        public TurboChargerSmallPart(PartSaveInfo inPartSaveInfo, GameObject inPart, GameObject inParent, Trigger inPartTrigger, Vector3 inPartPosition, Quaternion inPartRotation) : base(inPartSaveInfo, inPart, inParent, inPartTrigger, inPartPosition, inPartRotation)
         {
 
         }
@@ -18,7 +18,7 @@ namespace SatsumaTurboCharger
         {
             installed = false, //Will make part installed
 
-            position = new Vector3(-15.9201174f, 0f, -3.128799f), //Sets the spawn location -> where i can be found
+            position = new Vector3(-14f, 0.25f, -5f), //Sets the spawn location -> where i can be found
             rotation = Quaternion.Euler(-0.00126796588f, -0.7044102f, 0.0137513485f), // Rotation at spawn location
         };
 

@@ -76,14 +76,18 @@
     <Compile Include="SatsumaTurboCharger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TurboChargerBoostGaugePart.cs" />
-    <Compile Include="TurboChargerBoostTubePart.cs" />
-    <Compile Include="TurboChargerExhaustInletTubePart.cs" />
-    <Compile Include="TurboChargerExhaustOutletTubePart.cs" />
+    <Compile Include="TurboChargerBigIntercoolerTubePart.cs" />
+    <Compile Include="TurboChargerBigExhaustInletTubePart.cs" />
+    <Compile Include="TurboChargerBigExhaustOutletTubePart.cs" />
     <Compile Include="TurboChargerHoodPart.cs" />
     <Compile Include="TurboChargerIntercoolerManifoldTubePart.cs" />
     <Compile Include="TurboChargerIntercoolerPart.cs" />
     <Compile Include="TurboChargerManifoldPart.cs" />
-    <Compile Include="TurboChargerPart.cs" />
+    <Compile Include="TurboChargerBigPart.cs" />
+    <Compile Include="TurboChargerSmallExhaustInletTubePart.cs" />
+    <Compile Include="TurboChargerSmallExhaustOutletTubePart.cs" />
+    <Compile Include="TurboChargerSmallIntercoolerTubePart.cs" />
+    <Compile Include="TurboChargerSmallPart.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

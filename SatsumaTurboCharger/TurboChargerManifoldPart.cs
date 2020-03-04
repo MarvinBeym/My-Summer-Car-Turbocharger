@@ -18,7 +18,7 @@ namespace SatsumaTurboCharger
         {
             installed = false, //Will make part installed
 
-            position = new Vector3(-16.58165f, 0f, -3.092335f), //Sets the spawn location -> where i can be found
+            position = new Vector3(-15f, 0.25f, -6.5f), //Sets the spawn location -> where i can be found
             rotation = Quaternion.Euler(-0.330094337f, 0.00561392354f, -0.009909552f), // Rotation at spawn location
         };
 

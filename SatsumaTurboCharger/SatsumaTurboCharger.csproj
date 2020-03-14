@@ -82,9 +82,11 @@
     <Compile Include="TurboChargerBigExhaustInletTubePart.cs" />
     <Compile Include="TurboChargerBigExhaustOutletTubePart.cs" />
     <Compile Include="TurboChargerHoodPart.cs" />
-    <Compile Include="TurboChargerIntercoolerManifoldTubePart.cs" />
+    <Compile Include="TurboChargerIntercoolerManifoldTubeTwinCarbPart.cs" />
+    <Compile Include="TurboChargerIntercoolerManifoldTubeWeberPart.cs" />
     <Compile Include="TurboChargerIntercoolerPart.cs" />
-    <Compile Include="TurboChargerManifoldPart.cs" />
+    <Compile Include="TurboChargerManifoldTwinCarbPart.cs" />
+    <Compile Include="TurboChargerManifoldWeberPart.cs" />
     <Compile Include="TurboChargerBigPart.cs" />
     <Compile Include="TurboChargerSmallExhaustInletTubePart.cs" />
     <Compile Include="TurboChargerSmallExhaustOutletTubePart.cs" />

@@ -1,4 +1,5 @@
 ﻿using HutongGames.PlayMaker;
+using ModApi;
 using ModApi.Attachable;
 using MSCLoader;
 using System;
@@ -41,39 +42,28 @@ namespace SatsumaTurboCharger
          *  -------------------------------------------------
          */
 
-        /*  -> next one Changelog v1.8:
-         *  -------------------------------------------------
-         *  added twincarb Manfifold and tube
-         *  added check for twinCarb and raceCarb (weber) installed
-         *  reduced trigger area of all parts.
-         *  renamed parts that attach to racecarb (the one with 4 outlets) to xyz Weber (because it's a Weber Carburetor
-         *  made some more parts paintable (both manifolds text, both turbocharger turbine wheels, Intercooler)
-         *  changed how part painting is detected (now I can add every part to be painting system)
-         *  changed how part paint is applied (now I can add every part to the painting system)
-         *  changed how part paint is saved (recommend deleting all saveFiles)
-         *  reduced size of Intercooler to fit the fog lights from the fogLights2 mod
-         *  moved/changed pipes to fit new intercooler location
-         *  changed big turbo to include tube for blowoff valve
-         *  added Mod Settings toggle for using the default ingame colors for painting or my color settings
-         *  added blowoff valve for big turbo
-         *  increased big turbo engage rpm to 3400
-         *  increased big turbo boost from max 1.75 zo 2.45
-         *  decreased small turbo boost from 1.12 to 0.95
-         *  blowoff valve is now needed for the big turbo to work
-         *  removed blowoff sound when using small turbo (as it does not have a blowoff valve or wastegate)
-         *  made Big Turbocharger max Boost adjustable (can be changed between 1.75 and 2.45) by mouse scrolling when aiming at blowoff valve
-         *  deactivated Big Turbocharger and Big Intercooler tube collider to make it possible to adjust Blowoff valve when installed (you now need to uninstall the blowoff valve before you can uninstall big turbo and intercooler pipe)
-         *  added Parts to ModsShop (some parts spawn inside, some spawn outside on ramp) (make sure ramp is empty or some parts might fly away or glitch away)
-         *  added "DTR" text to intercooler front fins (DTR = DonnerTechRacing)
-         *  changed default position for all parts to be the same position they spawn when bought
-         *  changed Reset button text to just "Reset"
-         *  removed steamcheck for now -> pirates don't get any support and will be reported! -> annoy me and the mod is gone forever!
-         *  -------------------------------------------------
+        /*  Changelog v1.8.1
+         *  added guitext which will be displayed when aiming at blowoff valve if it's installed
+         *  added "othersSave" which will store stuff like maxBoost value from blowoff valve
+         *  made maxBoost value only changeable if blowoff valve is installed
          *  
          *  Known bugs
          *  -------------------------------------------------
          *  Use Key still has to be "F" for Painting
          */
+
+
+
+
+
+            /*
+             * Add guiText when adjusting blowoff valve
+             * 
+             * only allow adjusting blowoff valve when installed
+             * 
+             */
+
+
 
         //Material[] tttt = Resources.FindObjectsOfTypeAll<Material>(); //Get all Materials of game
         //Component sprayCanPlayMakerFSM = tests.Value.GetComponentInChildren<PlayMakerFSM>(); // get PlayMaker Component from GameObject
@@ -87,6 +77,7 @@ namespace SatsumaTurboCharger
         public override bool UseAssetsFolder => true;
 
         private static PartBuySave partBuySave;
+        private static OthersSave othersSave;
         private Vector3 turbocharger_big_installLocation = new Vector3(-0.275f, -0.062f, 0.288f);
         private Vector3 turbocharger_big_intercooler_tube_installLocation = new Vector3(0.323f, -0.04f, 1.523f);
         private Vector3 turbocharger_big_exhaust_inlet_tube_installLocation = new Vector3(-0.262f, -0.1705f, -0.072f);
@@ -301,6 +292,7 @@ namespace SatsumaTurboCharger
         private const string turbocharger_intercooler_manifold_tube_twinCarb_SaveFile = "turbocharger_intercooler_manifold_tube_twinCarb_partSave.txt";
 
         private const string turbocharger_mod_ModsShop_SaveFile = "turbocharger_mod_ModsShop_SaveFile.txt";
+        private const string turbocharger_mod_others_SaveFile = "turbocharger_mod_Others_SaveFile.txt";
 
         private PartSaveInfo loadSaveData(string saveFile)
         {
@@ -339,6 +331,7 @@ namespace SatsumaTurboCharger
             SaveLoad.SerializeSaveFile<PartSaveInfo>(this, null, turbocharger_intercooler_manifold_tube_twinCarb_SaveFile);
 
             SaveLoad.SerializeSaveFile<PartBuySave>(this, null, turbocharger_mod_ModsShop_SaveFile);
+            SaveLoad.SerializeSaveFile<PartBuySave>(this, null, turbocharger_mod_others_SaveFile);
             WritePartsColorSave(true);
         }
 
@@ -493,6 +486,24 @@ namespace SatsumaTurboCharger
                 originalGearRatios = satsumaDriveTrain.gearRatios;
                 satsumaDriveTrain.revLimiter = true;
 
+                try
+                {
+                    partBuySave = SaveLoad.DeserializeSaveFile<PartBuySave>(this, turbocharger_mod_ModsShop_SaveFile);
+                    othersSave = SaveLoad.DeserializeSaveFile<OthersSave>(this, turbocharger_mod_others_SaveFile);
+
+                    if(othersSave == null)
+                    {
+                        othersSave = new OthersSave
+                        {
+                            turbocharger_max_boost = 1.75f
+                        };
+                    }
+                    
+                }
+                catch
+                {
+
+                }
                 //Axles test = satsuma.GetComponent<Axles>();
                 //currentGear = satsumaDriveTrain.gear;
 
@@ -625,6 +636,7 @@ namespace SatsumaTurboCharger
                 SaveLoad.SerializeSaveFile<PartSaveInfo>(this, SatsumaTurboCharger.turboChargerIntercoolerManifoldTubeWeberPart.getSaveInfo(), turbocharger_intercooler_manifold_tube_weber_SaveFile);
                 SaveLoad.SerializeSaveFile<PartSaveInfo>(this, SatsumaTurboCharger.turboChargerIntercoolerManifoldTubeTwinCarbPart.getSaveInfo(), turbocharger_intercooler_manifold_tube_twinCarb_SaveFile);
                 SaveLoad.SerializeSaveFile<PartBuySave>(this, partBuySave, turbocharger_mod_ModsShop_SaveFile);
+                SaveLoad.SerializeSaveFile<OthersSave>(this, othersSave, turbocharger_mod_others_SaveFile);
                 WritePartsColorSave(false);
             }
             catch (System.Exception ex)
@@ -1774,9 +1786,9 @@ namespace SatsumaTurboCharger
                     */
                     if (newTurboChargerBar > 0f)
                     {
-                        if (newTurboChargerBar > turbocharger_big_max_Boost)
+                        if (newTurboChargerBar > othersSave.turbocharger_max_boost)
                         {
-                            newTurboChargerBar = turbocharger_big_max_Boost;
+                            newTurboChargerBar = othersSave.turbocharger_max_boost;
                         }
                         /*if (n2oBottle.Active)
                         {
@@ -1991,20 +2003,27 @@ namespace SatsumaTurboCharger
                                     }
                                 }
                                 else if (gameObjectHit.name == "Turbocharger Big Blowoff Valve" || gameObjectHit.name == "Turbocharger Big Blowoff Valve(Clone)"){
-                                    if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
+                                    if (turboChargerBigBlowoffValvePart.installed)
                                     {
-                                        if(turbocharger_big_max_Boost < 2.4f)
+                                        string guiText = "Increase/Decrease Max Boost: ";
+                                        ModClient.guiInteract("Increase/Decrease Max Boost: " + othersSave.turbocharger_max_boost);
+                                        if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
                                         {
-                                            turbocharger_big_max_Boost += 0.05f;
+                                            if (othersSave.turbocharger_max_boost < 2.4f)
+                                            {
+                                                othersSave.turbocharger_max_boost += 0.05f;
+                                            }
                                         }
-                                    }
-                                    else if (Input.GetAxis("Mouse ScrollWheel") < 0f) // backwards
-                                    {
-                                        if(turbocharger_big_max_Boost > 1.8f)
+                                        else if (Input.GetAxis("Mouse ScrollWheel") < 0f) // backwards
                                         {
-                                            turbocharger_big_max_Boost -= 0.05f;
+                                            if (othersSave.turbocharger_max_boost > 1.8f)
+                                            {
+                                                othersSave.turbocharger_max_boost -= 0.05f;
+                                            }
                                         }
+                                        ModClient.guiInteract("Increase/Decrease Max Boost: " + othersSave.turbocharger_max_boost);
                                     }
+                                    
                                 }
                             }
                         }

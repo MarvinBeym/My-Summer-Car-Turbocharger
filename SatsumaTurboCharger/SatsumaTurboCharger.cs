@@ -15,27 +15,11 @@ namespace SatsumaTurboCharger
     {
         /* Todo:
          *  -------------------------------------------------
-         *  DONE: (has to be changed before first entering car/starting up ) toggle awd/rwd/fwd
-         *  DONE: (no sound is played in 5th and 6th ) fix six gear mod not working
-         *  
-         *  DONE: :Check for steam
-         *  save settings in file
-         *  DONE: Intercooler
-         *  DONE: (make pretty) gauge
-         *  DONE: limited boost to 1.65bar
-         *  DONE: turbocharger_intercooler__manifold_tube -> see throuth object
-         *  DONE: Reset partSaves when starting new game
-         *  DONE: prevent turboboost in Neutral
-         *  DONE: Better calculation of turbocharger boost
-         *           *  DONE: add position reset button
          *  backfire flames ?
          *  Draw power grapth/turbo grapth ?
-         *  add ModsShop
-         *  check for race carb installed
-         *  model for other carb
+
          *  check for air fuel mixture and decrease/increase boost
          *  prevent inspection with turbo installed
-         *  add blowoff valve as model which then can be configured using mouse wheel to increase pressure
          *  make n2o usable
          *  increase fuel consumption when turbo is used/installed
          *  more grip ?
@@ -70,7 +54,7 @@ namespace SatsumaTurboCharger
         public override string ID => "SatsumaTurboCharger"; //Your mod ID (unique)
         public override string Name => "DonnerTechRacing Turbocharger"; //You mod name
         public override string Author => "DonnerPlays"; //Your Username
-        public override string Version => "1.8"; //Version
+        public override string Version => "1.8.1"; //Version
 
         // Set this to true if you will be load custom assets from Assets folder.
         // This will create subfolder in Assets folder for your mod.

@@ -51,6 +51,10 @@
       <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\modapi_v0120-alpha.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="ModsShop">
+      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\Mods\ModsShop.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="MSCLoader">
       <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\MSCLoader.dll</HintPath>
       <Private>False</Private>
@@ -75,8 +79,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PartBuySave.cs" />
     <Compile Include="SatsumaTurboCharger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TurboChargerBigBlowoffValvePart.cs" />
     <Compile Include="TurboChargerBoostGaugePart.cs" />
     <Compile Include="TurboChargerBigIntercoolerTubePart.cs" />
     <Compile Include="TurboChargerBigExhaustInletTubePart.cs" />

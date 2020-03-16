@@ -19,8 +19,8 @@ namespace SatsumaTurboCharger
         {
             installed = false, //Will make part installed
 
-            position = new Vector3(-17f, 0.25f, -3.5f), //Sets the spawn location -> where i can be found
-            rotation = Quaternion.Euler(-0.03519259f, -0.322451085f, 0.825269341f), // Rotation at spawn location
+            position = new Vector3(-1555f, 5f, 1184f), //Sets the spawn location -> where i can be found
+            rotation = Quaternion.Euler(0f, 0f, 0f), // Rotation at spawn location
         };
 
         public override GameObject rigidPart

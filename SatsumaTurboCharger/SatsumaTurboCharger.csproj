@@ -95,9 +95,11 @@
     <Compile Include="TurboChargerManifoldTwinCarbPart.cs" />
     <Compile Include="TurboChargerManifoldWeberPart.cs" />
     <Compile Include="TurboChargerBigPart.cs" />
+    <Compile Include="TurboChargerSmallAirfilterPart.cs" />
     <Compile Include="TurboChargerSmallExhaustInletTubePart.cs" />
     <Compile Include="TurboChargerSmallExhaustOutletTubePart.cs" />
     <Compile Include="TurboChargerSmallIntercoolerTubePart.cs" />
+    <Compile Include="TurboChargerSmallManifoldTwinCarbTubePart.cs" />
     <Compile Include="TurboChargerSmallPart.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

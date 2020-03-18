@@ -17,7 +17,7 @@ namespace SatsumaTurboCharger
             get;
             set;
         }
-        public bool bought_turbocharger_small_kit
+        public bool bought_turbocharger_small_intercooler_tube
         {
             get;
             set;

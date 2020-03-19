@@ -7,7 +7,17 @@ namespace SatsumaTurboCharger
 {
     class OthersSave
     {
-        public float turbocharger_max_boost
+        public float turbocharger_big_max_boost
+        {
+            get;
+            set;
+        }
+        public float turbocharger_small_max_boost
+        {
+            get;
+            set;
+        }
+        public float turbocharger_small_max_boost_limit
         {
             get;
             set;

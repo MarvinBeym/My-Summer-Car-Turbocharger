@@ -33,7 +33,6 @@ namespace SatsumaTurboCharger
          *  fixed turbocharger boost gauge falling through floor
          *  changed audio source for turboSound loop to be the turbocharger (now the spool sound wil come from the turbo itself not the car) (both for small and big)
          *  changed audio source for blowoff sound to be the blowoff valve (now the blowoff sound will come from the blowoff valve itself not the car) (only big) (small one does not have a blowoff valve)
-         *  added rotation animation to both small and big turbo compressor turbine (can't make them spin faster)
          *  removed part installation order (better fps)
          *  changed twinCarb manifold to have port on top
          *  changed tubes going from intercooler to manifolds to not go through coolant pipe
@@ -49,6 +48,13 @@ namespace SatsumaTurboCharger
          *  changed sound for small turbo
          *  sound changes when airfilter is installed (will also get quiter)
          *  improved code to be simpler for detecting which parts are installed/not installed
+         *  added airfilter to painting system
+         *  added blowoff valve (in this case actually a wastegate) to small turbo (preinstalled, can't be uninstalled)
+         *  added wastegate of small turbo to painting system
+         *  added small turbo max boost changeability (lowest is 1bar highest is 1.4bar with all parts (raceCarb, intercooler, airfilter) installed)
+         *  maximum boost possible changes based on which parts are installed
+         *  added airfilter to ModsShop
+         *  removed small turbo from ModsShop
          *  -------------------------------------------------
          *  Known bugs:
          *  
@@ -508,12 +514,13 @@ namespace SatsumaTurboCharger
                 {
                     partBuySave = SaveLoad.DeserializeSaveFile<PartBuySave>(this, turbocharger_mod_ModsShop_SaveFile);
                     othersSave = SaveLoad.DeserializeSaveFile<OthersSave>(this, turbocharger_mod_others_SaveFile);
-
-                    if(othersSave == null)
+                    if(othersSave == null || othersSave.turbocharger_big_max_boost <= 0  || othersSave.turbocharger_small_max_boost <= 0 || othersSave.turbocharger_small_max_boost_limit <= 0)
                     {
                         othersSave = new OthersSave
                         {
-                            turbocharger_max_boost = 1.75f
+                            turbocharger_big_max_boost = 1.75f,
+                            turbocharger_small_max_boost = 1f,
+                            turbocharger_small_max_boost_limit = 1f
                         };
                     }
                     
@@ -1177,6 +1184,7 @@ namespace SatsumaTurboCharger
                 {
                     bought_turbocharger_big_kit = false,
                     bought_turbocharger_small_intercooler_tube = false,
+                    bought_turbocharger_small_airfilter = false,
                     bought_turbocharger_big_blowoff_valve = false,
                     bought_turbocharger_manifold_twinCarb_kit = false,
                     bought_turbocharger_manifold_weber_kit = false,
@@ -1195,6 +1203,10 @@ namespace SatsumaTurboCharger
             if (!partBuySave.bought_turbocharger_small_intercooler_tube)
             {
                 turbocharger_small_intercooler_tube_SaveInfo = null;
+            }
+            if (!partBuySave.bought_turbocharger_small_airfilter)
+            {
+                turbocharger_small_airfilter_SaveInfo = null;
             }
             if (!partBuySave.bought_turbocharger_big_blowoff_valve)
             {
@@ -1472,6 +1484,14 @@ namespace SatsumaTurboCharger
                     productIcon = assets.LoadAsset<Sprite>("Small_Turbocharger_Tube_Intercooler_ProductImage.png"),
                     productPrice = 500
                 };
+                ModsShop.ProductDetails turbocharger_small_airfiler_Product = new ModsShop.ProductDetails
+                {
+                    productName = "Small Turbocharger Airfilter",
+                    multiplePurchases = false,
+                    productCategory = "DonnerTech Racing",
+                    productIcon = assets.LoadAsset<Sprite>("Small_Turbocharger_Airfilter_ProductImage.png"),
+                    productPrice = 800
+                };
                 ModsShop.ProductDetails turbocharger_manifold_twinCarb_kit_Product = new ModsShop.ProductDetails
                 {
                     productName = "TwinCarb Manifold Kit",
@@ -1535,6 +1555,13 @@ namespace SatsumaTurboCharger
                 {
                     shop.Add(this, turbocharger_small_intercoolerTube_Product, ModsShop.ShopType.Teimo, PurchaseMadeTurbochargerSmallIntercoolerTube, null);
                     turboChargerSmallIntercoolerTubePart.activePart.SetActive(false);
+                }
+                if (!partBuySave.bought_turbocharger_small_airfilter)
+                {
+                    shop.Add(this, turbocharger_small_airfiler_Product, ModsShop.ShopType.Teimo, PurchaseMadeTurbochargerSmallAirfilter, null);
+                    turbocharger_small_airfilter_part.activePart.SetActive(false);
+                    turbocharger_small_airfilter_color = new Color(0.800f, 0.800f, 0.800f);
+                    original_turbocharger_small_airfilter_color = new Color(0.800f, 0.800f, 0.800f);
                 }
                 if (!partBuySave.bought_turbocharger_manifold_twinCarb_kit)
                 {
@@ -1609,6 +1636,13 @@ namespace SatsumaTurboCharger
             turboChargerSmallIntercoolerTubePart.activePart.SetActive(true);
             partBuySave.bought_turbocharger_small_intercooler_tube = true;
         }
+        public void PurchaseMadeTurbochargerSmallAirfilter(ModsShop.PurchaseInfo item)
+        {
+            turbocharger_small_airfilter_part.activePart.transform.position = new Vector3(-1554.043f, 5f, 1183.203f);
+            turbocharger_small_airfilter_part.activePart.SetActive(true);
+            partBuySave.bought_turbocharger_small_airfilter = true;
+        }
+
         public void PurchaseMadeTurbochargerManifoldTwinCarbKit(ModsShop.PurchaseInfo item)
         {
             turboChargerManifoldTwinCarbPart.activePart.transform.position = new Vector3(-1551.212f, 4.8f, 1182.758f);
@@ -1700,6 +1734,10 @@ namespace SatsumaTurboCharger
                             {
                                 turbochargerBigBlowoffValveColor = new Color(rFloat, gFloat, bFloat);
                             }
+                            else if(xmlReader.Name == "turbocharger_small_airfilter-color")
+                            {
+                                turbocharger_small_airfilter_color = new Color(rFloat, gFloat, bFloat);
+                            }
                             else if (xmlReader.Name == "original_intercooler-color")
                             {
                                 originalIntercoolerColor = new Color(rFloat, gFloat, bFloat);
@@ -1723,7 +1761,11 @@ namespace SatsumaTurboCharger
                             else if(xmlReader.Name == "original_blowoffValve-color")
                             {
                                 originalTurbochargerBigBlowoffValveColor = new Color(rFloat, gFloat, bFloat);
-                            } 
+                            }
+                            else if (xmlReader.Name == "original_turbocharger_small_airfilter-color")
+                            {
+                                turbocharger_small_airfilter_color = new Color(rFloat, gFloat, bFloat);
+                            }
                         }
                     }
                 }
@@ -1743,6 +1785,8 @@ namespace SatsumaTurboCharger
                 WriteXMLColorSaveElement(xmlWriter, "intercooler-color", intercoolerColor);
                 WriteXMLColorSaveElement(xmlWriter, "turbochargerBig-color", turbochargerBigColor);
                 WriteXMLColorSaveElement(xmlWriter, "turbochargerSmall-color", turbochargerSmallColor);
+                WriteXMLColorSaveElement(xmlWriter, "turbocharger_small_airfilter-color", turbocharger_small_airfilter_color);
+
                 WriteXMLColorSaveElement(xmlWriter, "weber-color", turbochargerManifoldWeberColor);
                 WriteXMLColorSaveElement(xmlWriter, "twincarb-color", turbochargerManifoldTwinCarbColor);
                 WriteXMLColorSaveElement(xmlWriter, "blowoffValve-color", turbochargerBigBlowoffValveColor);
@@ -1750,6 +1794,8 @@ namespace SatsumaTurboCharger
                 WriteXMLColorSaveElement(xmlWriter, "original_intercooler-color", originalIntercoolerColor);
                 WriteXMLColorSaveElement(xmlWriter, "original_turbochargerBig-color", originalTurbocchargerBigColor);
                 WriteXMLColorSaveElement(xmlWriter, "original_turbochargerSmall-color", originalTurbochargerSmallColor);
+                WriteXMLColorSaveElement(xmlWriter, "original_turbocharger_small_airfilter-color", original_turbocharger_small_airfilter_color);
+
                 WriteXMLColorSaveElement(xmlWriter, "original_weber-color", originalTurbochargerManifoldWeberColor);
                 WriteXMLColorSaveElement(xmlWriter, "original_twincarb-color", originalTurbochargerManifoldTwinCarbColor);
                 WriteXMLColorSaveElement(xmlWriter, "original_blowoffValve-color", originalTurbochargerBigBlowoffValveColor);
@@ -1765,10 +1811,12 @@ namespace SatsumaTurboCharger
                 WriteXMLColorSaveElement(xmlWriter, "weber-color", defaultColor);
                 WriteXMLColorSaveElement(xmlWriter, "twincarb-color", defaultColor);
                 WriteXMLColorSaveElement(xmlWriter, "blowoffValve-color", defaultColor);
+                WriteXMLColorSaveElement(xmlWriter, "turbocharger_small_airfilter-color", defaultColor);
 
                 WriteXMLColorSaveElement(xmlWriter, "original_intercooler-color", defaultColor);
                 WriteXMLColorSaveElement(xmlWriter, "original_turbochargerBig-color", defaultColor);
                 WriteXMLColorSaveElement(xmlWriter, "original_turbochargerSmall-color", defaultColor);
+                WriteXMLColorSaveElement(xmlWriter, "original_turbocharger_small_airfilter-color", defaultColor);
                 WriteXMLColorSaveElement(xmlWriter, "original_weber-color", defaultColor);
                 WriteXMLColorSaveElement(xmlWriter, "original_twincarb-color", defaultColor);
                 WriteXMLColorSaveElement(xmlWriter, "original_blowoffValve-color", defaultColor);
@@ -1821,6 +1869,7 @@ namespace SatsumaTurboCharger
                     SetPartMaterialColor(turboChargerManifoldWeberPart, originalTurbochargerManifoldWeberColor);
                     SetPartMaterialColor(turboChargerManifoldTwinCarbPart, originalTurbochargerManifoldTwinCarbColor);
                     SetPartMaterialColor(turboChargerBigBlowoffValvePart, originalTurbochargerBigBlowoffValveColor);
+                    SetPartMaterialColor(turbocharger_small_airfilter_part, original_turbocharger_small_airfilter_color);
                 }
                 else
                 {
@@ -1831,6 +1880,7 @@ namespace SatsumaTurboCharger
                     SetPartMaterialColor(turboChargerManifoldWeberPart, turbochargerManifoldWeberColor);
                     SetPartMaterialColor(turboChargerManifoldTwinCarbPart, turbochargerManifoldTwinCarbColor);
                     SetPartMaterialColor(turboChargerBigBlowoffValvePart, turbochargerBigBlowoffValveColor);
+                    SetPartMaterialColor(turbocharger_small_airfilter_part, turbocharger_small_airfilter_color);
                 }
 
             }
@@ -1924,11 +1974,7 @@ namespace SatsumaTurboCharger
                 if (turboChargerBigPart.installed && turboChargerBigBlowoffValvePart.installed)
                 {
                     newTurboChargerBar = Convert.ToSingle(Math.Log(engineRPM / 3400, 100)) * 11;
-                    if(engineRPM /2 >= 0)
-                    {
-                        turboChargerBigPart.rigidPart.transform.FindChild("TurboCharger_Compressor_Turbine").Rotate(Vector3.forward, Time.deltaTime * engineRPM / 2);
-                    }
-
+                    
                     /*
                     if (engineRPM >= 6200f)
                     {
@@ -1937,9 +1983,9 @@ namespace SatsumaTurboCharger
                     */
                     if (newTurboChargerBar > 0f)
                     {
-                        if (newTurboChargerBar > othersSave.turbocharger_max_boost)
+                        if (newTurboChargerBar > othersSave.turbocharger_big_max_boost)
                         {
-                            newTurboChargerBar = othersSave.turbocharger_max_boost;
+                            newTurboChargerBar = othersSave.turbocharger_big_max_boost;
                         }
                         /*if (n2oBottle.Active)
                         {
@@ -1959,56 +2005,43 @@ namespace SatsumaTurboCharger
                 }
                 else if (turboChargerSmallPart.installed && !turboChargerBigBlowoffValvePart.installed)
                 {
-                    newTurboChargerBar = Convert.ToSingle(Math.Log(engineRPM / 1600, 10)) * 2;
+                    newTurboChargerBar = Convert.ToSingle(Math.Log(engineRPM / 1600, 10)) * 2.2f;
 
-                    if (engineRPM / 4 >= 0)
+
+                    if (twinCarb_inst && turboChargerIntercoolerPart.installed && turbocharger_small_airfilter_part.installed)
                     {
-                        turboChargerSmallPart.rigidPart.transform.FindChild("Turbocharger_Small_Compressor_Turbine").Rotate(Vector3.forward, Time.deltaTime * engineRPM / 4);
+                        othersSave.turbocharger_small_max_boost_limit = (0.95f + 0.05f + 0.15f + 0.19f);
+                    }
+                    else if (twinCarb_inst && turboChargerIntercoolerPart.installed)
+                    {
+                        othersSave.turbocharger_small_max_boost_limit = (0.95f + 0.05f + 0.15f);
+                    }
+                    else if (twinCarb_inst && turbocharger_small_airfilter_part.installed)
+                    {
+                        othersSave.turbocharger_small_max_boost_limit = (0.95f + 0.05f + 0.00f + 0.11f);
+                    }
+                    else if (weberCarb_inst && turboChargerIntercoolerPart.installed && turbocharger_small_airfilter_part.installed)
+                    {
+                        othersSave.turbocharger_small_max_boost_limit = (0.95f + 0.11f + 0.15f + 0.19f);
+                    }
+                    else if (weberCarb_inst && turboChargerIntercoolerPart.installed)
+                    {
+                        othersSave.turbocharger_small_max_boost_limit = (0.95f + 0.11f + 0.15f);
+                    }
+                    else
+                    {
+                        othersSave.turbocharger_small_max_boost_limit = (0.95f + 0.05f);
+                    }
+                    if(othersSave.turbocharger_small_max_boost >= othersSave.turbocharger_small_max_boost_limit)
+                    {
+                        othersSave.turbocharger_small_max_boost = othersSave.turbocharger_small_max_boost_limit;
                     }
 
                     if (newTurboChargerBar > 0f)
                     {
-                        if (twinCarb_inst && turboChargerIntercoolerPart.installed && turbocharger_small_airfilter_part.installed)
+                        if (newTurboChargerBar > othersSave.turbocharger_small_max_boost)
                         {
-                            if (newTurboChargerBar > (0.95f + 0.05f + 0.15f  + 0.19f))
-                            {
-                                newTurboChargerBar = (0.95f + 0.05f + 0.15f + 0.19f);
-                            }
-                        }
-                        else if (twinCarb_inst && turboChargerIntercoolerPart.installed)
-                        {
-                            if (newTurboChargerBar > (0.95f + 0.05f + 0.15f))
-                            {
-                                newTurboChargerBar = (0.95f + 0.05f + 0.15f);
-                            }
-                        }
-                        else if (weberCarb_inst && turboChargerIntercoolerPart.installed && turbocharger_small_airfilter_part.installed)
-                        {
-                            if (newTurboChargerBar > (0.95f + 0.11f + 0.15f + 0.19f))
-                            {
-                                newTurboChargerBar = (0.95f + 0.11f + 0.15f + 0.19f);
-                            }
-                        }
-                        else if (weberCarb_inst && turboChargerIntercoolerPart.installed)
-                        {
-                            if (newTurboChargerBar > (0.95f + 0.11f + 0.15f))
-                            {
-                                newTurboChargerBar = (0.95f + 0.11f + 0.15f);
-                            }
-                        }
-                        else if (twinCarb_inst && turbocharger_small_airfilter_part.installed)
-                        {
-                            if (newTurboChargerBar > (0.95f + 0.05f + 0.00f + 0.11f))
-                            {
-                                newTurboChargerBar = (0.95f + 0.05f + 0.00f + 0.11f);
-                            }
-                        }
-                        else
-                        {
-                            if (newTurboChargerBar > (0.95f + 0.05f))
-                            {
-                                newTurboChargerBar = (0.95f + 0.05f);
-                            }
+                            newTurboChargerBar = othersSave.turbocharger_small_max_boost;
                         }
                         _enginePowerMultiplier.Value = (0.96f + (newTurboChargerBar) * 1.4f);
 
@@ -2123,6 +2156,8 @@ namespace SatsumaTurboCharger
                                      || gameObjectHit.name == "Turbocharger Manifold TwinCarb(Clone)"
                                      || gameObjectHit.name == "Turbocharger Big Blowoff Valve"
                                      || gameObjectHit.name == "Turbocharger Big Blowoff Valve(Clone)"
+                                     || gameObjectHit.name == "Turbocharger Small Airfilter"
+                                     || gameObjectHit.name == "Turbocharger Small Airfilter(Clone)"
                                      )
                                     {
                                         if (Input.GetMouseButton(0))
@@ -2185,6 +2220,11 @@ namespace SatsumaTurboCharger
                                                 turbochargerBigBlowoffValveColor = modSprayColors[arrIndex];
                                                 originalTurbochargerBigBlowoffValveColor = pickedUPsprayCanColor;
                                             }
+                                            if(gameObjectHit.name == "Turbocharger Small Airfilter" || gameObjectHit.name == "Turbocharger Small Airfilter(Clone)")
+                                            {
+                                                turbocharger_small_airfilter_color = modSprayColors[arrIndex];
+                                                original_turbocharger_small_airfilter_color = pickedUPsprayCanColor;
+                                            }
 
                                             MeshRenderer partRenderer = hit.collider.GetComponentInChildren<MeshRenderer>();
                                             for (int i = 0; i < partRenderer.materials.Length; i++)
@@ -2205,23 +2245,40 @@ namespace SatsumaTurboCharger
                                 else if (gameObjectHit.name == "Turbocharger Big Blowoff Valve" || gameObjectHit.name == "Turbocharger Big Blowoff Valve(Clone)"){
                                     if (turboChargerBigBlowoffValvePart.installed)
                                     {
-                                        ModClient.guiInteract("Increase/Decrease Max Boost: " + othersSave.turbocharger_max_boost);
+                                        ModClient.guiInteract("Increase/Decrease Max Boost: " + othersSave.turbocharger_big_max_boost.ToString("0.00"));
                                         if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
                                         {
-                                            if (othersSave.turbocharger_max_boost < 2.4f)
+                                            if (othersSave.turbocharger_big_max_boost < 2.4f)
                                             {
-                                                othersSave.turbocharger_max_boost += 0.05f;
+                                                othersSave.turbocharger_big_max_boost += 0.05f;
                                             }
                                         }
                                         else if (Input.GetAxis("Mouse ScrollWheel") < 0f) // backwards
                                         {
-                                            if (othersSave.turbocharger_max_boost > 1.8f)
+                                            if ((othersSave.turbocharger_big_max_boost - 0.05f) > 1.8f)
                                             {
-                                                othersSave.turbocharger_max_boost -= 0.05f;
+                                                othersSave.turbocharger_big_max_boost -= 0.05f;
                                             }
                                         }
                                     }
-                                    
+                                }
+                                else if(gameObjectHit.name == "Turbocharger Small" || gameObjectHit.name == "Turbocharger Small(Clone)")
+                                {
+                                    ModClient.guiInteract("Increase/Decrease Max Boost: " + othersSave.turbocharger_small_max_boost.ToString("0.00"));
+                                    if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
+                                    {
+                                        if (othersSave.turbocharger_small_max_boost < othersSave.turbocharger_small_max_boost_limit)
+                                        {
+                                            othersSave.turbocharger_small_max_boost += 0.01f;
+                                        }
+                                    }
+                                    else if (Input.GetAxis("Mouse ScrollWheel") < 0f) // backwards
+                                    {
+                                        if ((othersSave.turbocharger_small_max_boost - 0.01f) > 0.90f)
+                                        {
+                                            othersSave.turbocharger_small_max_boost -= 0.01f;
+                                        }
+                                    }
                                 }
                             }
                         }

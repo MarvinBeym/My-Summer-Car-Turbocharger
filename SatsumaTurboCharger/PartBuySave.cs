@@ -22,6 +22,13 @@ namespace SatsumaTurboCharger
             get;
             set;
         }
+
+        public bool bought_turbocharger_small_airfilter
+        {
+            get;
+            set;
+        }
+
         public bool bought_turbocharger_hood
         {
             get;

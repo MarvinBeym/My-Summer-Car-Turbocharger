@@ -18,7 +18,7 @@ namespace SatsumaTurboCharger
         {
             installed = false, //Will make part installed
 
-            position = new Vector3(-1554.043f, 4.5f, 1183.203f), //Sets the spawn location -> where i can be found
+            position = SatsumaTurboCharger.turbocharger_small_manifold_twinCarb_tube_spawnLocation, //Sets the spawn location -> where i can be found
             rotation = Quaternion.Euler(0f, 0f, 0f), // Rotation at spawn location
         };
 

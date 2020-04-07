@@ -8,9 +8,9 @@ using ModApi.Attachable;
 namespace SatsumaTurboCharger
 {
 
-    public class TurboChargerBigExhaustInletTubePart : Part
+    public class Racing_Exhaust_Inlet_Tube_Part : Part
     {
-        public TurboChargerBigExhaustInletTubePart(PartSaveInfo inPartSaveInfo, GameObject inPart, GameObject inParent, Trigger inPartTrigger, Vector3 inPartPosition, Quaternion inPartRotation) : base(inPartSaveInfo, inPart, inParent, inPartTrigger, inPartPosition, inPartRotation)
+        public Racing_Exhaust_Inlet_Tube_Part(PartSaveInfo inPartSaveInfo, GameObject inPart, GameObject inParent, Trigger inPartTrigger, Vector3 inPartPosition, Quaternion inPartRotation) : base(inPartSaveInfo, inPart, inParent, inPartTrigger, inPartPosition, inPartRotation)
         {
 
         }
@@ -38,12 +38,20 @@ namespace SatsumaTurboCharger
         {
             // do stuff on assemble.
             base.assemble(startUp); // if you want assemble function, you need to call base!
+            if (SatsumaTurboCharger.turbocharger_big_exhaust_inlet_tube_screwable != null)
+            {
+                SatsumaTurboCharger.turbocharger_big_exhaust_inlet_tube_screwable.setScrewsOnAssemble();
+            }
         }
 
         protected override void disassemble(bool startup = false)
         {
             // do stuff on dissemble.
             base.disassemble(startup); // if you want dissemble function, you need to call base!
+            if (SatsumaTurboCharger.turbocharger_big_exhaust_inlet_tube_screwable != null)
+            {
+                SatsumaTurboCharger.turbocharger_big_exhaust_inlet_tube_screwable.resetScrewsOnDisassemble();
+            }
         }
     }
 

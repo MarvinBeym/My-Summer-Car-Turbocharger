@@ -12,6 +12,11 @@ namespace SatsumaTurboCharger
             get;
             set;
         }
+        public bool bought_turbocharger_big_exhaust_header
+        {
+            get;
+            set;
+        }
         public bool bought_turbocharger_big_blowoff_valve
         {
             get;

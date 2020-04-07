@@ -7,9 +7,9 @@ using ModApi.Attachable;
 
 namespace SatsumaTurboCharger
 {
-    public class TurboChargerSmallAirfilterPart : Part
+    public class Manifold_TwinCarb_Part : Part
     {
-        public TurboChargerSmallAirfilterPart(PartSaveInfo inPartSaveInfo, GameObject inPart, GameObject inParent, Trigger inPartTrigger, Vector3 inPartPosition, Quaternion inPartRotation) : base(inPartSaveInfo, inPart, inParent, inPartTrigger, inPartPosition, inPartRotation)
+        public Manifold_TwinCarb_Part(PartSaveInfo inPartSaveInfo, GameObject inPart, GameObject inParent, Trigger inPartTrigger, Vector3 inPartPosition, Quaternion inPartRotation) : base(inPartSaveInfo, inPart, inParent, inPartTrigger, inPartPosition, inPartRotation)
         {
 
         }
@@ -18,7 +18,7 @@ namespace SatsumaTurboCharger
         {
             installed = false, //Will make part installed
 
-            position = SatsumaTurboCharger.turbocharger_small_airfilter_spawnLocation, //Sets the spawn location -> where i can be found
+            position = SatsumaTurboCharger.turbocharger_manifold_twinCarb_spawnLocation, //Sets the spawn location -> where i can be found
             rotation = Quaternion.Euler(0f, 0f, 0f), // Rotation at spawn location
         };
 

@@ -59,9 +59,17 @@
       <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\MSCLoader.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="PlayMaker">
       <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\PlayMaker.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="ScrewablePartAPI">
+      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\Mods\References\ScrewablePartAPI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -79,29 +87,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="OthersSave.cs" />
     <Compile Include="PartBuySave.cs" />
+    <Compile Include="Racing_Exhaust_Header_Part.cs" />
     <Compile Include="SatsumaTurboCharger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TurboChargerBigBlowoffValvePart.cs" />
-    <Compile Include="TurboChargerBoostGaugePart.cs" />
-    <Compile Include="TurboChargerBigIntercoolerTubePart.cs" />
-    <Compile Include="TurboChargerBigExhaustInletTubePart.cs" />
-    <Compile Include="TurboChargerBigExhaustOutletTubePart.cs" />
-    <Compile Include="TurboChargerHoodPart.cs" />
-    <Compile Include="TurboChargerIntercoolerManifoldTubeTwinCarbPart.cs" />
-    <Compile Include="TurboChargerIntercoolerManifoldTubeWeberPart.cs" />
-    <Compile Include="TurboChargerIntercoolerPart.cs" />
-    <Compile Include="TurboChargerManifoldTwinCarbPart.cs" />
-    <Compile Include="TurboChargerManifoldWeberPart.cs" />
-    <Compile Include="TurboChargerBigPart.cs" />
-    <Compile Include="TurboChargerSmallAirfilterPart.cs" />
-    <Compile Include="TurboChargerSmallExhaustInletTubePart.cs" />
-    <Compile Include="TurboChargerSmallExhaustOutletTubePart.cs" />
-    <Compile Include="TurboChargerSmallIntercoolerTubePart.cs" />
-    <Compile Include="TurboChargerSmallManifoldTwinCarbTubePart.cs" />
-    <Compile Include="TurboChargerSmallPart.cs" />
+    <Compile Include="Racing_Blowoff_Valve_Part.cs" />
+    <Compile Include="Boost_Gauge_Part.cs" />
+    <Compile Include="Racing_Intercooler_Tube_Part.cs" />
+    <Compile Include="Racing_Exhaust_Inlet_Tube_Part.cs" />
+    <Compile Include="Racing_Exhaust_Outlet_Tube_Part.cs" />
+    <Compile Include="Racing_Hood_Part.cs" />
+    <Compile Include="Intercooler_Manifold_Tube_TwinCarb_Part.cs" />
+    <Compile Include="Intercooler_Manifold_Tube_Weber_Part.cs" />
+    <Compile Include="Intercooler_Part.cs" />
+    <Compile Include="Manifold_TwinCarb_Part.cs" />
+    <Compile Include="Manifold_Weber_Part.cs" />
+    <Compile Include="Racing_Turbocharger_Part.cs" />
+    <Compile Include="GT_Airfilter_Part.cs" />
+    <Compile Include="Exhaust_Inlet_Tube_Part.cs" />
+    <Compile Include="Exhaust_Outlet_Tube_Part.cs" />
+    <Compile Include="Intercooler_Tube_Part.cs" />
+    <Compile Include="Manifold_TwinCarb_Tube_Part.cs" />
+    <Compile Include="GT_Turbocharger_Part.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

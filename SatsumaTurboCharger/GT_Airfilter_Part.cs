@@ -7,9 +7,9 @@ using ModApi.Attachable;
 
 namespace SatsumaTurboCharger
 {
-    public class TurboChargerBoostGaugePart : Part
+    public class GT_Airfilter_Part : Part
     {
-        public TurboChargerBoostGaugePart(PartSaveInfo inPartSaveInfo, GameObject inPart, GameObject inParent, Trigger inPartTrigger, Vector3 inPartPosition, Quaternion inPartRotation) : base(inPartSaveInfo, inPart, inParent, inPartTrigger, inPartPosition, inPartRotation)
+        public GT_Airfilter_Part(PartSaveInfo inPartSaveInfo, GameObject inPart, GameObject inParent, Trigger inPartTrigger, Vector3 inPartPosition, Quaternion inPartRotation) : base(inPartSaveInfo, inPart, inParent, inPartTrigger, inPartPosition, inPartRotation)
         {
 
         }
@@ -17,8 +17,8 @@ namespace SatsumaTurboCharger
         public override PartSaveInfo defaultPartSaveInfo => new PartSaveInfo()
         {
             installed = false, //Will make part installed
-            
-            position = SatsumaTurboCharger.turbocharger_boost_gauge_spawnLocation, //Sets the spawn location -> where i can be found
+
+            position = SatsumaTurboCharger.turbocharger_small_airfilter_spawnLocation, //Sets the spawn location -> where i can be found
             rotation = Quaternion.Euler(0f, 0f, 0f), // Rotation at spawn location
         };
 

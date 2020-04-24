@@ -44,5 +44,10 @@ namespace SatsumaTurboCharger
             // do stuff on dissemble.
             base.disassemble(startup); // if you want dissemble function, you need to call base!
         }
+
+        public void removePart()
+        {
+            disassemble(false);
+        }
     }
 }

@@ -7,6 +7,11 @@ namespace SatsumaTurboCharger
 {
     class PartBuySave
     {
+        public bool bought_turbocharger_big
+        {
+            get;
+            set;
+        }
         public bool bought_turbocharger_big_kit
         {
             get;

@@ -22,6 +22,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile>
+    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -70,6 +72,7 @@
     </Reference>
     <Reference Include="ScrewablePartAPI">
       <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\Mods\References\ScrewablePartAPI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -89,6 +92,7 @@
   <ItemGroup>
     <Compile Include="OthersSave.cs" />
     <Compile Include="PartBuySave.cs" />
+    <Compile Include="PartsWearSave.cs" />
     <Compile Include="Racing_Exhaust_Header_Part.cs" />
     <Compile Include="SatsumaTurboCharger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -110,6 +114,7 @@
     <Compile Include="Intercooler_Tube_Part.cs" />
     <Compile Include="Manifold_TwinCarb_Tube_Part.cs" />
     <Compile Include="GT_Turbocharger_Part.cs" />
+    <Compile Include="SmartEngineModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

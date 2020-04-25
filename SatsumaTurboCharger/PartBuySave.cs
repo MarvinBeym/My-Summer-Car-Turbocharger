@@ -17,7 +17,7 @@ namespace SatsumaTurboCharger
             get;
             set;
         }
-        public bool bought_turbocharger_big_exhaust_header
+        public bool bought_turbocharger_exhaust_header
         {
             get;
             set;

@@ -70,6 +70,9 @@ namespace SatsumaTurboCharger
          * Added workaround for ModsShop purchased logic so "REPAIR" products can be bought multiple times
          * Parts have to be removed from the car and placed on the Desk where the ModsShop sign is. Otherwise the parts won't be repaired (money is refunded)
          * Changed started/finished loading ModConsole output.
+         * ModsShop save information changed. I might have to delete the modsShop bought save file.
+         * Added screws/clamps to small turbo, small turbo intercooler tube and small turbo exhaust inlet tube
+         * 
          */
 
         /*
@@ -101,14 +104,15 @@ namespace SatsumaTurboCharger
         private Vector3 turbocharger_big_exhaust_inlet_tube_installLocation = new Vector3(-0.179f, -0.1506f, -0.037f);          //Cylinder Head
         private Vector3 turbocharger_big_exhaust_outlet_tube_installLocation = new Vector3(-0.217f, -0.229f, -0.059f);          //Cylinder Head
         private Vector3 turbocharger_big_blowoff_valve_installLocation = new Vector3(0.3165f, 0.254f, 1.334f);                  //Satsuma       //Done
-        private Vector3 turbocharger_big_exhaust_header_installLocation = new Vector3(-0.005f, -0.089f, -0.064f);               //Cylinder Head
 
-        private Vector3 turbocharger_small_installLocation = new Vector3(-0.254f, -0.162f, 0.01f);                              //Cylinder Head
+        private Vector3 turbocharger_exhaust_header_installLocation = new Vector3(-0.005f, -0.089f, -0.064f);               //Cylinder Head
+
+        private Vector3 turbocharger_small_installLocation = new Vector3(-0.25f, -0.1665f, 0.0001f);                              //Cylinder Head
         private Vector3 turbocharger_small_manifold_twinCarb_tube_installLocation = new Vector3(-0.188f, -0.23f, 0.14f);        //Cylinder Head
-        private Vector3 turbocharger_small_intercooler_tube_installLocation = new Vector3(0.321f, -0.04f, 1.523f);              //Satsuma
-        private Vector3 turbocharger_small_exhaust_inlet_tube_installLocation = new Vector3(-0.136f, -0.217f, -0.137f);         //Cylinder Head
-        private Vector3 turbocharger_small_exhaust_outlet_tube_installLocation = new Vector3(-0.184f, -0.272f, -0.15f);         //Cylinder Head
-        private Vector3 turbocharger_small_airfilter_installLocation = new Vector3(-0.254f, -0.05f, 0.01f);                     //Cylinder Head
+        private Vector3 turbocharger_small_intercooler_tube_installLocation = new Vector3(0.316f, -0.041f, 1.518f);              //Satsuma
+        private Vector3 turbocharger_small_exhaust_inlet_tube_installLocation = new Vector3(-0.0918f, -0.1774f, -0.094f);         //Cylinder Head
+        private Vector3 turbocharger_small_exhaust_outlet_tube_installLocation = new Vector3(-0.1825f, -0.267f, -0.145f);         //Cylinder Head
+        private Vector3 turbocharger_small_airfilter_installLocation = new Vector3(-0.25f, -0.04f, 0.0001f);                     //Cylinder Head
 
         private Vector3 turbocharger_hood_installLocation = new Vector3(0.0f, 0.241f, 1.68f);                                   //Satsuma
         private Vector3 turbocharger_manifold_weber_installLocation = new Vector3(0f, -0.3f, 0.1f);                             //Cylinder Head
@@ -130,7 +134,8 @@ namespace SatsumaTurboCharger
         public static Vector3 turbocharger_big_exhaust_inlet_tube_spawnLocation = new Vector3(1557.866f, 5.5f, 741.9728f);
         public static Vector3 turbocharger_big_exhaust_outlet_tube_spawnLocation = new Vector3(1557.352f, 5f, 741.7303f);
         public static Vector3 turbocharger_big_blowoff_valve_spawnLocation = new Vector3(1555.136f, 5.8f, 737.2324f);
-        public static Vector3 turbocharger_big_exhaust_header_spawnLocation = new Vector3(1555.136f, 5.8f, 737.2324f);
+
+        public static Vector3 turbocharger_exhaust_header_spawnLocation = new Vector3(1555.136f, 5.8f, 737.2324f);
 
         public static Vector3 turbocharger_small_spawnLocation = new Vector3(1457.509f, -1.8f, 716.0f);
         public static Vector3 turbocharger_small_exhaust_inlet_tube_spawnLocation = new Vector3(1457.509f, -1.8f, 715.5f);
@@ -161,7 +166,8 @@ namespace SatsumaTurboCharger
         private static GameObject turbocharger_big_exhaust_inlet_tube = new GameObject();
         private static GameObject turbocharger_big_exhaust_outlet_tube = new GameObject();
         private static GameObject turbocharger_big_blowoff_valve = new GameObject();
-        private static GameObject turbocharger_big_exhaust_header = new GameObject();
+
+        private static GameObject turbocharger_exhaust_header = new GameObject();
 
         private static GameObject turbocharger_small = new GameObject();
         private static GameObject turbocharger_small_intercooler_tube = new GameObject();
@@ -179,6 +185,7 @@ namespace SatsumaTurboCharger
         private static GameObject turbocharger_intercooler_manifold_tube_twinCarb = new GameObject();
         private static GameObject boostGauge;
         private TextMesh boostGaugeTextMesh;
+        private ParticleSystem small_turbo_fire_fx;
 
         private GameObject exhaustEngine;
         private GameObject exhaustPipeRace;
@@ -189,7 +196,8 @@ namespace SatsumaTurboCharger
         private Trigger turbocharger_big_exhaustInletTubeTrigger;
         private Trigger turbocharger_big_exhaustOutletTubeTrigger;
         private Trigger turbocharger_big_blowoffValveTrigger;
-        private Trigger turbocharger_big_exhaust_header_Trigger;
+
+        private Trigger turbocharger_exhaust_header_Trigger;
 
         private Trigger turbocharger_small_Trigger;
         private Trigger turbocharger_small_intercoolerTubeTrigger;
@@ -258,16 +266,18 @@ namespace SatsumaTurboCharger
         private static Racing_Exhaust_Inlet_Tube_Part turboChargerBigExhaustInletTubePart;
         private static Racing_Exhaust_Outlet_Tube_Part turboChargerBigExhaustOutletTubePart;
         private static Racing_Blowoff_Valve_Part turboChargerBigBlowoffValvePart;
-        private static Racing_Exhaust_Header_Part turbocharger_big_exhaust_header_part;
+
+        private static Exhaust_Header_Part turbocharger_exhaust_header_part;
 
         private static GT_Turbocharger_Part turboChargerSmallPart;
         private static Intercooler_Tube_Part turboChargerSmallIntercoolerTubePart;
         private static Exhaust_Inlet_Tube_Part turboChargerSmallExhaustInletTubePart;
         private static Exhaust_Outlet_Tube_Part turboChargerSmallExhaustOutletTubePart;
         private static GT_Airfilter_Part turbocharger_small_airfilter_part;
+        private static Manifold_TwinCarb_Tube_Part turbocharger_small_manifold_twinCarb_tube_part;
 
         private static Racing_Hood_Part turboChargerHoodPart;
-        private static Manifold_TwinCarb_Tube_Part turbocharger_small_manifold_twinCarb_tube_part;
+        
         private static Manifold_Weber_Part turboChargerManifoldWeberPart;
         private static Manifold_TwinCarb_Part turboChargerManifoldTwinCarbPart;
         private static Boost_Gauge_Part turboChargerBoostGaugePart;
@@ -275,23 +285,28 @@ namespace SatsumaTurboCharger
         private static Intercooler_Manifold_Tube_Weber_Part turboChargerIntercoolerManifoldTubeWeberPart;
         private static Intercooler_Manifold_Tube_TwinCarb_Part turboChargerIntercoolerManifoldTubeTwinCarbPart;
 
-
-        public static ScrewablePart turbocharger_big_exhaust_inlet_tube_screwable;
-        public static ScrewablePart turbocharger_big_exhaust_outlet_tube_screwable;
-        public static ScrewablePart turbocharger_big_exhaust_header_screwable;
-
+        //ScrewableAPI
         public static ScrewablePart turbocharger_big_intercooler_tube_screwable;
         public static ScrewablePart turbocharger_big_screwable;
+        public static ScrewablePart turbocharger_big_exhaust_inlet_tube_screwable;
+        public static ScrewablePart turbocharger_big_exhaust_outlet_tube_screwable;
+
+        public static ScrewablePart turbocharger_small_intercooler_tube_screwable;
+        public static ScrewablePart turbocharger_small_screwable;
+        public static ScrewablePart turbocharger_small_exhaust_inlet_tube_screwable;
+        public static ScrewablePart turbocharger_small_exhaust_outlet_tube_screwable;
+        public static ScrewablePart turbocharger_small_manifold_twinCarb_tube_screwable;
 
         public static ScrewablePart turbocharger_intercooler_manifold_weberCarb_tube_screwable;
         public static ScrewablePart turbocharger_intercooler_manifold_twinCarb_tube_screwable;
+
+        public static ScrewablePart turbocharger_exhaust_header_screwable;
 
         public static ScrewablePart turbocharger_manifold_weberCarb_screwable;
         public static ScrewablePart turbocharger_manifold_twinCarb_screwable;
 
         private ModsShop.ShopItem shop;
 
-        private bool allPartsInstalled = false;
         private int currentGear = 0;
         private bool errorDetected = false;
         /* Gear: R = 0
@@ -377,7 +392,8 @@ namespace SatsumaTurboCharger
         private const string turbocharger_big_exhaust_inlet_tube_SaveFile = "turbocharger_big_exhaust_inlet_tube_partSave.txt";
         private const string turbocharger_big_exhaust_outlet_tube_SaveFile = "turbocharger_big_exhaust_outlet_tube_partSave.txt";
         private const string turbocharger_big_blowoff_valve_SaveFile = "turbocharger_big_blowoff_valve_partSave.txt";
-        private const string turbocharger_big_exhaust_header_SaveFile = "turbocharger_big_exhaust_header_partSave.txt";
+
+        private const string turbocharger_exhaust_header_SaveFile = "turbocharger_exhaust_header_partSave.txt";
 
 
         private const string turbocharger_small_SaveFile = "turbocharger_small_partSave.txt";
@@ -427,7 +443,8 @@ namespace SatsumaTurboCharger
             SaveLoad.SerializeSaveFile<PartSaveInfo>(this, null, turbocharger_big_exhaust_inlet_tube_SaveFile);
             SaveLoad.SerializeSaveFile<PartSaveInfo>(this, null, turbocharger_big_exhaust_outlet_tube_SaveFile);
             SaveLoad.SerializeSaveFile<PartSaveInfo>(this, null, turbocharger_big_blowoff_valve_SaveFile);
-            SaveLoad.SerializeSaveFile<PartSaveInfo>(this, null, turbocharger_big_exhaust_header_SaveFile);
+
+            SaveLoad.SerializeSaveFile<PartSaveInfo>(this, null, turbocharger_exhaust_header_SaveFile);
 
             SaveLoad.SerializeSaveFile<PartSaveInfo>(this, null, turbocharger_small_SaveFile);
             SaveLoad.SerializeSaveFile<PartSaveInfo>(this, null, turbocharger_small_intercooler_tube_SaveFile);
@@ -457,21 +474,6 @@ namespace SatsumaTurboCharger
             ModConsole.Print("DonnerTechRacing Turbocharger Mod [v" + this.Version + "]" + " started loading");
             ecu_mod_installed = ModLoader.IsModPresent("DonnerTech_ECU_Mod");
             randDestroyValue = new Random();
-            /*
-            ingameSprayColors[0] = new Color(0.961f, 0.961f, 0.961f, 1f);
-            ingameSprayColors[1] = new Color(0.965f, 0.510f, 0.122f, 1f);
-            ingameSprayColors[2] = new Color(0.824f, 0.176f, 0.204f, 1f);
-            ingameSprayColors[3] = new Color(0.000f, 0.494f, 0.773f, 1f);
-            ingameSprayColors[4] = new Color(0.380f, 0.247f, 0.208f, 1f);
-            ingameSprayColors[5] = new Color(0.114f, 0.110f, 0.129f, 1f);
-            ingameSprayColors[6] = new Color(1.000f, 0.831f, 0.004f, 1f);
-            ingameSprayColors[7] = new Color(0.000f, 0.447f, 0.212f, 1f);
-            ingameSprayColors[8] = new Color(0.490f, 0.816f, 0.851f, 1f);
-            ingameSprayColors[9] = new Color(0.569f, 0.569f, 0.569f, 1f);
-            ingameSprayColors[10] = new Color(0.953f, 0.529f, 0.722f, 1f);
-            ingameSprayColors[11] = new Color(0.149f, 0.310f, 0.318f, 1f);
-            ingameSprayColors[12] = new Color(0.125f, 0.125f, 0.125f, 1f);
-            */
 
             modSprayColors[0] = new Color(205f / 255, 205f / 255, 205f / 255, 1f);    // white
             modSprayColors[1] = new Color(40f / 255, 40f / 255, 40f / 255, 1f);       // black
@@ -641,9 +643,10 @@ namespace SatsumaTurboCharger
                 turbocharger_big_exhaust_inlet_tube = (assets.LoadAsset("turbocharger_big_exhaust_inlet_tube.prefab") as GameObject);
                 turbocharger_big_exhaust_outlet_tube = (assets.LoadAsset("turbocharger_big_exhaust_outlet_tube.prefab") as GameObject);
                 turbocharger_big_blowoff_valve = (assets.LoadAsset("turbocharger_big_blowoff_valve.prefab") as GameObject);
-                turbocharger_big_exhaust_header = (assets.LoadAsset("turbocharger_big_exhaust_header.prefab") as GameObject);
+                turbocharger_exhaust_header = (assets.LoadAsset("turbocharger_big_exhaust_header.prefab") as GameObject);
 
                 turbocharger_small = (assets.LoadAsset("turbocharger_small.prefab") as GameObject);
+
                 turbocharger_small_intercooler_tube = (assets.LoadAsset("turbocharger_small_intercooler_tube.prefab") as GameObject);
                 turbocharger_small_exhaust_inlet_tube = (assets.LoadAsset("turbocharger_small_exhaust_inlet_tube.prefab") as GameObject);
                 turbocharger_small_exhaust_outlet_tube = (assets.LoadAsset("turbocharger_small_exhaust_outlet_tube.prefab") as GameObject);
@@ -688,7 +691,6 @@ namespace SatsumaTurboCharger
                         new Vector3(0.7f, 0.7f, 0.7f),
                         new Vector3(0.7f, 0.7f, 0.7f),
                     }, 10, "screwable_screw2");
-
                 turbocharger_big_exhaust_outlet_tube_screwable = new ScrewablePart(screwListSave, this, turboChargerBigExhaustOutletTubePart.rigidPart,
                     new Vector3[]
                     {
@@ -703,7 +705,80 @@ namespace SatsumaTurboCharger
                         new Vector3(0.7f, 0.7f, 0.7f),
                     }, 10, "screwable_screw2");
 
-                turbocharger_big_exhaust_header_screwable = new ScrewablePart(screwListSave, this, turbocharger_big_exhaust_header_part.rigidPart,
+                turbocharger_small_screwable = new ScrewablePart(screwListSave, this, turboChargerSmallPart.rigidPart,
+                     new Vector3[]
+                    {
+                        new Vector3(0.0715f, -0.024f, 0.044f),
+                        new Vector3(-0.0528f, 0.068f, -0.034f),
+                    },
+                    new Vector3[]
+                    {
+                        new Vector3(180f, 0f, 0f),
+                        new Vector3(0f, -90f, 0f),
+                    },
+                    new Vector3[]
+                    {
+                        new Vector3(0.4f, 0.4f, 0.4f),
+                        new Vector3(0.4f, 0.4f, 0.4f),
+                    }, 10, "screwable_screw2");
+                turbocharger_small_intercooler_tube_screwable = new ScrewablePart(screwListSave, this, turboChargerSmallIntercoolerTubePart.rigidPart,
+                    new Vector3[]
+                    {
+                        new Vector3(0.034f, -0.13f, -0.1638f),
+                    },
+                    new Vector3[]
+                    {
+                         new Vector3(180f, 0f, 0f),
+                    },
+                    new Vector3[]
+                    {
+                         new Vector3(0.4f, 0.4f, 0.4f),
+                    }, 10, "screwable_screw2");
+                //
+                turbocharger_small_exhaust_inlet_tube_screwable = new ScrewablePart(screwListSave, this, turboChargerSmallExhaustInletTubePart.rigidPart,
+                    new Vector3[]
+                    {
+                        new Vector3(0.114f, -0.044f, -0.035f),
+                        new Vector3(0.06f, -0.044f, -0.044f),
+                    },
+                    new Vector3[]
+                    {
+                        new Vector3(-90f, 0f, 0f),
+                        new Vector3(-90f, 0f, 0f),
+                    },
+                    new Vector3[]
+                    {
+                        new Vector3(0.7f, 0.7f, 0.7f),
+                        new Vector3(0.7f, 0.7f, 0.7f),
+                    }, 10, "screwable_screw2");
+                turbocharger_small_exhaust_outlet_tube_screwable = new ScrewablePart(screwListSave, this, turboChargerSmallExhaustOutletTubePart.rigidPart,
+                    new Vector3[]
+                    {
+
+                    },
+                    new Vector3[]
+                    {
+
+                    },
+                    new Vector3[]
+                    {
+
+                    }, 10, "screwable_screw2");
+                turbocharger_small_manifold_twinCarb_tube_screwable = new ScrewablePart(screwListSave, this, turbocharger_small_manifold_twinCarb_tube_part.rigidPart,
+                    new Vector3[]
+                    {
+
+                    },
+                    new Vector3[]
+                    {
+
+                    },
+                    new Vector3[]
+                    {
+
+                    }, 10, "screwable_screw2");
+
+                turbocharger_exhaust_header_screwable = new ScrewablePart(screwListSave, this, turbocharger_exhaust_header_part.rigidPart,
                     new Vector3[]
                     {
                         new Vector3(0.169f, 0.076f, -0.022f),   //Bolt1
@@ -825,6 +900,25 @@ namespace SatsumaTurboCharger
                         new Vector3(0.5f, 0.5f, 0.5f),
                     }, 10, "screwable_screw2");
 
+                turbocharger_big_exhaust_outlet_tube_screwable.AddClampModel(new Vector3(-0.055f, 0.334f, -0.0425f), new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+                turbocharger_big_intercooler_tube_screwable.AddClampModel(new Vector3(0.031f, -0.154f, -0.1545f), new Vector3(0, 90, 0), new Vector3(0.62f, 0.62f, 0.62f));
+                turbocharger_intercooler_manifold_weberCarb_tube_screwable.AddClampModel(new Vector3(-0.047f, -0.1465f, -0.232f), new Vector3(0, 90, 0), new Vector3(0.68f, 0.68f, 0.68f));
+                turbocharger_intercooler_manifold_twinCarb_tube_screwable.AddClampModel(new Vector3(-0.042f, -0.1465f, -0.232f), new Vector3(0, 90, 0), new Vector3(0.68f, 0.68f, 0.68f));
+                turbocharger_manifold_weberCarb_screwable.AddClampModel(new Vector3(0.2f, -0.002f, 0.001f), new Vector3(0, 90, 0), new Vector3(0.82f, 0.82f, 0.82f));
+                turbocharger_manifold_twinCarb_screwable.AddClampModel(new Vector3(0f, 0.105f, 0f), new Vector3(90, 0, 0), new Vector3(0.8f, 0.8f, 0.8f));
+
+                
+                turbocharger_small_intercooler_tube_screwable.AddClampModel(new Vector3(0.034f, -0.154f, -0.1548f), new Vector3(0, 90, 0), new Vector3(0.62f, 0.62f, 0.62f));
+
+                turbocharger_small_screwable.AddClampModel(new Vector3(0.0715f, -0.043f, 0.052f), new Vector3(0, 90, 0), new Vector3(0.5f, 0.5f, 0.5f));
+                turbocharger_small_screwable.AddClampModel(new Vector3(-0.044f, 0.068f, -0.0525f), new Vector3(90, 0, 0), new Vector3(0.5f, 0.5f, 0.5f));
+                /*
+                
+                turbocharger_small_exhaust_inlet_tube_screwable.AddClampModel(new Vector3(0f, 0f, 0f), new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+                turbocharger_small_exhaust_outlet_tube_screwable.AddClampModel(new Vector3(0f, 0f, 0f), new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+                turbocharger_small_manifold_twinCarb_tube_screwable.AddClampModel(new Vector3(0f, 0f, 0f), new Vector3(0, 0, 0), new Vector3(1, 1, 1));
+                */
+
                 if (ecu_mod_installed)
                 {
                     ecu_mod_SmartEngineModule = GameObject.Find("Smart Engine ECU(Clone)");
@@ -836,7 +930,7 @@ namespace SatsumaTurboCharger
                 UnityEngine.Object.Destroy(turbocharger_big_exhaust_inlet_tube);
                 UnityEngine.Object.Destroy(turbocharger_big_exhaust_outlet_tube);
                 UnityEngine.Object.Destroy(turbocharger_big_blowoff_valve);
-                UnityEngine.Object.Destroy(turbocharger_big_exhaust_header);
+                UnityEngine.Object.Destroy(turbocharger_exhaust_header);
 
                 UnityEngine.Object.Destroy(turbocharger_small);
                 UnityEngine.Object.Destroy(turbocharger_small_intercooler_tube);
@@ -872,7 +966,7 @@ namespace SatsumaTurboCharger
                             break;
                     }
                 }
-                ModConsole.Print("DonnerTechRacing Turbocharger Mod [v" + this.Version + "]" + " finished loaded");
+                ModConsole.Print("DonnerTechRacing Turbocharger Mod [v" + this.Version + "]" + " finished loading");
             }
             else
             {
@@ -902,7 +996,7 @@ namespace SatsumaTurboCharger
                 SaveLoad.SerializeSaveFile<PartSaveInfo>(this, turboChargerBigExhaustInletTubePart.getSaveInfo(), turbocharger_big_exhaust_inlet_tube_SaveFile);
                 SaveLoad.SerializeSaveFile<PartSaveInfo>(this, turboChargerBigExhaustOutletTubePart.getSaveInfo(), turbocharger_big_exhaust_outlet_tube_SaveFile);
                 SaveLoad.SerializeSaveFile<PartSaveInfo>(this, turboChargerBigBlowoffValvePart.getSaveInfo(), turbocharger_big_blowoff_valve_SaveFile);
-                SaveLoad.SerializeSaveFile<PartSaveInfo>(this, turbocharger_big_exhaust_header_part.getSaveInfo(), turbocharger_big_exhaust_header_SaveFile);
+                SaveLoad.SerializeSaveFile<PartSaveInfo>(this, turbocharger_exhaust_header_part.getSaveInfo(), turbocharger_exhaust_header_SaveFile);
 
                 SaveLoad.SerializeSaveFile<PartSaveInfo>(this, turboChargerSmallPart.getSaveInfo(), turbocharger_small_SaveFile);
                 SaveLoad.SerializeSaveFile<PartSaveInfo>(this, turboChargerSmallIntercoolerTubePart.getSaveInfo(), turbocharger_small_intercooler_tube_SaveFile);
@@ -925,7 +1019,7 @@ namespace SatsumaTurboCharger
 
                 ScrewablePart.SaveScrews(this, new ScrewablePart[]
                 {
-                    turbocharger_big_exhaust_header_screwable,
+                    turbocharger_exhaust_header_screwable,
                     turbocharger_big_exhaust_inlet_tube_screwable,
                     turbocharger_big_exhaust_outlet_tube_screwable,
                     turbocharger_big_intercooler_tube_screwable,
@@ -974,6 +1068,15 @@ namespace SatsumaTurboCharger
         }
         public override void Update()
         {
+            if (turboChargerSmallPart.installed && small_turbo_fire_fx == null)
+            {
+                small_turbo_fire_fx = turboChargerSmallPart.rigidPart.GetComponentInChildren<ParticleSystem>();
+                small_turbo_fire_fx.startSpeed = 5;
+                small_turbo_fire_fx.startLifetime = 0.1f;
+                small_turbo_fire_fx.playbackSpeed = 5;
+            }
+            
+
             //ModsShop purchashed workaround
             List<ModsShop.ShopItems> shopItems = shop.fleetariShopItems;
             foreach (ModsShop.ShopItems shopItem in shopItems)
@@ -1001,11 +1104,18 @@ namespace SatsumaTurboCharger
             AddPartsColorMaterial();
             DetectPaintingPart();
             
-            turbocharger_big_exhaust_header_screwable.DetectScrewing();
+            turbocharger_exhaust_header_screwable.DetectScrewing();
             turbocharger_big_exhaust_inlet_tube_screwable.DetectScrewing();
             turbocharger_big_exhaust_outlet_tube_screwable.DetectScrewing();
             turbocharger_big_intercooler_tube_screwable.DetectScrewing();
             turbocharger_big_screwable.DetectScrewing();
+
+            turbocharger_small_intercooler_tube_screwable.DetectScrewing();
+            turbocharger_small_screwable.DetectScrewing();
+            turbocharger_small_exhaust_inlet_tube_screwable.DetectScrewing();
+            turbocharger_small_exhaust_outlet_tube_screwable.DetectScrewing();
+            turbocharger_small_manifold_twinCarb_tube_screwable.DetectScrewing();
+
             turbocharger_manifold_weberCarb_screwable.DetectScrewing();
             turbocharger_manifold_twinCarb_screwable.DetectScrewing();
             turbocharger_intercooler_manifold_weberCarb_tube_screwable.DetectScrewing();
@@ -1230,58 +1340,67 @@ namespace SatsumaTurboCharger
                     {
                         if (hit.collider)
                         {
-                            ModClient.guiInteract("Increase/Decrease Max Boost: " + othersSave.turbocharger_big_max_boost.ToString("0.00"));
                             if (gameObjectHit.name == "Racing Turbocharger" || gameObjectHit.name == "Racing Turbocharger(Clone)")
                             {
-                                if (partsWearSave.turbocharger_big_wear >= 75f)
-                                    ModClient.guiInteract("Looks brand new...", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.turbocharger_big_wear >= 50f)
-                                    ModClient.guiInteract("Not sure if this thing should wobble that much", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.turbocharger_big_wear >= 25f)
-                                    ModClient.guiInteract("Nope... This should not wobble that much", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.turbocharger_big_wear >= 15f)
-                                    ModClient.guiInteract("I could pull it out. If I wanted to...", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.turbocharger_big_wear < 15f)
-                                    ModClient.guiInteract("Well... I think it's fucked", GuiInteractSymbolEnum.None);
+                                if (!turboChargerBigPart.installed)
+                                {
+                                    if (partsWearSave.turbocharger_big_wear >= 75f)
+                                        ModClient.guiInteraction = "Looks brand new...";
+                                    else if (partsWearSave.turbocharger_big_wear >= 50f)
+                                        ModClient.guiInteraction = "Not sure if this thing should wobble that much";
+                                    else if (partsWearSave.turbocharger_big_wear >= 25f)
+                                        ModClient.guiInteraction = "Nope... This should not wobble that much";
+                                    else if (partsWearSave.turbocharger_big_wear >= 15f)
+                                        ModClient.guiInteraction = "I could pull it out. If I wanted to...";
+                                    else if (partsWearSave.turbocharger_big_wear < 15f)
+                                        ModClient.guiInteraction = "Well... I think it's fucked";
+                                }
                             }
                             else if (gameObjectHit.name == "GT Turbocharger" || gameObjectHit.name == "GT Turbocharger(Clone)")
                             {
-                                if (partsWearSave.turbocharger_small_wear >= 75f)
-                                    ModClient.guiInteract("Looks brand new...", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.turbocharger_small_wear >= 50f)
-                                    ModClient.guiInteract("Not sure if this thing should wobble that much", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.turbocharger_small_wear >= 25f)
-                                    ModClient.guiInteract("Nope... This should not wobble that much", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.turbocharger_small_wear >= 15f)
-                                    ModClient.guiInteract("I could pull it out. If I wanted to...", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.turbocharger_small_wear < 15f)
-                                    ModClient.guiInteract("Well... I think it's fucked", GuiInteractSymbolEnum.None);
+                                if (!turboChargerSmallPart.installed)
+                                {
+                                    if (partsWearSave.turbocharger_small_wear >= 75f)
+                                        ModClient.guiInteraction = "Looks brand new...";
+                                    else if (partsWearSave.turbocharger_small_wear >= 50f)
+                                        ModClient.guiInteraction = "Not sure if this thing should wobble that much";
+                                    else if (partsWearSave.turbocharger_small_wear >= 25f)
+                                        ModClient.guiInteraction = "Nope... This should not wobble that much";
+                                    else if (partsWearSave.turbocharger_small_wear >= 15f)
+                                        ModClient.guiInteraction = "I could pull it out. If I wanted to...";
+                                    else if (partsWearSave.turbocharger_small_wear < 15f)
+                                        ModClient.guiInteraction = "Well... I think it's fucked";
+                                }
                             }
                             else if (gameObjectHit.name == "GT Turbocharger Airfilter" || gameObjectHit.name == "GT Turbocharger Airfilter(Clone)")
                             {
-                                if (partsWearSave.airfilter_wear >= 75f)
-                                    ModClient.guiInteract("Looks brand new...", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.airfilter_wear >= 50f)
-                                    ModClient.guiInteract("I can see some small holes in the fabric...", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.airfilter_wear >= 25f)
-                                    ModClient.guiInteract("With those large holes I should get more power right?", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.airfilter_wear >= 15f)
-                                    ModClient.guiInteract("I can nearly fit my hand into the holes", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.airfilter_wear < 15f)
-                                    ModClient.guiInteract("Well... I think it's fucked", GuiInteractSymbolEnum.None);
+                                if(!turbocharger_small_airfilter_part.installed){
+                                    if (partsWearSave.airfilter_wear >= 75f)
+                                        ModClient.guiInteraction = "Looks brand new...";
+                                    else if (partsWearSave.airfilter_wear >= 50f)
+                                        ModClient.guiInteraction = "I can see some small holes in the fabric...";
+                                    else if (partsWearSave.airfilter_wear >= 25f)
+                                        ModClient.guiInteraction = "With those large holes I should get more power right?";
+                                    else if (partsWearSave.airfilter_wear >= 15f)
+                                        ModClient.guiInteraction = "I can nearly fit my hand into the holes";
+                                    else if (partsWearSave.airfilter_wear < 15f)
+                                        ModClient.guiInteraction = "Well... I think it's fucked";
+                                }
                             }
                             else if (gameObjectHit.name == "Intercooler" || gameObjectHit.name == "Intercooler(Clone)")
                             {
-                                if (partsWearSave.intercooler_wear >= 75f)
-                                    ModClient.guiInteract("Looks brand new...", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.intercooler_wear >= 50f)
-                                    ModClient.guiInteract("Some scratches and little damage. Should be fine I guess...", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.intercooler_wear >= 25f)
-                                    ModClient.guiInteract("I can hear air escaping more than before", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.intercooler_wear >= 15f)
-                                    ModClient.guiInteract("It sounds like a leaf blower from those holes", GuiInteractSymbolEnum.None);
-                                else if (partsWearSave.intercooler_wear < 15f)
-                                    ModClient.guiInteract("Well... I think it's fucked", GuiInteractSymbolEnum.None);
+                                if(!turboChargerIntercoolerPart.installed){
+                                    if (partsWearSave.intercooler_wear >= 75f)
+                                        ModClient.guiInteraction = "Looks brand new...";
+                                    else if (partsWearSave.intercooler_wear >= 50f)
+                                        ModClient.guiInteraction = "Some scratches and little damage. Should be fine I guess...";
+                                    else if (partsWearSave.intercooler_wear >= 25f)
+                                        ModClient.guiInteraction = "I can hear air escaping more than before";
+                                    else if (partsWearSave.intercooler_wear >= 15f)
+                                        ModClient.guiInteraction = "It sounds like a leaf blower from those holes";
+                                    else if (partsWearSave.intercooler_wear < 15f)
+                                        ModClient.guiInteraction = "Well... I think it's fucked";
+                                }
                             }
                         }
                     }
@@ -1536,7 +1655,7 @@ namespace SatsumaTurboCharger
             }
 
             //ModConsole.Print(racingExhaustPipe_inst + " | " + racingExhaustMuffler_inst + " | " + turbocharger_big_exhaust_outlet_tube_screwable.partFixed);
-            if(racingExhaustPipe_inst && racingExhaustMuffler_inst && turbocharger_big_exhaust_header_screwable.partFixed && turbocharger_big_exhaust_inlet_tube_screwable.partFixed && turbocharger_big_exhaust_outlet_tube_screwable.partFixed && racingExhaustPipeTighness.Value >= 24)
+            if(racingExhaustPipe_inst && racingExhaustMuffler_inst && turbocharger_exhaust_header_screwable.partFixed && turbocharger_big_exhaust_inlet_tube_screwable.partFixed && turbocharger_big_exhaust_outlet_tube_screwable.partFixed && racingExhaustPipeTighness.Value >= 24)
             {
                 exhaustEngine.SetActive(false);
                 exhaustPipeRace.SetActive(false);
@@ -1544,7 +1663,7 @@ namespace SatsumaTurboCharger
             }
             else
             {
-                if(!turbocharger_big_exhaust_header_screwable.partFixed || !turbocharger_big_exhaust_inlet_tube_screwable.partFixed || !turbocharger_big_exhaust_outlet_tube_screwable.partFixed)
+                if(!turbocharger_exhaust_header_screwable.partFixed || !turbocharger_big_exhaust_inlet_tube_screwable.partFixed || !turbocharger_big_exhaust_outlet_tube_screwable.partFixed)
                 {
                     exhaustEngine.SetActive(true);
                     exhaustPipeRace.SetActive(false);
@@ -1589,7 +1708,7 @@ namespace SatsumaTurboCharger
             PartSaveInfo turbocharger_big_exhaust_inlet_tube_SaveInfo = null;
             PartSaveInfo turbocharger_big_exhaust_outlet_tube_SaveInfo = null;
             PartSaveInfo turbocharger_big_blowoff_valve_SaveInfo = null;
-            PartSaveInfo turbocharger_big_exhaust_header_SaveInfo = null;
+            PartSaveInfo turbocharger_exhaust_header_SaveInfo = null;
 
             PartSaveInfo turbocharger_small_SaveInfo = null;
             PartSaveInfo turbocharger_small_intercooler_tube_SaveInfo = null;
@@ -1611,7 +1730,8 @@ namespace SatsumaTurboCharger
             turbocharger_big_exhaust_inlet_tube_SaveInfo = this.loadSaveData(turbocharger_big_exhaust_inlet_tube_SaveFile);
             turbocharger_big_exhaust_outlet_tube_SaveInfo = this.loadSaveData(turbocharger_big_exhaust_outlet_tube_SaveFile);
             turbocharger_big_blowoff_valve_SaveInfo = this.loadSaveData(turbocharger_big_blowoff_valve_SaveFile);
-            turbocharger_big_exhaust_header_SaveInfo = this.loadSaveData(turbocharger_big_exhaust_header_SaveFile);
+
+            turbocharger_exhaust_header_SaveInfo = this.loadSaveData(turbocharger_exhaust_header_SaveFile);
 
             turbocharger_small_SaveInfo = this.loadSaveData(turbocharger_small_SaveFile);
             turbocharger_small_intercooler_tube_SaveInfo = this.loadSaveData(turbocharger_small_intercooler_tube_SaveFile);
@@ -1643,7 +1763,7 @@ namespace SatsumaTurboCharger
                 partBuySave = new PartBuySave
                 {
                     bought_turbocharger_big_kit = false,
-                    bought_turbocharger_big_exhaust_header = false,
+                    bought_turbocharger_exhaust_header = false,
                     bought_turbocharger_small_intercooler_tube = false,
                     bought_turbocharger_small_airfilter = false,
                     bought_turbocharger_big_blowoff_valve = false,
@@ -1661,9 +1781,9 @@ namespace SatsumaTurboCharger
                 turbocharger_big_exhaust_inlet_tube_SaveInfo = null;
                 turbocharger_big_exhaust_outlet_tube_SaveInfo = null;
             }
-            if (!partBuySave.bought_turbocharger_big_exhaust_header)
+            if (!partBuySave.bought_turbocharger_exhaust_header)
             {
-                turbocharger_big_exhaust_header_SaveInfo = null;
+                turbocharger_exhaust_header_SaveInfo = null;
             }
             if (!partBuySave.bought_turbocharger_small_intercooler_tube)
             {
@@ -1713,12 +1833,12 @@ namespace SatsumaTurboCharger
                 }
             );
 
-            turbocharger_big_exhaust_header_part = new Racing_Exhaust_Header_Part(
-                turbocharger_big_exhaust_header_SaveInfo,
-                turbocharger_big_exhaust_header,
+            turbocharger_exhaust_header_part = new Exhaust_Header_Part(
+                turbocharger_exhaust_header_SaveInfo,
+                turbocharger_exhaust_header,
                 originalCylinerHead,
-                turbocharger_big_exhaust_header_Trigger,
-                turbocharger_big_exhaust_header_installLocation,
+                turbocharger_exhaust_header_Trigger,
+                turbocharger_exhaust_header_installLocation,
                 new Quaternion
                 {
                     eulerAngles = new Vector3(90, 0, 0)
@@ -1923,7 +2043,7 @@ namespace SatsumaTurboCharger
                 }
             );
 
-            addClampModelToParent();
+            //addClampModelToParent();
             
 
             LoadPartsColorSave();
@@ -2049,18 +2169,18 @@ namespace SatsumaTurboCharger
                 {
                     shop.Add(this, repair_turbocharger_big_Product, ModsShop.ShopType.Fleetari, RepairPurchaseMadeTurbochargerBig, null);
                 }
-                ModsShop.ProductDetails turbocharger_big_exhaust_header_Product = new ModsShop.ProductDetails
+                ModsShop.ProductDetails turbocharger_exhaust_header_Product = new ModsShop.ProductDetails
                 {
-                    productName = "Racing Turbocharger Exhaust Header",
+                    productName = "Turbocharger Exhaust Header",
                     multiplePurchases = false,
                     productCategory = "DonnerTech Racing",
                     //productIcon = assets.LoadAsset<Sprite>("Big_Turbocharger_Kit_ProductImage.png"),
                     productPrice = 2100
                 };
-                if (!partBuySave.bought_turbocharger_big_exhaust_header)
+                if (!partBuySave.bought_turbocharger_exhaust_header)
                 {
-                    shop.Add(this, turbocharger_big_exhaust_header_Product, ModsShop.ShopType.Fleetari, PurchaseMadeTurbochargerBigExhaustHeader, null);
-                    turbocharger_big_exhaust_header_part.activePart.SetActive(false);
+                    shop.Add(this, turbocharger_exhaust_header_Product, ModsShop.ShopType.Fleetari, PurchaseMadeTurbochargerExhaustHeader, null);
+                    turbocharger_exhaust_header_part.activePart.SetActive(false);
                 }
 
                 ModsShop.ProductDetails turbocharger_big_blowoff_valve_Product = new ModsShop.ProductDetails
@@ -2297,11 +2417,11 @@ namespace SatsumaTurboCharger
             turboChargerBigExhaustOutletTubePart.activePart.SetActive(true);
             partBuySave.bought_turbocharger_big_kit = true;
         }
-        public void PurchaseMadeTurbochargerBigExhaustHeader(ModsShop.PurchaseInfo item)
+        public void PurchaseMadeTurbochargerExhaustHeader(ModsShop.PurchaseInfo item)
         {
-            turbocharger_big_exhaust_header_part.activePart.transform.position = new Vector3(1555.136f, 5.8f, 737.2324f); //CHANGE
-            turbocharger_big_exhaust_header_part.activePart.SetActive(true);
-            partBuySave.bought_turbocharger_big_exhaust_header = true;
+            turbocharger_exhaust_header_part.activePart.transform.position = new Vector3(1555.136f, 5.8f, 737.2324f); //CHANGE
+            turbocharger_exhaust_header_part.activePart.SetActive(true);
+            partBuySave.bought_turbocharger_exhaust_header = true;
         }
         public void PurchaseMadeTurbochargerBigBlowoffValve(ModsShop.PurchaseInfo item)
         {
@@ -2976,6 +3096,23 @@ namespace SatsumaTurboCharger
                         SetBoostGaugeText(0.04f, false);
                         _enginePowerMultiplier.Value = 0.96f;
                     }
+
+                    /*
+                    if (small_turbo_fire_fx != null)
+                    {
+                        if (newTurboChargerBar >= othersSave.turbocharger_small_max_boost - 0.1f)
+                        {
+                            if (!small_turbo_fire_fx.isPlaying)
+                            {
+                                small_turbo_fire_fx.Play();
+                            }
+                        }
+                        else
+                        {
+                            small_turbo_fire_fx.Stop();
+                        }
+                    }
+                    */
                 }
                 if(satsumaDriveTrain.rpm >= 400)
                 {
@@ -3353,7 +3490,7 @@ namespace SatsumaTurboCharger
             turbocharger_big_exhaust_inlet_tube.name = "Racing Turbocharger Exhaust Inlet Tube";
             turbocharger_big_exhaust_outlet_tube.name = "Racing Turbocharger Exhaust Outlet Tube";
             turbocharger_big_blowoff_valve.name = "Racing Turbocharger Blowoff Valve";
-            turbocharger_big_exhaust_header.name = "Racing Turbocharger Exhaust Header";
+            turbocharger_exhaust_header.name = "Turbocharger Exhaust Header";
 
             //Small Turbocharger
             turbocharger_small.name = "GT Turbocharger";
@@ -3380,7 +3517,8 @@ namespace SatsumaTurboCharger
             turbocharger_big_exhaustInletTubeTrigger = new Trigger("TurbochargerBigExhaustInletTubeTrigger", originalCylinerHead, turbocharger_big_exhaust_inlet_tube_installLocation, new Quaternion(0, 0, 0, 0), new Vector3(0.15f, 0.15f, 0.15f), false);
             turbocharger_big_exhaustOutletTubeTrigger = new Trigger("TurbochargerBigExhaustOutletTubeTrigger", originalCylinerHead, turbocharger_small_exhaust_outlet_tube_installLocation, new Quaternion(0, 0, 0, 0), new Vector3(0.15f, 0.15f, 0.15f), false);
             turbocharger_big_blowoffValveTrigger = new Trigger("TurbochargerBigBlowoffValveTrigger", satsuma, turbocharger_big_blowoff_valve_installLocation, new Quaternion(0, 0, 0, 0), new Vector3(0.15f, 0.15f, 0.15f), false);
-            turbocharger_big_exhaust_header_Trigger = new Trigger("turbocharger_big_exhaust_header_Trigger", originalCylinerHead, turbocharger_big_exhaust_header_installLocation, new Quaternion(0, 0, 0, 0), new Vector3(0.15f, 0.15f, 0.15f), false);
+
+            turbocharger_exhaust_header_Trigger = new Trigger("turbocharger_big_exhaust_header_Trigger", originalCylinerHead, turbocharger_exhaust_header_installLocation, new Quaternion(0, 0, 0, 0), new Vector3(0.15f, 0.15f, 0.15f), false);
 
             turbocharger_small_Trigger = new Trigger("TurbochargerSmallTrigger", originalCylinerHead, turbocharger_small_installLocation, new Quaternion(0, 0, 0, 0), new Vector3(0.15f, 0.15f, 0.15f), false);
             turbocharger_small_intercoolerTubeTrigger = new Trigger("TurbochargerSmallIntercoolerTubeTrigger", satsuma, turbocharger_small_intercooler_tube_installLocation, new Quaternion(0, 0, 0, 0), new Vector3(0.15f, 0.15f, 0.15f), false);

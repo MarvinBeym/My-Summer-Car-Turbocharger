@@ -7,9 +7,9 @@ using ModApi.Attachable;
 
 namespace SatsumaTurboCharger
 {
-    public class Intercooler_Tube_Part : Part
+    public class GT_Intercooler_Tube_Part : Part
     {
-        public Intercooler_Tube_Part(PartSaveInfo inPartSaveInfo, GameObject inPart, GameObject inParent, Trigger inPartTrigger, Vector3 inPartPosition, Quaternion inPartRotation) : base(inPartSaveInfo, inPart, inParent, inPartTrigger, inPartPosition, inPartRotation)
+        public GT_Intercooler_Tube_Part(PartSaveInfo inPartSaveInfo, GameObject inPart, GameObject inParent, Trigger inPartTrigger, Vector3 inPartPosition, Quaternion inPartRotation) : base(inPartSaveInfo, inPart, inParent, inPartTrigger, inPartPosition, inPartRotation)
         {
 
         }

@@ -90,6 +90,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Racing_Turbocharger_Logic.cs" />
     <Compile Include="OthersSave.cs" />
     <Compile Include="PartBuySave.cs" />
     <Compile Include="PartsWearSave.cs" />
@@ -110,10 +111,10 @@
     <Compile Include="Manifold_Weber_Part.cs" />
     <Compile Include="Racing_Turbocharger_Part.cs" />
     <Compile Include="GT_Airfilter_Part.cs" />
-    <Compile Include="Exhaust_Inlet_Tube_Part.cs" />
-    <Compile Include="Exhaust_Outlet_Tube_Part.cs" />
-    <Compile Include="Intercooler_Tube_Part.cs" />
-    <Compile Include="Manifold_TwinCarb_Tube_Part.cs" />
+    <Compile Include="GT_Exhaust_Inlet_Tube_Part.cs" />
+    <Compile Include="GT_Exhaust_Outlet_Tube_Part.cs" />
+    <Compile Include="GT_Intercooler_Tube_Part.cs" />
+    <Compile Include="GT_Manifold_TwinCarb_Tube_Part.cs" />
     <Compile Include="GT_Turbocharger_Part.cs" />
     <Compile Include="SmartEngineModule.cs" />
   </ItemGroup>

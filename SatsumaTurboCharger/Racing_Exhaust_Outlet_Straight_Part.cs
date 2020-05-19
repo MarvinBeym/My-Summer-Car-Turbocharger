@@ -38,24 +38,20 @@ namespace SatsumaTurboCharger
             // do stuff on assemble.
             base.assemble(startUp); // if you want assemble function, you need to call base!
 
-            /*
-            if (SatsumaTurboCharger.turbocharger_big_exhaust_outlet_tube_screwable != null)
+            if (SatsumaTurboCharger.turbocharger_big_exhaust_outlet_straight_screwable != null)
             {
-                SatsumaTurboCharger.turbocharger_big_exhaust_outlet_tube_screwable.setScrewsOnAssemble();
+                SatsumaTurboCharger.turbocharger_big_exhaust_outlet_straight_screwable.setScrewsOnAssemble();
             }
-            */
         }
 
         protected override void disassemble(bool startup = false)
         {
             // do stuff on dissemble.
             base.disassemble(startup); // if you want dissemble function, you need to call base!
-            /*
-            if (SatsumaTurboCharger.turbocharger_big_exhaust_outlet_tube_screwable != null)
+            if (SatsumaTurboCharger.turbocharger_big_exhaust_outlet_straight_screwable != null)
             {
-                SatsumaTurboCharger.turbocharger_big_exhaust_outlet_tube_screwable.resetScrewsOnDisassemble();
+                SatsumaTurboCharger.turbocharger_big_exhaust_outlet_straight_screwable.resetScrewsOnDisassemble();
             }
-            */
         }
     }
 }

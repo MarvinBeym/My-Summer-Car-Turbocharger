@@ -38,12 +38,20 @@ namespace SatsumaTurboCharger
         {
             // do stuff on assemble.
             base.assemble(startUp); // if you want assemble function, you need to call base!
+            if (SatsumaTurboCharger.turbocharger_small_exhaust_inlet_tube_screwable != null)
+            {
+                SatsumaTurboCharger.turbocharger_small_exhaust_inlet_tube_screwable.setScrewsOnAssemble();
+            }
         }
 
         protected override void disassemble(bool startup = false)
         {
             // do stuff on dissemble.
             base.disassemble(startup); // if you want dissemble function, you need to call base!
+            if (SatsumaTurboCharger.turbocharger_small_exhaust_inlet_tube_screwable != null)
+            {
+                SatsumaTurboCharger.turbocharger_small_exhaust_inlet_tube_screwable.resetScrewsOnDisassemble();
+            }
         }
     }
 

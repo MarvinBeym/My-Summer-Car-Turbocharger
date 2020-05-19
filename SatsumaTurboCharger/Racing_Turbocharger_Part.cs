@@ -41,6 +41,7 @@ namespace SatsumaTurboCharger
             {
                 SatsumaTurboCharger.turbocharger_big_screwable.setScrewsOnAssemble();
             }
+            SatsumaTurboCharger.colorHasToChange = true;
         }
 
         protected override void disassemble(bool startup = false)
@@ -51,6 +52,7 @@ namespace SatsumaTurboCharger
             {
                 SatsumaTurboCharger.turbocharger_big_screwable.resetScrewsOnDisassemble();
             }
+            SatsumaTurboCharger.colorHasToChange = true;
         }
 
         public void removePart()

@@ -90,7 +90,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Racing_Turbocharger_Logic.cs" />
     <Compile Include="OthersSave.cs" />
     <Compile Include="PartBuySave.cs" />
     <Compile Include="PartsWearSave.cs" />
@@ -116,7 +115,6 @@
     <Compile Include="GT_Intercooler_Tube_Part.cs" />
     <Compile Include="GT_Manifold_TwinCarb_Tube_Part.cs" />
     <Compile Include="GT_Turbocharger_Part.cs" />
-    <Compile Include="SmartEngineModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

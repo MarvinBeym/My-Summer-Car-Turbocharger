@@ -37,12 +37,22 @@ namespace SatsumaTurboCharger
         {
             // do stuff on assemble.
             base.assemble(startUp); // if you want assemble function, you need to call base!
+            if (SatsumaTurboCharger.turbocharger_small_airfilter_screwable != null)
+            {
+                SatsumaTurboCharger.turbocharger_small_airfilter_screwable.setScrewsOnAssemble();
+            }
+            SatsumaTurboCharger.colorHasToChange = true;
         }
 
         protected override void disassemble(bool startup = false)
         {
             // do stuff on dissemble.
             base.disassemble(startup); // if you want dissemble function, you need to call base!
+            if (SatsumaTurboCharger.turbocharger_small_airfilter_screwable != null)
+            {
+                SatsumaTurboCharger.turbocharger_small_airfilter_screwable.resetScrewsOnDisassemble();
+            }
+            SatsumaTurboCharger.colorHasToChange = true;
         }
 
         public void removePart()

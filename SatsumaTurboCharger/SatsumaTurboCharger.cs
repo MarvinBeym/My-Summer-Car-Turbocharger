@@ -28,84 +28,18 @@ namespace SatsumaTurboCharger
          *  -------------------------------------------------
          */
 
-        /* Changelog v2.0 first
-         * Added exhaust header 
-         * Changed exhaust pipes to fit with the new header
-         * Changed models for racing (Racing) turbo to have connection plates for screws
-         * Changed positions of parts slightly
-         * Added screws to all Racing turbo parts
-         * Added screws to intercooler manidold tubes
-         * Added screws to manifolds
-         * Added clamps to make tubes connected to each other more realistic looking
+        /* Changelog v2.0.1
+         * Improved performance
+         * Changed colliders of all parts to be "Discrete" again (except hood). This should improve performance. Please let me know if parts fall through the world.
+         * Fixed racing turbo blowoff valve not beeing paintable
+         * Fixed exhaust smoke not working like it should for racing exhaust parts (game parts, not mod parts)
+         * Fixed boost Increase/Decrease going lower than it should
+         * Fixed boost Increase/Decrease going higher than it should
+         * Fixed the possibility of having both the mod exhaust header and the ingame steel header installed
+         * Fixed the possibility of having both the straight exhaust and outlet pipe installed
+         * Fixed the compressor turbine of the racing turbo not keeping color when installed
+         * Changed blowoff valve screw size from 6mm to 5mm
          */
-
-        /* Changelog v2.0 second  
-         * Added mods communication with DonnerTechRacing ecus mod
-         * If you have the ecu mod installed and enable ALS (Antilag) the turbo will go to max boost and you can let of the throttle, drive around a corner and let it go again to have max boost
-         * Changed Racing turbo boost calculation (will now increase slower so that the car won't just instantly loose grip)
-         */
-
-        /* Changelog v2.0 third 
-         * Changed the multiplier used when the turbocharger value is applied.
-         * Racing turbo: from 2.0 -> 1.5f
-         * GT turbo: from 1.4 -> 1.5f
-         * Changed the boost gauge text to be the pressure of the turbo itself. 
-         * Racing turbo has a pressure of -0.10, meaning the car when idle or below turbo engage speed has less power (powerMultiplier = 0.9 instead of 1)
-         * GT turbo has a pressure of -0.04, meaning the car when idle or below turbo engage speed has less power (powerMultiplier = 0.96 instead of 1)
-         * Added parts wear to Racing turbo, GT turbo, intercooler and airfilter.
-         * Racing turbo wears faster than GT turbo
-         * Airfilter reduces wear on GT turbo based on it's own wear
-         * If intercooler is damaged it will reduce the max pressure possible
-         * Parts wear status can be checked by removing the part and aiming at it. It will show a text roughly telling the current wear status
-         * Added Debug information for parts wear status
-         * If the wear is below 15 (15%) there is a chance of 400:1 (0.25%) that the part will disassemble itself. The part can be reinstalled but the chance stays.
-         * If the wear is at 0 (0%) the part will always disassemble when installed.
-         * Added grinding sound when turbos wear is below 25%
-         * Added repair "Products" to the ModsShop for Racing turbo, GT turbo, intercooler, airfilter
-         * ModsShop might not display anything after buying something. Just wait a while and it will display again (something going on with ModsShop no turbo mod)
-         * Adjusted Prices for "REPAIR" to be lower than the original buy price
-         * Added workaround for ModsShop purchased logic so "REPAIR" products can be bought multiple times
-         * Parts have to be removed from the car and placed on the Desk where the ModsShop sign is. Otherwise the parts won't be repaired (money is refunded)
-         * Changed started/finished loading ModConsole output.
-         * ModsShop save information changed. I might have to delete the modsShop bought save file.
-         * Added screws/clamps to GT turbo, GT turbo intercooler tube and GT turbo exhaust inlet tube
-         */
-        /*Changelog v2.0 fourth
-         * Changed GT turbo part for increasing/decreasing of the max boost to be the wastegate and nolonger the turbo itself.
-         * Fixed the GT turbo smallest possible boost to not go below 1.01
-         * Changed minimum boost possible to be 0.8 for GT turbo
-         * Added Straight Tube for Racing turbo
-         * Made the exhaust smoke come out the straight tube if it is installed
-         * Added backfire sound if straight tube is installed and revLimiter is triggered (25% chance it will backfire)
-         * Added fire fx to straight pipe that will shoot out the straight pipe if the engine backfires
-         */
-        /*Changelog v2.0 fifth
-         * Boost gauge now displays if any part is not installed. It will then display "ERR" -> check that all needed parts are installed.
-         * Car will now fail inspection if any Turbo part is installed. Including the gauge and hood as it implies that you might be using a turbo.
-         * Updated all textures to be more realistic
-         * all parts now also have to be screwed in fully to count as "installed"
-         * Boost gauge also displays "ERR" if not all needed parts are screwed in
-         * Improved Backfire logic
-         * Backfire will only be triggered when having the straight pipe
-         * If ALS (ECU-Mod) is enabled (and get's Triggered) the backfire has a chance of 100% to trigger above 4k rpm when not pressing the accelerator key
-         * If ALS (ECU-Mod) is not enabled the backfire has a chance of 12.5% (1:8) to trigger above 4k rpm when not pressing the accelerator key
-         * Backfire can trigger each frame if the rpm is above 4k (more inital rpm = more possible backfires) (only with ALS)
-         * ALS Now can only trigger if you were accelerating before (Like in all the videos you can see on youtube about Antilag) (Antilag on Deceleration)
-         */
-
-        /*Changelog v2.0 final
-         *  Fixed some of the exhaust smoke bugs (smoke staying when car is off or smoke at wrong position)
-         *  Fixed Mod Communication between ecu and turbo mod
-         *  Fixed ALS not disabling for turbo
-         *  Added mounting points to intercooler
-         *  Added screws to Intercooler
-         *  Changed intercooler rotation from 15° to 5°
-         *  Changed intercooler position to be closer to the car
-         *  Fixed boost changer not detecting when aiming at it
-         *  Updated ProductImages for all files
-         *  Fixed alot of bugs
-         */
-
 
         /*FIX (alot of this thanks to twitch LDB_Valow:
          *  FIXED: add screws to intercooler
@@ -141,6 +75,9 @@ namespace SatsumaTurboCharger
          *  make fire of exhaust light up house?????
          *  Add Gear adjustment back into the mod but only for 1-4th gear.
          *  If screws of original exhaust pipe is unscrewed boost still works
+         *  Smoke coming from engine when no turbo part installed -> might be because people don't have the race exhaust installed -> check for stock exhaust
+         *  straight exhaust and normal exhaust can both be installed at the same time
+         *  ScrewablePartAPI: screwdriver works on 6mm bolts
          *  -------------------------------------------------
          *  Known bugs:
          *  
@@ -153,7 +90,7 @@ namespace SatsumaTurboCharger
         public override string ID => "SatsumaTurboCharger"; //Your mod ID (unique)
         public override string Name => "DonnerTechRacing Turbocharger"; //You mod name
         public override string Author => "DonnerPlays"; //Your Username
-        public override string Version => "2.0"; //Version
+        public override string Version => "2.0.1"; //Version
         public override bool UseAssetsFolder => true;
 
         //Saves
@@ -711,7 +648,7 @@ namespace SatsumaTurboCharger
                 //n2oBottlePSI = satsuma.transform.GetChild(13).GetChild(1).GetChild(7).gameObject.GetComponent<PlayMakerFSM>().FsmVariables.FloatVariables[4];
                 weberCarb = GameObject.Find("racing carburators(Clone)");
                 twinCarb = GameObject.Find("twin carburators(Clone)");
-                steelHeaders = GameObject.Find("steel_headers(Clone)");
+                steelHeaders = GameObject.Find("steel headers(Clone)");
                 racingExhaustPipe = GameObject.Find("racing exhaust(Clone)");
                 racingExhaustMuffler = GameObject.Find("racing muffler(Clone)");
                 originalCylinerHead = GameObject.Find("cylinder head(Clone)");
@@ -855,7 +792,7 @@ namespace SatsumaTurboCharger
                             break;
                     }
                 }
-
+                
                 SetupInspectionPrevention();
 
                 ModConsole.Print("DonnerTechRacing Turbocharger Mod [v" + this.Version + "]" + " finished loading");
@@ -1011,7 +948,7 @@ namespace SatsumaTurboCharger
                 new Vector3[]
                 {
                         new Vector3(0.3f, 0.3f, 0.3f),
-                }, 6, "screwable_screw2");
+                }, 5, "screwable_screw2");
             turbocharger_big_blowoff_valve_screwable.AddClampModel(new Vector3(0.035f, -0.04f, 0.0005f), new Vector3(55, 90, 0), new Vector3(0.41f, 0.41f, 0.41f));
             turbocharger_big_exhaust_outlet_straight_screwable.AddClampModel(new Vector3(0.045f, -0.034f, -0.023f), new Vector3(0, 0, 0), new Vector3(1, 1, 1));
             turbocharger_big_exhaust_outlet_tube_screwable.AddClampModel(new Vector3(-0.055f, 0.334f, -0.0425f), new Vector3(0, 0, 0), new Vector3(1, 1, 1));
@@ -1984,6 +1921,18 @@ namespace SatsumaTurboCharger
             }
             try
             {
+                steelHeaders_inst = steelHeaders.transform.parent.name == "pivot_headers";
+            }
+            catch
+            {
+                try
+                {
+                    steelHeaders_inst = GameObject.Find("steel headers(Clone)").transform.parent.transform.parent.name == "pivot_exhaust pipe";
+                }
+                catch { }
+            }
+            try
+            {
                 racingExhaustPipe_inst = racingExhaustPipe.transform.parent.name == "pivot_exhaust pipe";
             }
             catch
@@ -2063,7 +2012,38 @@ namespace SatsumaTurboCharger
                 turbocharger_big_exhaust_outlet_tube_trigger.triggerGameObject.SetActive(false);
             }
 
-            if(satsumaDriveTrain.rpm >= 200)
+            if (steelHeaders_inst)
+            {
+                turbocharger_exhaust_header_trigger.triggerGameObject.SetActive(false);
+                if (turbocharger_exhaust_header_part.installed)
+                {
+                    turbocharger_exhaust_header_part.removePart();
+                }
+            }
+            else
+            {
+                turbocharger_exhaust_header_trigger.triggerGameObject.SetActive(true);
+            }
+
+            if (turbocharger_big_exhaust_outlet_straight_part.installed)
+            {
+                turbocharger_big_exhaust_outlet_tube_trigger.triggerGameObject.SetActive(false);
+            }
+            else
+            {
+                turbocharger_big_exhaust_outlet_tube_trigger.triggerGameObject.SetActive(true);
+            }
+
+            if (turbocharger_big_exhaust_outlet_tube_part.installed)
+            {
+                turbocharger_big_exhaust_outlet_straight_trigger.triggerGameObject.SetActive(false);
+            }
+            else
+            {
+                turbocharger_big_exhaust_outlet_straight_trigger.triggerGameObject.SetActive(true);
+            }
+
+            if (satsumaDriveTrain.rpm >= 200)
             {
                 if (turbocharger_big_exhaust_outlet_straight_part.installed)
                 {
@@ -2095,16 +2075,13 @@ namespace SatsumaTurboCharger
                     {
                         if((!allBigPartsScrewed || !allSmallPartsScrewed) || !allOtherPartsScrewed)
                         {
-                            exhaustEngine.SetActive(true);
-                            exhaustPipeRace.SetActive(false);
-                            exhaustRaceMuffler.SetActive(false);
-                            if (steelHeaders_inst && racingExhaustPipe_inst && racingExhaustPipe_inst)
+                            if (steelHeaders_inst && racingExhaustPipe_inst && racingExhaustMuffler_inst)
                             {
                                 exhaustEngine.SetActive(false);
                                 exhaustPipeRace.SetActive(false);
                                 exhaustRaceMuffler.SetActive(true);
                             }
-                            else if (steelHeaders_inst && !racingExhaustPipe_inst && !racingExhaustPipe_inst)
+                            else if (steelHeaders_inst && !racingExhaustPipe_inst && !racingExhaustMuffler_inst)
                             {
                                 exhaustEngine.SetActive(true);
                                 exhaustPipeRace.SetActive(false);
@@ -2123,6 +2100,12 @@ namespace SatsumaTurboCharger
                                 exhaustRaceMuffler.SetActive(false);
                             }
                             else if (!racingExhaustPipe_inst && !racingExhaustMuffler_inst)
+                            {
+                                exhaustEngine.SetActive(true);
+                                exhaustPipeRace.SetActive(false);
+                                exhaustRaceMuffler.SetActive(false);
+                            }
+                            else
                             {
                                 exhaustEngine.SetActive(true);
                                 exhaustPipeRace.SetActive(false);
@@ -2864,6 +2847,7 @@ namespace SatsumaTurboCharger
             turbocharger_big_exhaust_inlet_tube_part.activePart.SetActive(true);
             turbocharger_big_exhaust_outlet_tube_part.activePart.SetActive(true);
             partBuySave.bought_turbocharger_big_kit = true;
+            colorHasToChange = true;
         }
         public void PurchaseMadeTurbochargerExhaustHeader(ModsShop.PurchaseInfo item)
         {
@@ -2877,6 +2861,7 @@ namespace SatsumaTurboCharger
 
             turbocharger_big_blowoff_valve_part.activePart.SetActive(true);
             partBuySave.bought_turbocharger_big_blowoff_valve = true;
+            colorHasToChange = true;
         }
         public void PurchaseMadeTurbochargerSmallIntercoolerTube(ModsShop.PurchaseInfo item)
         {
@@ -2903,6 +2888,7 @@ namespace SatsumaTurboCharger
             turbocharger_small_airfilter_part.activePart.transform.position = new Vector3(1555.174f, 5.8f, 736.9866f);
             turbocharger_small_airfilter_part.activePart.SetActive(true);
             partBuySave.bought_turbocharger_small_airfilter = true;
+            colorHasToChange = true;
         }
 
         public void PurchaseMadeTurbochargerManifoldTwinCarbKit(ModsShop.PurchaseInfo item)
@@ -2913,6 +2899,7 @@ namespace SatsumaTurboCharger
             turbocharger_manifold_twinCarb_part.activePart.SetActive(true);
             turbocharger_intercooler_manifold_tube_twinCarb_part.activePart.SetActive(true);
             partBuySave.bought_turbocharger_manifold_twinCarb_kit = true;
+            colorHasToChange = true;
         }
         public void PurchaseMadeTurbochargerManifoldbWeberKit(ModsShop.PurchaseInfo item)
         {
@@ -2922,6 +2909,7 @@ namespace SatsumaTurboCharger
             turbocharger_manifold_weber_part.activePart.SetActive(true);
             turbocharger_intercooler_manifold_tube_weber_part.activePart.SetActive(true);
             partBuySave.bought_turbocharger_manifold_weber_kit = true;
+            colorHasToChange = true;
 
         }
         public void PurchaseMadeTurbochargerHood(ModsShop.PurchaseInfo item)
@@ -2930,7 +2918,7 @@ namespace SatsumaTurboCharger
 
             turbocharger_hood_part.activePart.SetActive(true);
             partBuySave.bought_turbocharger_hood = true;
-            
+            colorHasToChange = true;
         }
         public void PurchaseMadeTurbochargerIntercooler(ModsShop.PurchaseInfo item)
         {
@@ -2952,6 +2940,7 @@ namespace SatsumaTurboCharger
 
             turbocharger_intercooler_part.activePart.SetActive(true);
             partBuySave.bought_turbocharger_intercooler = true;
+            colorHasToChange = true;
         }
         public void PurchaseMadeTurbochargerBoostGauge(ModsShop.PurchaseInfo item)
         {
@@ -3176,36 +3165,23 @@ namespace SatsumaTurboCharger
                 MeshRenderer meshRenderer;
                 if (part == turbocharger_big_part)
                 {
-                    if (turbocharger_big_turbine == null)
+                    meshRenderer = GameObject.Find("TurboCharger_Big_Compressor_Turbine").GetComponentInChildren<MeshRenderer>();
+                    if (meshRenderer.material.name == "Red_Acent (Instance)" || meshRenderer.material.name == "CAR_PAINT_REGULAR (Instance)")
                     {
-                        turbocharger_big_turbine = GameObject.Find("TurboCharger_Big_Compressor_Turbine");
-                    }
-                    if (turbocharger_big_turbine != null)
-                    {
-                        meshRenderer = turbocharger_big_turbine.GetComponentInChildren<MeshRenderer>();
-                        if (meshRenderer.material.name == "Red_Acent (Instance)" || meshRenderer.material.name == "CAR_PAINT_REGULAR (Instance)")
+                        if (useDefaultColors != true)
                         {
-                            if (useDefaultColors != true)
-                            {
-                                meshRenderer.material.SetColor("_Color", colorToPaint);
-                            }
-
+                            meshRenderer.material.SetColor("_Color", colorToPaint);
                         }
-                        meshRenderer = GameObject.Find("TurboCharger_Big_Exhaust_Turbine").GetComponentInChildren<MeshRenderer>();
-                        if (meshRenderer.material.name == "Red_Acent (Instance)" || meshRenderer.material.name == "CAR_PAINT_REGULAR (Instance)")
-                        {
-                            if (useDefaultColors != true)
-                            {
-                                meshRenderer.material.SetColor("_Color", colorToPaint);
-                            }
 
+                    }
+                    meshRenderer = GameObject.Find("TurboCharger_Big_Exhaust_Turbine").GetComponentInChildren<MeshRenderer>();
+                    if (meshRenderer.material.name == "Red_Acent (Instance)" || meshRenderer.material.name == "CAR_PAINT_REGULAR (Instance)")
+                    {
+                        if (useDefaultColors != true)
+                        {
+                            meshRenderer.material.SetColor("_Color", colorToPaint);
                         }
                     }
-                    else
-                    {
-                        meshRenderer = null;
-                    }
-                    
                 }
                 else if(part == turbocharger_small_part)
                 {
@@ -3761,9 +3737,13 @@ namespace SatsumaTurboCharger
 
                                     if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
                                     {
-                                        if (othersSave.turbocharger_big_max_boost != othersSave.turbocharger_big_max_boost_limit)
+                                        if (othersSave.turbocharger_big_max_boost < othersSave.turbocharger_big_max_boost_limit)
                                         {
                                             othersSave.turbocharger_big_max_boost += 0.05f;
+                                            if (othersSave.turbocharger_big_max_boost >= othersSave.turbocharger_big_max_boost_limit)
+                                            {
+                                                othersSave.turbocharger_big_max_boost = othersSave.turbocharger_big_max_boost_limit;
+                                            } 
                                         }
                                     }
                                     else if (Input.GetAxis("Mouse ScrollWheel") < 0f) // backwards
@@ -3771,6 +3751,10 @@ namespace SatsumaTurboCharger
                                         if (othersSave.turbocharger_big_max_boost > 1.55f)
                                         {
                                             othersSave.turbocharger_big_max_boost -= 0.05f;
+                                            if (othersSave.turbocharger_big_max_boost <= 1.55f)
+                                            {
+                                                othersSave.turbocharger_big_max_boost = 1.55f;
+                                            }
                                         }
                                     }
                                     ModClient.guiInteract("Increase/Decrease Max Boost: " + othersSave.turbocharger_big_max_boost.ToString("0.00"));
@@ -3782,9 +3766,13 @@ namespace SatsumaTurboCharger
                                 {
                                     if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
                                     {
-                                        if (othersSave.turbocharger_small_max_boost != othersSave.turbocharger_small_max_boost_limit)
+                                        if (othersSave.turbocharger_small_max_boost < othersSave.turbocharger_small_max_boost_limit)
                                         {
                                             othersSave.turbocharger_small_max_boost += 0.01f;
+                                            if (othersSave.turbocharger_small_max_boost >= othersSave.turbocharger_small_max_boost_limit)
+                                            {
+                                                othersSave.turbocharger_small_max_boost = othersSave.turbocharger_small_max_boost_limit;
+                                            }
                                         }
                                     }
                                     else if (Input.GetAxis("Mouse ScrollWheel") < 0f) // backwards
@@ -3793,6 +3781,10 @@ namespace SatsumaTurboCharger
                                         if (othersSave.turbocharger_small_max_boost > 0.8f)
                                         {
                                             othersSave.turbocharger_small_max_boost -= 0.01f;
+                                            if (othersSave.turbocharger_small_max_boost <= 0.8f)
+                                            {
+                                                othersSave.turbocharger_small_max_boost = 0.8f;
+                                            }
                                         }
                                     }
                                     ModClient.guiInteract("Increase/Decrease Max Boost: " + othersSave.turbocharger_small_max_boost.ToString("0.00"));
@@ -3844,6 +3836,7 @@ namespace SatsumaTurboCharger
                                      || gameObjectHit.name == "Weber Manifold(Clone)"
                                      || gameObjectHit.name == "TwinCarb Manifold(Clone)"
                                      || gameObjectHit.name == "GT Turbocharger Airfilter(Clone)"
+                                     || gameObjectHit.name == "Racing Turbocharger Blowoff Valve(Clone)"
                                      )
                                     {
                                         if (Input.GetMouseButton(0))

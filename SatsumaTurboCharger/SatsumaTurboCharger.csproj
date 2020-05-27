@@ -94,7 +94,9 @@
     <Compile Include="PartBuySave.cs" />
     <Compile Include="PartsWearSave.cs" />
     <Compile Include="Exhaust_Header_Part.cs" />
+    <Compile Include="Racing_Exhaust_Outlet_Straight_Logic.cs" />
     <Compile Include="Racing_Exhaust_Outlet_Straight_Part.cs" />
+    <Compile Include="Racing_Turbocharger_Logic.cs" />
     <Compile Include="SatsumaTurboCharger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Racing_Blowoff_Valve_Part.cs" />

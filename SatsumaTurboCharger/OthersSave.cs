@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SatsumaTurboCharger
 {
-    class OthersSave
+    public class OthersSave
     {
         public float turbocharger_big_max_boost
         {

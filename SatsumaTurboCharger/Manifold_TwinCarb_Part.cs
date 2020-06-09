@@ -54,5 +54,9 @@ namespace SatsumaTurboCharger
             }
             SatsumaTurboCharger.colorHasToChange = true;
         }
+        public void removePart()
+        {
+            disassemble(false);
+        }
     }
 }

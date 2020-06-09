@@ -52,5 +52,9 @@ namespace SatsumaTurboCharger
                 SatsumaTurboCharger.turbocharger_intercooler_manifold_twinCarb_tube_screwable.resetScrewsOnDisassemble();
             }
         }
+        public void removePart()
+        {
+            disassemble(false);
+        }
     }
 }

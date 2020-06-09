@@ -53,6 +53,11 @@ namespace SatsumaTurboCharger
                 SatsumaTurboCharger.turbocharger_big_exhaust_outlet_tube_screwable.resetScrewsOnDisassemble();
             }
         }
+
+        public void removePart()
+        {
+            disassemble(false);
+        }
     }
 
 }

@@ -13,6 +13,8 @@ namespace SatsumaTurboCharger
         void Start()
         {
             audio_fx_backfire = this.gameObject.GetComponentInChildren<AudioSource>();
+            audio_fx_backfire.spatialBlend = 0.8f;
+            audio_fx_backfire.rolloffMode = AudioRolloffMode.Linear;
             particle_fx_backfire = this.gameObject.GetComponentInChildren<ParticleSystem>();
         }
 
@@ -24,8 +26,21 @@ namespace SatsumaTurboCharger
 
         internal void TriggerBackfire()
         {
-            audio_fx_backfire.Play();
-            particle_fx_backfire.Emit(2);
+            if(!audio_fx_backfire.isPlaying && !particle_fx_backfire.isPlaying)
+            {
+                audio_fx_backfire.Play();
+                particle_fx_backfire.Emit(2);
+            }
+        }
+
+        internal Vector3 GetFireFXPos()
+        {
+            return particle_fx_backfire.transform.localPosition;
+        }
+
+        internal Quaternion GetFireFXRot()
+        {
+            return particle_fx_backfire.transform.localRotation;
         }
     }
 }

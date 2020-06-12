@@ -300,7 +300,7 @@ namespace SatsumaTurboCharger
         private float HandleTurboDelay(float calculated_boost, float delay_comparer, float delayAdder)
         {
             timer_delay_turbocharger_small += Time.deltaTime;
-            if (useThrottleButton)
+            if (useThrottleButton || throttleUsed)
             {
                 if (timer_delay_turbocharger_small >= delay_comparer)
                 {
@@ -310,7 +310,7 @@ namespace SatsumaTurboCharger
                         turbocharger_delay = 1;
                 }
             }
-            else
+            else if (!useThrottleButton && !throttleUsed)
             {
                 if (timer_delay_turbocharger_small >= delay_comparer)
                 {
@@ -577,6 +577,14 @@ namespace SatsumaTurboCharger
         internal static bool useThrottleButton
         {
             get { return cInput.GetKey("Throttle"); }
+        }
+
+        internal bool throttleUsed
+        {
+            get
+            {
+                return (satsumaDriveTrain.idlethrottle > 0f);
+            }
         }
 
         internal static void SwitchUseFlutterSound(bool useFlutterSound)

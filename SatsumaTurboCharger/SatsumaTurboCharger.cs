@@ -29,11 +29,13 @@ namespace SatsumaTurboCharger
          *  -------------------------------------------------
          */
 
-        /* Changelog v2.1.5
-         * Fixed cruise control from ecu-mod causing turbo to not spool up/stay under pressure
+        /* Changelog v2.1.6
+         * Fixed cruise control from ecu-mod causing (small) turbo to not spool up/stay under pressure
+         * Fixed cruise control from ecu-mod preventing the boost of the small turbo to be displaying both on ecu panel and boost gauge
          */
 
         /*FIX
+         *  Prevent turbo from working if any stock exhaust part is installed.
          *  Change PaintingSystem into MonoBehaviour
          *  if cruise control is off and a speed was set it should enable cruise control and make it reach the originally set speed
          *  if cruise control is off and on button is pressed it should set the speed to the current car speed
@@ -61,7 +63,7 @@ namespace SatsumaTurboCharger
         public override string ID => "SatsumaTurboCharger"; //Your mod ID (unique)
         public override string Name => "DonnerTechRacing Turbocharger"; //You mod name
         public override string Author => "DonnerPlays"; //Your Username
-        public override string Version => "2.1.5"; //Version
+        public override string Version => "2.1.6"; //Version
 
         internal bool GetAirfilterInstalled()
         {

@@ -16,8 +16,7 @@ namespace SatsumaTurboCharger
         private bool needToWriteHeader = true;
         private Mod mod;
 
-        public Logger(string filePath, Mod mod)
-        {
+        public Logger(string filePath, Mod mod){ 
             this.mod = mod;
             this.filePath = filePath;
             if (File.Exists(filePath))
@@ -26,8 +25,7 @@ namespace SatsumaTurboCharger
             }
         }
         
-        public void LogError(string errorMessage, Exception e, int errorLevel = 1)
-        {
+        public void LogError(string errorMessage, Exception e, int errorLevel = 1){ 
             string errorLine = "[" + DateTime.UtcNow.ToString("G", CultureInfo.CreateSpecificCulture("de-DE")) + "][" + ErrorLevelToString(errorLevel) + "] " + errorMessage + Environment.NewLine;
             try
             {
@@ -54,8 +52,7 @@ namespace SatsumaTurboCharger
 
         }
 
-        private string ErrorLevelToString(int errorLevel)
-        {
+        private string ErrorLevelToString(int errorLevel){ 
             if(errorLevel == 1)
             {
                 return "ERROR";
@@ -70,8 +67,7 @@ namespace SatsumaTurboCharger
             }
         }
 
-        private void WriteErrorBeginText(StreamWriter writer)
-        {
+        private void WriteErrorBeginText(StreamWriter writer){ 
             string header =
                 String.Format("MOD-ID: {0}", mod.ID) + Environment.NewLine
                 + String.Format("MOD-Name: {0}", mod.Name) + Environment.NewLine

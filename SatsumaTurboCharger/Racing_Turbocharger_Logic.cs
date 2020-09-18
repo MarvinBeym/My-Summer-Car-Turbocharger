@@ -14,7 +14,7 @@ namespace SatsumaTurboCharger
         //Turbo mod
         private GameObject turbocharger_big_turbine;
 
-        private OthersSave othersSave;
+        private BoostSave boostSave;
         private PartsWearSave partsWearSave;
 
         private float calculated_boost = 0;
@@ -89,7 +89,7 @@ namespace SatsumaTurboCharger
             }
             ecu_mod_installed = ModLoader.IsModPresent("DonnerTech_ECU_Mod");
 
-            othersSave = donnerTech_turbocharger_mod.GetOthersSave();
+            boostSave = donnerTech_turbocharger_mod.GetBoostSave();
             partsWearSave = donnerTech_turbocharger_mod.GetPartsWearSave();
 
             CreateTurboGrindingLoop();
@@ -206,8 +206,6 @@ namespace SatsumaTurboCharger
                 }
             }
 
-
-
             if (hasPower && donnerTech_turbocharger_mod.GetAllOtherPartsInstalledScrewed() && donnerTech_turbocharger_mod.GetAllBigPartsInstalledScrewed() && !donnerTech_turbocharger_mod.GetAllSmallPartsInstalledScrewed())
             {
                 if (!turboLoopBig.isPlaying)
@@ -228,7 +226,10 @@ namespace SatsumaTurboCharger
                     calculated_boost = HandleTurboDelay(calculated_boost, 0.1f, 0.4f);
                     if (calculated_boost > 0f)
                     {
-                        calculated_boost = HandleWear(calculated_boost);
+                        if (SatsumaTurboCharger.GetPartsWearEnabled())
+                        {
+                            calculated_boost = HandleWear(calculated_boost);
+                        }
                         HandleBackfire();
 
                         donnerTech_turbocharger_mod.SetBoostGaugeText(calculated_boost, true);
@@ -255,7 +256,11 @@ namespace SatsumaTurboCharger
 
                 if (satsumaDriveTrain.rpm >= 400)
                 {
-                    CheckPartsWear();
+                    if (SatsumaTurboCharger.GetPartsWearEnabled())
+                    {
+                        CheckPartsWear();
+                    }
+                    
                 }
 
                 if (useThrottleButton && satsumaDriveTrain.rpm > 4000 && timeSinceLastBlowOff > 1)
@@ -266,14 +271,11 @@ namespace SatsumaTurboCharger
 
                 if ((!useThrottleButton && turbocharger_blowoffShotAllowed == true) && calculated_boost >= 0.6f)
                 {
-                    if (ecu_mod_installed && smart_engine_module_alsModuleEnabled != null)
-                    {
-                        donnerTech_turbocharger_mod.SetBoostGaugeText(0.10f, false);
-                        TriggerBlowoff();
-                    }
+                    donnerTech_turbocharger_mod.SetBoostGaugeText(0.10f, false);
+                    TriggerBlowoff();
                 }
 
-                turbocharger_big_max_boost.Value = othersSave.turbocharger_big_max_boost;
+                turbocharger_big_max_boost.Value = boostSave.turbocharger_big_max_boost;
                 turbocharger_big_exhaust_temp.Value = 0f;
                 turbocharger_big_intake_temp.Value = 0f;
                 turbocharger_big_rpm.Value = CalculateRpm(calculated_boost);
@@ -284,7 +286,7 @@ namespace SatsumaTurboCharger
             }
             else if (!donnerTech_turbocharger_mod.GetAllSmallPartsInstalledScrewed())
             {
-                turbocharger_big_max_boost.Value = othersSave.turbocharger_big_max_boost;
+                turbocharger_big_max_boost.Value = boostSave.turbocharger_big_max_boost;
                 turbocharger_big_exhaust_temp.Value = 0f;
                 turbocharger_big_intake_temp.Value = 0f;
                 turbocharger_big_rpm.Value = 0;
@@ -300,7 +302,7 @@ namespace SatsumaTurboCharger
             }
             else
             {
-                turbocharger_big_max_boost.Value = othersSave.turbocharger_big_max_boost;
+                turbocharger_big_max_boost.Value = boostSave.turbocharger_big_max_boost;
                 turbocharger_big_exhaust_temp.Value = 0f;
                 turbocharger_big_intake_temp.Value = 0f;
                 turbocharger_big_rpm.Value = 0;
@@ -396,15 +398,15 @@ namespace SatsumaTurboCharger
         {
             if (twinCarb_inst.Value)
             {
-                othersSave.turbocharger_big_max_boost_limit = (2.2f + 0.05f);
+                boostSave.turbocharger_big_max_boost_limit = (2.2f + 0.05f);
             }
             else if (weberCarb_inst.Value)
             {
-                othersSave.turbocharger_big_max_boost_limit = (2.2f + 0.30f);
+                boostSave.turbocharger_big_max_boost_limit = (2.2f + 0.30f);
             }
-            if (othersSave.turbocharger_big_max_boost >= othersSave.turbocharger_big_max_boost_limit)
+            if (boostSave.turbocharger_big_max_boost >= boostSave.turbocharger_big_max_boost_limit)
             {
-                othersSave.turbocharger_big_max_boost = othersSave.turbocharger_big_max_boost_limit;
+                boostSave.turbocharger_big_max_boost = boostSave.turbocharger_big_max_boost_limit;
             }
 
             if (ecu_mod_installed && smart_engine_module_alsModuleEnabled != null && smart_engine_module_alsModuleEnabled.Value && satsumaDriveTrain.rpm >= satsumaDriveTrain.maxRPM)
@@ -416,9 +418,9 @@ namespace SatsumaTurboCharger
                 calculated_boost = Convert.ToSingle(Math.Log(satsumaDriveTrain.rpm / 4000, 100)) * 19f;
             }
 
-            if (calculated_boost > othersSave.turbocharger_big_max_boost)
+            if (calculated_boost > boostSave.turbocharger_big_max_boost)
             {
-                calculated_boost = othersSave.turbocharger_big_max_boost;
+                calculated_boost = boostSave.turbocharger_big_max_boost;
             }
 
             return calculated_boost;

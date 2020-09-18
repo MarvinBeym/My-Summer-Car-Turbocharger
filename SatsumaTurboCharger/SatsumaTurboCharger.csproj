@@ -90,10 +90,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bodykit_Part.cs" />
     <Compile Include="GT_Turbocharger_Logic.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="OthersSave.cs" />
+    <Compile Include="BoostSave.cs" />
+    <Compile Include="PaintSystem.cs" />
     <Compile Include="PartBuySave.cs" />
     <Compile Include="PartsWearSave.cs" />
     <Compile Include="Exhaust_Header_Part.cs" />

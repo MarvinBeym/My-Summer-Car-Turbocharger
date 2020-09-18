@@ -11,15 +11,14 @@ namespace SatsumaTurboCharger
     {
         public Racing_Turbocharger_Part(PartSaveInfo inPartSaveInfo, GameObject inPart, GameObject inParent, Trigger inPartTrigger, Vector3 inPartPosition, Quaternion inPartRotation) : base(inPartSaveInfo, inPart, inParent, inPartTrigger, inPartPosition, inPartRotation)
         {
-
         }
 
         public override PartSaveInfo defaultPartSaveInfo => new PartSaveInfo()
         {
-            installed = false, //Will make part installed
+            installed = false,
+            position = SatsumaTurboCharger.turbocharger_big_spawnLocation,
+            rotation = Quaternion.Euler(0f, 0f, 0f),
 
-            position = SatsumaTurboCharger.turbocharger_big_spawnLocation, //Sets the spawn location -> where i can be found
-            rotation = Quaternion.Euler(0f, 0f, 0f), // Rotation at spawn location
         };
 
         public override GameObject rigidPart

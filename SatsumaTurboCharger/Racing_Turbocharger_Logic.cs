@@ -1,7 +1,9 @@
 ﻿using HutongGames.PlayMaker;
 using MSCLoader;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using Random = System.Random;
 
@@ -9,10 +11,10 @@ namespace SatsumaTurboCharger
 {
     public class Racing_Turbocharger_Logic : MonoBehaviour
     {
-        private SatsumaTurboCharger donnerTech_turbocharger_mod;
+        private SatsumaTurboCharger mod;
         
         //Turbo mod
-        private GameObject turbocharger_big_turbine;
+        private GameObject turboBig_turbine;
 
         private BoostSave boostSave;
         private PartsWearSave partsWearSave;
@@ -48,14 +50,14 @@ namespace SatsumaTurboCharger
         private AudioSource turboBlowOffShot;
 
         //Big turbo playmakerFSM
-        private PlayMakerFSM turbocharger_bigFSM;
-        private FsmFloat turbocharger_big_rpm;
-        private FsmFloat turbocharger_big_pressure;
-        private FsmFloat turbocharger_big_max_boost;
-        private FsmFloat turbocharger_big_wear;
-        private FsmFloat turbocharger_big_exhaust_temp;
-        private FsmFloat turbocharger_big_intake_temp;
-        private FsmBool turbocharger_big_allInstalled;
+        private PlayMakerFSM turboBigFSM;
+        private FsmFloat turboBig_rpm;
+        private FsmFloat turboBig_pressure;
+        private FsmFloat turboBig_max_boost;
+        private FsmFloat turboBig_wear;
+        private FsmFloat turboBig_exhaust_temp;
+        private FsmFloat turboBig_intake_temp;
+        private FsmBool turboBig_allInstalled;
 
         //Installed Objects
         private FsmBool weberCarb_inst;
@@ -63,7 +65,7 @@ namespace SatsumaTurboCharger
 
         //Time Comparer
         private float timeSinceLastBlowOff;
-        private float timer_delay_turbocharger_big;
+        private float timer_delay_turboBig;
 
         //Turbo delay
         private float turbocharger_delay;
@@ -71,26 +73,13 @@ namespace SatsumaTurboCharger
 
         //Wear Logic
         private Random randDestroyValue;
-        private float timer_wear_turbocharger_big;
+        private float timer_wear_turboBig;
         private float timer_wear_intercooler;
         private float timer_backfire;
 
         void Start()
         {
-            System.Collections.Generic.List<Mod> mods = ModLoader.LoadedMods;
-            Mod[] modsArr = mods.ToArray();
-            foreach (Mod mod in modsArr)
-            {
-                if (mod.ID == "SatsumaTurboCharger")
-                {
-                    donnerTech_turbocharger_mod = (SatsumaTurboCharger) mod;
-                    break;
-                }
-            }
-            ecu_mod_installed = ModLoader.IsModPresent("DonnerTech_ECU_Mod");
-
-            boostSave = donnerTech_turbocharger_mod.GetBoostSave();
-            partsWearSave = donnerTech_turbocharger_mod.GetPartsWearSave();
+            ecu_mod_installed = ModLoader.IsModPresent("SatsumaTurboCharger");
 
             CreateTurboGrindingLoop();
             CreateTurboLoopBig();
@@ -124,29 +113,29 @@ namespace SatsumaTurboCharger
             PlayMakerFSM electricsFSM = electrics.GetComponent<PlayMakerFSM>();
 
 
-            turbocharger_bigFSM = this.gameObject.AddComponent<PlayMakerFSM>();
-            turbocharger_bigFSM.FsmName = "SatsumaTurboCharger_Values";
+            turboBigFSM = this.gameObject.AddComponent<PlayMakerFSM>();
+            turboBigFSM.FsmName = "SatsumaTurboCharger_Values";
 
-            turbocharger_big_rpm = new FsmFloat("Rpm");
-            turbocharger_big_pressure = new FsmFloat("Pressure");
-            turbocharger_big_max_boost = new FsmFloat("Max boost");
-            turbocharger_big_wear = new FsmFloat("Wear");
-            turbocharger_big_exhaust_temp = new FsmFloat("Exhaust temperature");
-            turbocharger_big_intake_temp = new FsmFloat("Intake temperature");
-            turbocharger_big_allInstalled = new FsmBool("All installed");
+            turboBig_rpm = new FsmFloat("Rpm");
+            turboBig_pressure = new FsmFloat("Pressure");
+            turboBig_max_boost = new FsmFloat("Max boost");
+            turboBig_wear = new FsmFloat("Wear");
+            turboBig_exhaust_temp = new FsmFloat("Exhaust temperature");
+            turboBig_intake_temp = new FsmFloat("Intake temperature");
+            turboBig_allInstalled = new FsmBool("All installed");
 
-            turbocharger_bigFSM.FsmVariables.FloatVariables = new FsmFloat[]
+            turboBigFSM.FsmVariables.FloatVariables = new FsmFloat[]
             {
-                        turbocharger_big_rpm,
-                        turbocharger_big_pressure,
-                        turbocharger_big_max_boost,
-                        turbocharger_big_wear,
-                        turbocharger_big_exhaust_temp,
-                        turbocharger_big_intake_temp
+                turboBig_rpm,
+                turboBig_pressure,
+                turboBig_max_boost,
+                turboBig_wear,
+                turboBig_exhaust_temp,
+                turboBig_intake_temp
             };
-            turbocharger_bigFSM.FsmVariables.BoolVariables = new FsmBool[]
+            turboBigFSM.FsmVariables.BoolVariables = new FsmBool[]
             {
-                        turbocharger_big_allInstalled
+                turboBig_allInstalled
             };
         }
 
@@ -157,7 +146,7 @@ namespace SatsumaTurboCharger
             turboBlowOffShot = this.gameObject.AddComponent<AudioSource>();
             turbocharger_blowoff.audioSource = turboBlowOffShot;
 
-            turbocharger_blowoff.LoadAudioFromFile(Path.Combine(ModLoader.GetModAssetsFolder(donnerTech_turbocharger_mod), "turbocharger_blowoff.wav"), true, false);
+            turbocharger_blowoff.LoadAudioFromFile(Path.Combine(ModLoader.GetModAssetsFolder(mod), "turbocharger_blowoff.wav"), true, false);
             turboBlowOffShot.minDistance = 1;
             turboBlowOffShot.maxDistance = 10;
             turboBlowOffShot.spatialBlend = 1;
@@ -167,7 +156,7 @@ namespace SatsumaTurboCharger
         {
             turboLoopBig = this.gameObject.AddComponent<AudioSource>();
             turbocharger_loop_big.audioSource = turboLoopBig;
-            turbocharger_loop_big.LoadAudioFromFile(Path.Combine(ModLoader.GetModAssetsFolder(donnerTech_turbocharger_mod), "turbocharger_loop.wav"), true, false);
+            turbocharger_loop_big.LoadAudioFromFile(Path.Combine(ModLoader.GetModAssetsFolder(mod), "turbocharger_loop.wav"), true, false);
 
 
 
@@ -180,7 +169,10 @@ namespace SatsumaTurboCharger
 
         void Update()
         {
-            if (ModLoader.IsModPresent("DonnerTech_ECU_Mod"))
+            bool allBigInstalled = mod.allBigInstalled;
+            bool allSmallInstalled = mod.allSmallInstalled;
+            bool allOtherInstalled = mod.allOtherInstalled;
+            if (ModLoader.IsModPresent("SatsumaTurboCharger"))
             {
                 if (smart_engine_moduleFSM == null)
                 {
@@ -206,7 +198,7 @@ namespace SatsumaTurboCharger
                 }
             }
 
-            if (hasPower && donnerTech_turbocharger_mod.GetAllOtherPartsInstalledScrewed() && donnerTech_turbocharger_mod.GetAllBigPartsInstalledScrewed() && !donnerTech_turbocharger_mod.GetAllSmallPartsInstalledScrewed())
+            if (hasPower && allOtherInstalled && allBigInstalled && !allSmallInstalled)
             {
                 if (!turboLoopBig.isPlaying)
                 {
@@ -215,11 +207,11 @@ namespace SatsumaTurboCharger
                 turboLoopBig.volume = satsumaDriveTrain.rpm * 0.00005f;
                 turboLoopBig.pitch = satsumaDriveTrain.rpm * 0.00018f;
 
-                timer_wear_turbocharger_big += Time.deltaTime;
+                timer_wear_turboBig += Time.deltaTime;
                 timer_wear_intercooler += Time.deltaTime;
                 timeSinceLastBlowOff += Time.deltaTime;
                 RotateTurbineWheel();
-
+                
                 if (timeSinceLastBlowOff >= 0.8f)
                 {
                     calculated_boost = CalculateTurboBoost();
@@ -232,16 +224,16 @@ namespace SatsumaTurboCharger
                         }
                         HandleBackfire();
 
-                        donnerTech_turbocharger_mod.SetBoostGaugeText(calculated_boost, true);
+                        mod.SetBoostGaugeText(calculated_boost, true);
                         powerMultiplier.Value = (0.90f + (calculated_boost * 1.5f));
                     }
                     else
                     {
                         timer_wear_intercooler = 0;
-                        timer_wear_turbocharger_big = 0;
+                        timer_wear_turboBig = 0;
                         calculated_boost = -0.10f;
                         powerMultiplier.Value = 1f - 0.10f;
-                        donnerTech_turbocharger_mod.SetBoostGaugeText(0.10f, false);
+                        mod.SetBoostGaugeText(0.10f, false);
                     }
 
                     
@@ -251,7 +243,7 @@ namespace SatsumaTurboCharger
                 {
                     calculated_boost = -0.10f;
                     powerMultiplier.Value = 1f - 0.10f;
-                    donnerTech_turbocharger_mod.SetBoostGaugeText(0.10f, false);
+                    mod.SetBoostGaugeText(0.10f, false);
                 }
 
                 if (satsumaDriveTrain.rpm >= 400)
@@ -271,43 +263,43 @@ namespace SatsumaTurboCharger
 
                 if ((!useThrottleButton && turbocharger_blowoffShotAllowed == true) && calculated_boost >= 0.6f)
                 {
-                    donnerTech_turbocharger_mod.SetBoostGaugeText(0.10f, false);
+                    mod.SetBoostGaugeText(0.10f, false);
                     TriggerBlowoff();
                 }
 
-                turbocharger_big_max_boost.Value = boostSave.turbocharger_big_max_boost;
-                turbocharger_big_exhaust_temp.Value = 0f;
-                turbocharger_big_intake_temp.Value = 0f;
-                turbocharger_big_rpm.Value = CalculateRpm(calculated_boost);
-                turbocharger_big_pressure.Value = calculated_boost;
-                turbocharger_big_wear.Value = partsWearSave.turbocharger_big_wear;
-                turbocharger_big_allInstalled.Value = true;
+                turboBig_max_boost.Value = boostSave.turboBig_max_boost;
+                turboBig_exhaust_temp.Value = 0f;
+                turboBig_intake_temp.Value = 0f;
+                turboBig_rpm.Value = CalculateRpm(calculated_boost);
+                turboBig_pressure.Value = calculated_boost;
+                turboBig_wear.Value = partsWearSave.turboBig_wear;
+                turboBig_allInstalled.Value = true;
                 
             }
-            else if (!donnerTech_turbocharger_mod.GetAllSmallPartsInstalledScrewed())
+            else if (!allSmallInstalled)
             {
-                turbocharger_big_max_boost.Value = boostSave.turbocharger_big_max_boost;
-                turbocharger_big_exhaust_temp.Value = 0f;
-                turbocharger_big_intake_temp.Value = 0f;
-                turbocharger_big_rpm.Value = 0;
-                turbocharger_big_pressure.Value = 0;
-                turbocharger_big_allInstalled.Value = false;
+                turboBig_max_boost.Value = boostSave.turboBig_max_boost;
+                turboBig_exhaust_temp.Value = 0f;
+                turboBig_intake_temp.Value = 0f;
+                turboBig_rpm.Value = 0;
+                turboBig_pressure.Value = 0;
+                turboBig_allInstalled.Value = false;
 
                 turbocharger_loop_big.Stop();
                 turbocharger_blowoff.Stop();
                 turbocharger_grinding_loop.Stop();
-                donnerTech_turbocharger_mod.SetBoostGaugeText("ERR");
+                mod.SetBoostGaugeText("ERR");
 
 
             }
             else
             {
-                turbocharger_big_max_boost.Value = boostSave.turbocharger_big_max_boost;
-                turbocharger_big_exhaust_temp.Value = 0f;
-                turbocharger_big_intake_temp.Value = 0f;
-                turbocharger_big_rpm.Value = 0;
-                turbocharger_big_pressure.Value = 0;
-                turbocharger_big_allInstalled.Value = false;
+                turboBig_max_boost.Value = boostSave.turboBig_max_boost;
+                turboBig_exhaust_temp.Value = 0f;
+                turboBig_intake_temp.Value = 0f;
+                turboBig_rpm.Value = 0;
+                turboBig_pressure.Value = 0;
+                turboBig_allInstalled.Value = false;
 
                 turbocharger_loop_big.Stop();
                 turbocharger_blowoff.Stop();
@@ -317,12 +309,12 @@ namespace SatsumaTurboCharger
 
         private float HandleTurboDelay(float calculated_boost, float delay_comparer, float delayAdder)
         {
-            timer_delay_turbocharger_big += Time.deltaTime;
+            timer_delay_turboBig += Time.deltaTime;
             if (useThrottleButton || throttleUsed)
             {
-                if (timer_delay_turbocharger_big >= delay_comparer)
+                if (timer_delay_turboBig >= delay_comparer)
                 {
-                    timer_delay_turbocharger_big = 0;
+                    timer_delay_turboBig = 0;
                     turbocharger_delay += delayAdder;
                     if (turbocharger_delay >= 1)
                         turbocharger_delay = 1;
@@ -330,9 +322,9 @@ namespace SatsumaTurboCharger
             }
             else if(!useThrottleButton && !throttleUsed)
             {
-                if (timer_delay_turbocharger_big >= delay_comparer)
+                if (timer_delay_turboBig >= delay_comparer)
                 {
-                    timer_delay_turbocharger_big = 0;
+                    timer_delay_turboBig = 0;
                     turbocharger_delay -= (0.1f / 4);
                     if (turbocharger_delay <= 0)
                         turbocharger_delay = 0;
@@ -363,24 +355,24 @@ namespace SatsumaTurboCharger
 
         private void CheckPartsWear()
         {
-            if (partsWearSave.turbocharger_big_wear <= 0f)
+            if (partsWearSave.turboBig_wear <= 0f)
             {
-                donnerTech_turbocharger_mod.removePartBigTurbo();
+                mod.turboBig_part.removePart();
             }
-            else if (partsWearSave.turbocharger_big_wear <= 15f)
+            else if (partsWearSave.turboBig_wear <= 15f)
             {
 
                 int randVal = randDestroyValue.Next(100);
                 if (randVal == 1)
                 {
                     //Part should destroy
-                    donnerTech_turbocharger_mod.removePartBigTurbo();
+                    mod.turboBig_part.removePart();
                 }
             }
 
             if (partsWearSave.intercooler_wear <= 0f)
             {
-                donnerTech_turbocharger_mod.removePartIntercooler();
+                mod.intercooler_part.removePart();
             }
             else if (partsWearSave.intercooler_wear <= 15f)
             {
@@ -389,7 +381,7 @@ namespace SatsumaTurboCharger
                 if (randVal == 1)
                 {
                     //Part should destroy
-                    donnerTech_turbocharger_mod.removePartIntercooler();
+                    mod.intercooler_part.removePart();
                 }
             }
         }
@@ -398,15 +390,15 @@ namespace SatsumaTurboCharger
         {
             if (twinCarb_inst.Value)
             {
-                boostSave.turbocharger_big_max_boost_limit = (2.2f + 0.05f);
+                boostSave.turboBig_max_boost_limit = (2.2f + 0.05f);
             }
             else if (weberCarb_inst.Value)
             {
-                boostSave.turbocharger_big_max_boost_limit = (2.2f + 0.30f);
+                boostSave.turboBig_max_boost_limit = (2.2f + 0.30f);
             }
-            if (boostSave.turbocharger_big_max_boost >= boostSave.turbocharger_big_max_boost_limit)
+            if (boostSave.turboBig_max_boost >= boostSave.turboBig_max_boost_limit)
             {
-                boostSave.turbocharger_big_max_boost = boostSave.turbocharger_big_max_boost_limit;
+                boostSave.turboBig_max_boost = boostSave.turboBig_max_boost_limit;
             }
 
             if (ecu_mod_installed && smart_engine_module_alsModuleEnabled != null && smart_engine_module_alsModuleEnabled.Value && satsumaDriveTrain.rpm >= satsumaDriveTrain.maxRPM)
@@ -418,9 +410,9 @@ namespace SatsumaTurboCharger
                 calculated_boost = Convert.ToSingle(Math.Log(satsumaDriveTrain.rpm / 4000, 100)) * 19f;
             }
 
-            if (calculated_boost > boostSave.turbocharger_big_max_boost)
+            if (calculated_boost > boostSave.turboBig_max_boost)
             {
-                calculated_boost = boostSave.turbocharger_big_max_boost;
+                calculated_boost = boostSave.turboBig_max_boost;
             }
 
             return calculated_boost;
@@ -429,16 +421,16 @@ namespace SatsumaTurboCharger
         private float HandleWear(float boost)
         {
             float newCalculated_boost = boost;
-            if (partsWearSave.turbocharger_big_wear <= 0)
+            if (partsWearSave.turboBig_wear <= 0)
             {
-                partsWearSave.turbocharger_big_wear = 0;
+                partsWearSave.turboBig_wear = 0;
             }
-            else if (timer_wear_turbocharger_big >= 0.5f)
+            else if (timer_wear_turboBig >= 0.5f)
             {
-                timer_wear_turbocharger_big = 0;
-                partsWearSave.turbocharger_big_wear -= (newCalculated_boost * 0.003f);
+                timer_wear_turboBig = 0;
+                partsWearSave.turboBig_wear -= (newCalculated_boost * 0.003f);
             }
-            if (partsWearSave.turbocharger_big_wear < 25f)
+            if (partsWearSave.turboBig_wear < 25f)
             {
                 if (!turboGrindingLoop.isPlaying)
                 {
@@ -522,14 +514,14 @@ namespace SatsumaTurboCharger
 
         private void TriggerBackfire()
         {
-            donnerTech_turbocharger_mod.turbocharger_big_exhaust_outlet_straight_logic.TriggerBackfire();
+            mod.turboBig_exhaust_outlet_straight_logic.TriggerBackfire();
         }
 
         private void CreateTurboGrindingLoop()
         {
             turboGrindingLoop = this.gameObject.AddComponent<AudioSource>();
             turbocharger_grinding_loop.audioSource = turboGrindingLoop;
-            turbocharger_grinding_loop.LoadAudioFromFile(Path.Combine(ModLoader.GetModAssetsFolder(donnerTech_turbocharger_mod), "grinding sound.wav"), true, false);
+            turbocharger_grinding_loop.LoadAudioFromFile(Path.Combine(ModLoader.GetModAssetsFolder(mod), "grinding sound.wav"), true, false);
 
             turboGrindingLoop.rolloffMode = AudioRolloffMode.Linear;
             turboGrindingLoop.minDistance = 1;
@@ -540,13 +532,13 @@ namespace SatsumaTurboCharger
 
         private void RotateTurbineWheel()
         {
-            if (turbocharger_big_turbine == null)
+            if (turboBig_turbine == null)
             {
-                turbocharger_big_turbine = GameObject.Find("TurboCharger_Big_Compressor_Turbine");
+                turboBig_turbine = GameObject.Find("TurboCharger_Big_Compressor_Turbine");
             }
-            if (turbocharger_big_turbine != null)
+            if (turboBig_turbine != null)
             {
-                turbocharger_big_turbine.transform.Rotate(0, 0, (satsumaDriveTrain.rpm / 500));
+                turboBig_turbine.transform.Rotate(0, 0, (satsumaDriveTrain.rpm / 500));
             }
         }
 
@@ -588,6 +580,11 @@ namespace SatsumaTurboCharger
             {
                 return (satsumaDriveTrain.idlethrottle > 0f);
             }
+        }
+
+        public void Init(SatsumaTurboCharger mod)
+        {
+            this.mod = mod;
         }
     }
 }

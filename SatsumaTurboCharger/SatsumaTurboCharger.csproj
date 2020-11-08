@@ -90,37 +90,30 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BoxLogic.cs" />
     <Compile Include="GT_Turbocharger_Logic.cs" />
+    <Compile Include="Helper.cs" />
+    <Compile Include="Kit.cs" />
+    <Compile Include="KitLogic.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="BoostSave.cs" />
-    <Compile Include="PaintSystem.cs" />
+    <Compile Include="old_file_checker\OldFileRenamer.cs" />
+    <Compile Include="old_file_checker\OverrideFileRenamer.cs" />
+    <Compile Include="painting_system\CustomColors.cs" />
+    <Compile Include="painting_system\PaintSystem.cs" />
     <Compile Include="PartBuySave.cs" />
     <Compile Include="PartsWearSave.cs" />
-    <Compile Include="Exhaust_Header_Part.cs" />
+    <Compile Include="Box.cs" />
+    <Compile Include="parts\SimplePart.cs" />
+    <Compile Include="shop\ProductInformation.cs" />
     <Compile Include="Racing_Exhaust_Outlet_Straight_Logic.cs" />
-    <Compile Include="Racing_Exhaust_Outlet_Straight_Part.cs" />
     <Compile Include="Racing_Turbocharger_Logic.cs" />
     <Compile Include="SatsumaTurboCharger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Racing_Blowoff_Valve_Part.cs" />
-    <Compile Include="Boost_Gauge_Part.cs" />
-    <Compile Include="Racing_Intercooler_Tube_Part.cs" />
-    <Compile Include="Racing_Exhaust_Inlet_Tube_Part.cs" />
-    <Compile Include="Racing_Exhaust_Outlet_Tube_Part.cs" />
-    <Compile Include="Racing_Hood_Part.cs" />
-    <Compile Include="Intercooler_Manifold_Tube_TwinCarb_Part.cs" />
-    <Compile Include="Intercooler_Manifold_Tube_Weber_Part.cs" />
-    <Compile Include="Intercooler_Part.cs" />
-    <Compile Include="Manifold_TwinCarb_Part.cs" />
-    <Compile Include="Manifold_Weber_Part.cs" />
-    <Compile Include="Racing_Turbocharger_Part.cs" />
-    <Compile Include="GT_Airfilter_Part.cs" />
-    <Compile Include="GT_Exhaust_Inlet_Tube_Part.cs" />
-    <Compile Include="GT_Exhaust_Outlet_Tube_Part.cs" />
-    <Compile Include="GT_Intercooler_Tube_Part.cs" />
-    <Compile Include="GT_Manifold_TwinCarb_Tube_Part.cs" />
-    <Compile Include="GT_Turbocharger_Part.cs" />
+    <Compile Include="old_file_checker\SaveFileRenamer.cs" />
+    <Compile Include="shop\Shop.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if "$(ConfigurationName)" == "Debug" (

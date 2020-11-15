@@ -9,6 +9,7 @@ using Random = System.Random;
 
 namespace SatsumaTurboCharger
 {
+    [Obsolete("Replaced by generic Turbo_Logic class", true)]
     public class Racing_Turbocharger_Logic : MonoBehaviour
     {
         private SatsumaTurboCharger mod;
@@ -16,8 +17,6 @@ namespace SatsumaTurboCharger
         //Turbo mod
         private GameObject turboBig_turbine;
 
-        private BoostSave boostSave;
-        private PartsWearSave partsWearSave;
 
         private float calculated_boost = 0;
 
@@ -169,9 +168,9 @@ namespace SatsumaTurboCharger
 
         void Update()
         {
-            bool allBigInstalled = mod.allBigInstalled;
-            bool allSmallInstalled = mod.allSmallInstalled;
-            bool allOtherInstalled = mod.allOtherInstalled;
+            bool allBigInstalled = mod.AllBigInstalled();
+            bool allSmallInstalled = mod.AllSmallInstalled();
+            bool allOtherInstalled = mod.AllOtherInstalled();
             if (ModLoader.IsModPresent("SatsumaTurboCharger"))
             {
                 if (smart_engine_moduleFSM == null)
@@ -218,13 +217,10 @@ namespace SatsumaTurboCharger
                     calculated_boost = HandleTurboDelay(calculated_boost, 0.1f, 0.4f);
                     if (calculated_boost > 0f)
                     {
-                        if (SatsumaTurboCharger.GetPartsWearEnabled())
-                        {
-                            calculated_boost = HandleWear(calculated_boost);
-                        }
+                        if ((bool)mod.partsWearSetting.Value) { calculated_boost = HandleWear(calculated_boost); }
                         HandleBackfire();
 
-                        mod.SetBoostGaugeText(calculated_boost, true);
+                        mod.SetBoostGaugeText(calculated_boost.ToString("0.00"));
                         powerMultiplier.Value = (0.90f + (calculated_boost * 1.5f));
                     }
                     else
@@ -233,7 +229,7 @@ namespace SatsumaTurboCharger
                         timer_wear_turboBig = 0;
                         calculated_boost = -0.10f;
                         powerMultiplier.Value = 1f - 0.10f;
-                        mod.SetBoostGaugeText(0.10f, false);
+                        mod.SetBoostGaugeText(0.10f.ToString("0.00"));
                     }
 
                     
@@ -243,16 +239,13 @@ namespace SatsumaTurboCharger
                 {
                     calculated_boost = -0.10f;
                     powerMultiplier.Value = 1f - 0.10f;
-                    mod.SetBoostGaugeText(0.10f, false);
+                    mod.SetBoostGaugeText(0.10f.ToString("0.00"));
                 }
 
                 if (satsumaDriveTrain.rpm >= 400)
                 {
-                    if (SatsumaTurboCharger.GetPartsWearEnabled())
-                    {
-                        CheckPartsWear();
-                    }
-                    
+                    if ((bool)mod.partsWearSetting.Value) CheckPartsWear();
+
                 }
 
                 if (useThrottleButton && satsumaDriveTrain.rpm > 4000 && timeSinceLastBlowOff > 1)
@@ -263,22 +256,22 @@ namespace SatsumaTurboCharger
 
                 if ((!useThrottleButton && turbocharger_blowoffShotAllowed == true) && calculated_boost >= 0.6f)
                 {
-                    mod.SetBoostGaugeText(0.10f, false);
+                    mod.SetBoostGaugeText(0.10f.ToString("0.00"));
                     TriggerBlowoff();
                 }
 
-                turboBig_max_boost.Value = boostSave.turboBig_max_boost;
+                turboBig_max_boost.Value = mod.boostSave.turboBig_max_boost;
                 turboBig_exhaust_temp.Value = 0f;
                 turboBig_intake_temp.Value = 0f;
                 turboBig_rpm.Value = CalculateRpm(calculated_boost);
                 turboBig_pressure.Value = calculated_boost;
-                turboBig_wear.Value = partsWearSave.turboBig_wear;
+                turboBig_wear.Value = mod.partsWearSave.turboBig_wear;
                 turboBig_allInstalled.Value = true;
                 
             }
             else if (!allSmallInstalled)
             {
-                turboBig_max_boost.Value = boostSave.turboBig_max_boost;
+                turboBig_max_boost.Value = mod.boostSave.turboBig_max_boost;
                 turboBig_exhaust_temp.Value = 0f;
                 turboBig_intake_temp.Value = 0f;
                 turboBig_rpm.Value = 0;
@@ -294,7 +287,7 @@ namespace SatsumaTurboCharger
             }
             else
             {
-                turboBig_max_boost.Value = boostSave.turboBig_max_boost;
+                turboBig_max_boost.Value = mod.boostSave.turboBig_max_boost;
                 turboBig_exhaust_temp.Value = 0f;
                 turboBig_intake_temp.Value = 0f;
                 turboBig_rpm.Value = 0;
@@ -355,11 +348,11 @@ namespace SatsumaTurboCharger
 
         private void CheckPartsWear()
         {
-            if (partsWearSave.turboBig_wear <= 0f)
+            if (mod.partsWearSave.turboBig_wear <= 0f)
             {
                 mod.turboBig_part.removePart();
             }
-            else if (partsWearSave.turboBig_wear <= 15f)
+            else if (mod.partsWearSave.turboBig_wear <= 15f)
             {
 
                 int randVal = randDestroyValue.Next(100);
@@ -370,11 +363,11 @@ namespace SatsumaTurboCharger
                 }
             }
 
-            if (partsWearSave.intercooler_wear <= 0f)
+            if (mod.partsWearSave.intercooler_wear <= 0f)
             {
                 mod.intercooler_part.removePart();
             }
-            else if (partsWearSave.intercooler_wear <= 15f)
+            else if (mod.partsWearSave.intercooler_wear <= 15f)
             {
 
                 int randVal = randDestroyValue.Next(100);
@@ -390,15 +383,15 @@ namespace SatsumaTurboCharger
         {
             if (twinCarb_inst.Value)
             {
-                boostSave.turboBig_max_boost_limit = (2.2f + 0.05f);
+                mod.boostSave.turboBig_max_boost_limit = (2.2f + 0.05f);
             }
             else if (weberCarb_inst.Value)
             {
-                boostSave.turboBig_max_boost_limit = (2.2f + 0.30f);
+                mod.boostSave.turboBig_max_boost_limit = (2.2f + 0.30f);
             }
-            if (boostSave.turboBig_max_boost >= boostSave.turboBig_max_boost_limit)
+            if (mod.boostSave.turboBig_max_boost >= mod.boostSave.turboBig_max_boost_limit)
             {
-                boostSave.turboBig_max_boost = boostSave.turboBig_max_boost_limit;
+                mod.boostSave.turboBig_max_boost = mod.boostSave.turboBig_max_boost_limit;
             }
 
             if (ecu_mod_installed && smart_engine_module_alsModuleEnabled != null && smart_engine_module_alsModuleEnabled.Value && satsumaDriveTrain.rpm >= satsumaDriveTrain.maxRPM)
@@ -410,9 +403,9 @@ namespace SatsumaTurboCharger
                 calculated_boost = Convert.ToSingle(Math.Log(satsumaDriveTrain.rpm / 4000, 100)) * 19f;
             }
 
-            if (calculated_boost > boostSave.turboBig_max_boost)
+            if (calculated_boost > mod.boostSave.turboBig_max_boost)
             {
-                calculated_boost = boostSave.turboBig_max_boost;
+                calculated_boost = mod.boostSave.turboBig_max_boost;
             }
 
             return calculated_boost;
@@ -421,16 +414,16 @@ namespace SatsumaTurboCharger
         private float HandleWear(float boost)
         {
             float newCalculated_boost = boost;
-            if (partsWearSave.turboBig_wear <= 0)
+            if (mod.partsWearSave.turboBig_wear <= 0)
             {
-                partsWearSave.turboBig_wear = 0;
+                mod.partsWearSave.turboBig_wear = 0;
             }
             else if (timer_wear_turboBig >= 0.5f)
             {
                 timer_wear_turboBig = 0;
-                partsWearSave.turboBig_wear -= (newCalculated_boost * 0.003f);
+                mod.partsWearSave.turboBig_wear -= (newCalculated_boost * 0.003f);
             }
-            if (partsWearSave.turboBig_wear < 25f)
+            if (mod.partsWearSave.turboBig_wear < 25f)
             {
                 if (!turboGrindingLoop.isPlaying)
                 {
@@ -440,32 +433,32 @@ namespace SatsumaTurboCharger
                 turboGrindingLoop.pitch = satsumaDriveTrain.rpm * 0.00012f;
             }
 
-            if (partsWearSave.intercooler_wear <= 0)
+            if (mod.partsWearSave.intercooler_wear <= 0)
             {
-                partsWearSave.intercooler_wear = 0;
+                mod.partsWearSave.intercooler_wear = 0;
             }
             else if (timer_wear_intercooler >= 0.5f)
             {
                 timer_wear_intercooler = 0;
-                partsWearSave.intercooler_wear -= (newCalculated_boost * 0.005f);
+                mod.partsWearSave.intercooler_wear -= (newCalculated_boost * 0.005f);
             }
             
-            if (partsWearSave.intercooler_wear >= 75)
+            if (mod.partsWearSave.intercooler_wear >= 75)
             {
             }
-            else if (partsWearSave.intercooler_wear >= 50f)
+            else if (mod.partsWearSave.intercooler_wear >= 50f)
             {
                 newCalculated_boost /= 1.2f;
             }
-            else if (partsWearSave.intercooler_wear >= 25f)
+            else if (mod.partsWearSave.intercooler_wear >= 25f)
             {
                 newCalculated_boost /= 1.4f;
             }
-            else if (partsWearSave.intercooler_wear >= 15f)
+            else if (mod.partsWearSave.intercooler_wear >= 15f)
             {
                 newCalculated_boost /= 1.8f;
             }
-            else if (partsWearSave.intercooler_wear < 15f)
+            else if (mod.partsWearSave.intercooler_wear < 15f)
             {
                 newCalculated_boost = 0;
             }
@@ -514,7 +507,7 @@ namespace SatsumaTurboCharger
 
         private void TriggerBackfire()
         {
-            mod.turboBig_exhaust_outlet_straight_logic.TriggerBackfire();
+            //mod.turboBig_exhaust_outlet_straight_logic.TriggerBackfire();
         }
 
         private void CreateTurboGrindingLoop()

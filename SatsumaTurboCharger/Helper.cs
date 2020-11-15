@@ -6,11 +6,35 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using ScrewablePartAPI;
+using HutongGames.PlayMaker;
 
 namespace SatsumaTurboCharger
 {
     public static class Helper
     {
+        public static bool PlayerInCar()
+        {
+            return FsmVariables.GlobalVariables.FindFsmString("PlayerCurrentVehicle").Value == "Satsuma";
+        }
+        public static ScrewablePart[] GetScrewablePartsArrayFromPartsList(List<SimplePart> partsList)
+        {
+            List<ScrewablePart> screwableParts = new List<ScrewablePart>();
+
+            partsList.ForEach(delegate (SimplePart part)
+            {
+                if (part.screwablePart != null)
+                {
+                    screwableParts.Add(part.screwablePart);
+                }
+            });
+            return screwableParts.ToArray();
+        }
+        public static GameObject LoadPartAndSetName(AssetBundle assetsBundle, string prefabName, string name)
+        {
+            GameObject gameObject = assetsBundle.LoadAsset(prefabName) as GameObject;
+            return SetObjectNameTagLayer(gameObject, name);
+        }
         public static bool ThrottleButtonDown
         {
             get { return cInput.GetKey("Throttle"); }

@@ -38,6 +38,7 @@ namespace SatsumaTurboCharger
             this.bought = (bool)loadedData[3];
 
             fixRigidPartNaming();
+            UnityEngine.Object.Destroy(part);
         }
 
         public static Object[] LoadData(SatsumaTurboCharger mod, string saveFile, bool bought)

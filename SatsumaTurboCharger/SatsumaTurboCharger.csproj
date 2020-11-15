@@ -112,6 +112,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="old_file_checker\SaveFileRenamer.cs" />
     <Compile Include="shop\Shop.cs" />
+    <Compile Include="turbo\Backfire_Logic.cs" />
+    <Compile Include="turbo\Condition.cs" />
+    <Compile Include="turbo\Configuration.cs" />
+    <Compile Include="turbo\Turbo_Logic.cs" />
+    <Compile Include="turbo\Turbo.cs" />
+    <Compile Include="wear\Wear.cs" />
+    <Compile Include="wear\WearCondition.cs" />
+    <Compile Include="wear\WearLogic.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

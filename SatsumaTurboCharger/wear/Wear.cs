@@ -9,6 +9,7 @@ namespace SatsumaTurboCharger.wear
 {
     public class Wear
     {
+        public string id = "";
         public SimplePart part;
         public WearLogic activeLogic;
 
@@ -21,13 +22,22 @@ namespace SatsumaTurboCharger.wear
 
         public float timer = 0;
 
-        public Wear(SimplePart part, List<WearCondition> wearConditions, float wearReductionMultiplier, float wearReductionIntervall, int randomFallOff = -1, float baseWear = 100)
+        public Wear(string id, SimplePart part, List<WearCondition> wearConditions, float wearReductionMultiplier, float wearReductionIntervall, Dictionary<string, float> wearSave, int randomFallOff = -1)
         {
+            this.id = id;
             this.wearReductionMultiplier = wearReductionMultiplier;
             this.wearConditions = wearConditions;
             this.wearReductionIntervall = wearReductionIntervall;
             this.part = part;
-            this.wear = baseWear;
+
+            try
+            {
+                this.wear = wearSave[id];
+            }
+            catch
+            {
+                this.wear = 100;
+            }
             this.randomFallOff = randomFallOff;
 
 
@@ -82,6 +92,12 @@ namespace SatsumaTurboCharger.wear
                     part.removePart();
                 }
             }
+        }
+
+        public Dictionary<string, float> GetWear(Dictionary<string, float> partsWear)
+        {
+            partsWear.Add(id, wear);
+            return partsWear;
         }
     }
 }

@@ -92,13 +92,15 @@
   <ItemGroup>
     <Compile Include="BoxLogic.cs" />
     <Compile Include="GT_Turbocharger_Logic.cs" />
+    <Compile Include="gui\GuiInfo.cs" />
+    <Compile Include="gui\GuiButtonElement.cs" />
+    <Compile Include="gui\GuiDebug.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Kit.cs" />
     <Compile Include="KitLogic.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="BoostSave.cs" />
     <Compile Include="old_file_checker\OldFileRenamer.cs" />
-    <Compile Include="old_file_checker\OverrideFileRenamer.cs" />
     <Compile Include="painting_system\CustomColors.cs" />
     <Compile Include="painting_system\PaintSystem.cs" />
     <Compile Include="PartBuySave.cs" />

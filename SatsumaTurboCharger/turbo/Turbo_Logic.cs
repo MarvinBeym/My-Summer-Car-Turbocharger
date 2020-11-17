@@ -1,4 +1,5 @@
-﻿using MSCLoader;
+﻿using ModApi;
+using MSCLoader;
 using SatsumaTurboCharger.wear;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace SatsumaTurboCharger.turbo
         private float blowoffTimer = 0;
         private float delayTimer = 0;
         private float backfireTimer = 0;
-
+        private RaycastHit hit;
         // Use this for initialization
         void Start()
         {
@@ -26,7 +27,6 @@ namespace SatsumaTurboCharger.turbo
         // Update is called once per frame
         void Update()
         {
-
             if(!turbo.CheckAllRequiredInstalled())
             {
                 //Not all required installed RESET
@@ -35,15 +35,17 @@ namespace SatsumaTurboCharger.turbo
                 turbo.blowoff_source.Stop();
                 return;
             }
-
+            blowoffTimer += Time.deltaTime;
             float engineRpm = turbo.carDriveTrain.rpm;
             
             turbo.LoopSound(true);
-            blowoffTimer += Time.deltaTime;
 
             float soundBoost = CalculateSoundBoost(engineRpm, config.soundBoostMaxVolume, config.soundBoostIncreasement);
             turbo.loop_source.volume = soundBoost;
             turbo.loop_source.pitch = soundBoost * config.soundBoostPitchMultiplicator;
+
+            turbo.boostMaxConfigured = CalculateConfigurationBoost(turbo.boostMaxConfigured, config.boostBase, turbo.conditions);
+            HandleBoostChanging();
 
             RotateTurbine(turbo.turbine);
 
@@ -54,7 +56,7 @@ namespace SatsumaTurboCharger.turbo
 
             if (blowoffTimer >= config.blowoffDelay)
             {
-                turbo.boostMaxConfigured = CalculateConfigurationBoost(turbo.boostMaxConfigured, config.boostBase, turbo.conditions);
+                
                 
                 turbo.boost = CalculateBoost(engineRpm, config.boostStartingRpm, config.boostMin, turbo.boostMaxConfigured, config.boostIncreasement);
                 turbo.boost = CalculateBoostDelay(turbo.boost, 0.1f, 0.4f);
@@ -93,6 +95,35 @@ namespace SatsumaTurboCharger.turbo
             float finalMultiplicator = turbo.boost * config.extraPowerMultiplicator;
             turbo.powerMultiplier.Value = 1f + Mathf.Clamp(finalMultiplicator, config.boostMin, turbo.boostMaxConfigured);
 
+        }
+
+        private void HandleBoostChanging()
+        {
+            if (turbo.boostChangingGameObject == null || !Helper.DetectRaycastHitObject(turbo.boostChangingGameObject))
+            {
+                return;
+            }
+
+            float setBoost = turbo.userSetBoost;
+            float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
+            switch (scrollWheel)
+            {
+                case float _ when scrollWheel > 0f:
+                    setBoost += turbo.config.boostSettingSteps;
+                    break;
+                case float _ when scrollWheel < 0f:
+                    setBoost -= turbo.config.boostSettingSteps;
+                    break;
+            }
+
+            if (setBoost >= turbo.boostMaxConfigured) { setBoost = turbo.boostMaxConfigured; }
+            else if (setBoost <= turbo.config.minSettableBoost) { setBoost = turbo.config.minSettableBoost; }
+
+            ModClient.guiInteract("" +
+                "[SCROLL UP] to increase boost\n" +
+                "[SCROLL DOWN] to decrease boost\n" +
+                "Boost: " + setBoost.ToString("0.00"));
+            turbo.userSetBoost = setBoost;
         }
 
         private float HandleWear(float boost)

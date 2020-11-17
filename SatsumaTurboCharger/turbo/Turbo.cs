@@ -22,7 +22,7 @@ namespace SatsumaTurboCharger.turbo
         public Drivetrain carDriveTrain;
 
         public GameObject turbine;
-
+        public GameObject boostChangingGameObject;
         protected bool bigRequired = false;
         protected bool smallRequired = false;
         protected bool otherRequired = false;
@@ -65,7 +65,7 @@ namespace SatsumaTurboCharger.turbo
         private ModAudio grinding_audio = new ModAudio();
         private ModAudio blowoff_audio = new ModAudio();
 
-        public Turbo(SatsumaTurboCharger mod, SimplePart part, string loopSoundFile, string grindingSoundFIle, string blowoffSoundFile, bool[] requiredInstalled, Configuration config)
+        public Turbo(SatsumaTurboCharger mod, SimplePart part, string loopSoundFile, string grindingSoundFIle, string blowoffSoundFile, bool[] requiredInstalled, Configuration config, GameObject boostChangingGameObject)
         {
             this.mod = mod;
             this.part = part;
@@ -73,7 +73,7 @@ namespace SatsumaTurboCharger.turbo
             logic = this.part.rigidPart.AddComponent<Turbo_Logic>();
             logic.Init(mod, this);
             ecu_mod_installed = SetupEcuMod();
-
+            this.boostChangingGameObject = boostChangingGameObject;
             //userSetBoost = config.boostBase;
             userSetBoost = 2f;
             //Wont work maybe use percentage of difference to other boost

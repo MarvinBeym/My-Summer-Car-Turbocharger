@@ -13,6 +13,17 @@ namespace SatsumaTurboCharger
 {
     public static class Helper
     {
+        public static bool DetectRaycastHitObject(GameObject gameObjectToDetect)
+        {
+            RaycastHit hit;
+            if (Camera.main != null && Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 0.8f, 1 << LayerMask.NameToLayer("Parts")) != false)
+            {
+                GameObject gameObjectHit;
+                gameObjectHit = hit.collider?.gameObject;
+                return (gameObjectHit != null && hit.collider && gameObjectHit == gameObjectToDetect);
+            }
+            return false;
+        }
         public static bool PlayerInCar()
         {
             return FsmVariables.GlobalVariables.FindFsmString("PlayerCurrentVehicle").Value == "Satsuma";

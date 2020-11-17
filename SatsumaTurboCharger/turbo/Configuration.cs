@@ -21,5 +21,6 @@ namespace SatsumaTurboCharger.turbo
         public float soundBoostMaxVolume;           //Used for the turbo sound loops max volume.
         public float soundBoostIncreasement;        //Used the same as the boostIncreasement but for turbo sound loop.
         public float soundBoostPitchMultiplicator;  //Used to multiply the pitch of the turbo sound loop based on the sound boost calculation.
+        public float boostSettingSteps;             //When increasing/decreasing userSetBoost, this value is used to add or substract
     }
 }

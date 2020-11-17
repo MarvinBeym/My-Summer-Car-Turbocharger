@@ -3,6 +3,8 @@ using ModApi;
 using ModApi.Attachable;
 using ModsShop;
 using MSCLoader;
+using SatsumaTurboCharger.gui;
+using SatsumaTurboCharger.old_file_checker;
 using SatsumaTurboCharger.shop;
 using SatsumaTurboCharger.turbo;
 using SatsumaTurboCharger.wear;
@@ -48,10 +50,14 @@ namespace SatsumaTurboCharger
          * Reworked turbo logic
          * Reworked blowoff logic
          * Reworked backfire logic
+         * Added old file renaming tool
+         * Added copying of old save files to folder "AUTO_BACKUP" before changing name
          * 
          */
 
         /*FIX
+         * ScrewablePartAPI always adds .txt to end of screw save.
+         * -> Remove that 
          * Make parts paintable by Fleetar (metallic & normal)
          * cruise control not working -> Radex video
          *  Prevent turbo from working if any stock exhaust part is installed.
@@ -81,11 +87,11 @@ namespace SatsumaTurboCharger
         public override string Version => "2.1.7"; //Version
         public override bool UseAssetsFolder => true;
 
-
+        public SaveFileRenamer saveFileRenamer;
         public Logger logger;
+        public GuiDebug guiDebug;
 
-        
-
+        //Kits
         private Kit turboBig_kit;
         private Kit manifoldWeber_kit;
         private Kit manifoldTwinCarb_kit;
@@ -245,8 +251,8 @@ namespace SatsumaTurboCharger
         private static bool partsWearDEBUG = false;
         private static bool turboValuesDEBUG = false;
         private static bool useDefaultColors = false;
-        private Settings DEBUG_parts_wear = new Settings("debugPartsWear", "Enable/Disable", SwitchPartsWearDEBUG);
-        private Settings DEBUG_turbo_values = new Settings("debugTurboValues", "Enable/Disable", SwitchTurboChargerValuesDEBUG);
+
+        private Settings debugGuiSetting = new Settings("debugGuiSetting", "Show DEBUG GUI", false);
 
         private Settings useDefaultColorsSetting = new Settings("useDefaultColors", "Use default game colors for painting", false, new Action(ToggleUseDefaultColors));
         private Settings resetPosSetting = new Settings("resetPos", "Reset", Helper.WorkAroundAction);
@@ -332,42 +338,41 @@ namespace SatsumaTurboCharger
         private Color[] modSprayColors = new Color[13];
         public static bool colorHasToChange = false;
 
-
         //
         //Save File Locations
         //
-        private const string logger_saveFile = "turbo_mod_logs.txt";
+        private const string logger_saveFile = "turbo_mod.log";
         //Big Turbo
-        private const string turboBig_SaveFile = "turbocharger_big_partSave.txt";
-        private const string turboBig_intercooler_tube_SaveFile = "turbocharger_big_intercooler_tube_partSave.txt";
-        private const string turboBig_exhaust_inlet_tube_SaveFile = "turbocharger_big_exhaust_inlet_tube_partSave.txt";
-        private const string turboBig_exhaust_outlet_tube_SaveFile = "turbocharger_big_exhaust_outlet_tube_partSave.txt";
-        private const string turboBig_blowoff_valve_SaveFile = "turbocharger_big_blowoff_valve_partSave.txt";
-        private const string turboBig_exhaust_outlet_straight_SaveFile = "turbocharger_big_exhaust_outlet_straight_partSave.txt";
+        private const string turboBig_SaveFile = "turboBig_saveFile.json";
+        private const string turboBig_intercooler_tube_SaveFile = "turboBig_intercooler_tube_saveFile.json";
+        private const string turboBig_exhaust_inlet_tube_SaveFile = "turboBig_exhaustInlet_tube_saveFile.json";
+        private const string turboBig_exhaust_outlet_tube_SaveFile = "turboBig_exhaustOutlet_tube_saveFile.json";
+        private const string turboBig_blowoff_valve_SaveFile = "turboBig_blowoffValve_saveFile.json";
+        private const string turboBig_exhaust_outlet_straight_SaveFile = "turboBig_exhaustOutlet_straight_saveFile.json";
+        private const string turboBig_hood_SaveFile = "turboBig_hood_saveFile.json";
 
         //Small Turbo
-        private const string turboSmall_SaveFile = "turbocharger_small_partSave.txt";
-        private const string turboSmall_intercooler_tube_SaveFile = "turbocharger_small_intercooler_tube_partSave.txt";
-        private const string turboSmall_exhaust_inlet_tube_SaveFile = "turbocharger_small_exhaust_inlet_tube_partSave.txt";
-        private const string turboSmall_exhaust_outlet_tube_SaveFile = "turbocharger_small_exhaust_outlet_tube_partSave.txt";
-        private const string turboSmall_manifold_twinCarb_tube_SaveFile = "turbocharger_small_manifold_twinCarb_tube_partSave.txt";
-        private const string turboSmall_airfilter_SaveFile = "turbocharger_small_airfilter_partSave.txt";
+        private const string turboSmall_SaveFile = "turboSmall_saveFile.json";
+        private const string turboSmall_intercooler_tube_SaveFile = "turboSmall_intercooler_tube_saveFile.json";
+        private const string turboSmall_exhaust_inlet_tube_SaveFile = "turboSmall_exhaustInlet_tube_saveFile.json";
+        private const string turboSmall_exhaust_outlet_tube_SaveFile = "turboSmall_exhaustOutlet_tube_saveFile.json";
+        private const string turboSmall_manifold_twinCarb_tube_SaveFile = "turboSmall_manifoldTwinCarb_tube_saveFile.json";
+        private const string turboSmall_airfilter_SaveFile = "turboSmall_airfilter_saveFile.json";
 
         //Other Parts
-        private const string exhaust_header_SaveFile = "turbocharger_exhaust_header_partSave.txt";
-        private const string turboBig_hood_SaveFile = "turbocharger_turboBig_hood_partSave.txt";
-        private const string manifold_weber_SaveFile = "turbocharger_manifold_weber_partSave.txt";
-        private const string manifold_twinCarb_SaveFile = "turbocharger_manifold_twinCarb_partSave.txt";
-        private const string boost_gauge_SaveFile = "turbocharger_boost_gauge_partSave.txt";
-        private const string intercooler_SaveFile = "turbocharger_intercooler_partSave.txt";
-        private const string intercooler_manifold_tube_weber_SaveFile = "turbocharger_intercooler_manifold_tube_weber_partSave.txt";
-        private const string intercooler_manifold_tube_twinCarb_SaveFile = "turbocharger_intercooler_manifold_tube_twinCarb_partSave.txt";
+        private const string exhaust_header_SaveFile = "exhaustHeader_saveFile.json";
+        private const string manifold_weber_SaveFile = "manifoldWeber_saveFile.json";
+        private const string manifold_twinCarb_SaveFile = "manifoldTwinCarb_saveFile.json";
+        private const string boost_gauge_SaveFile = "boostGauge_saveFile.json";
+        private const string intercooler_SaveFile = "intercooler_saveFile.json";
+        private const string intercooler_manifold_tube_weber_SaveFile = "intercooler_manifoldWeber_tube_saveFile.json";
+        private const string intercooler_manifold_tube_twinCarb_SaveFile = "intercooler_manifoldTwinCarb_tube_saveFile.json";
 
         //Other Saves
-        private const string modsShop_saveFile = "turbocharger_mod_ModsShop_SaveFile.txt";
+        private const string modsShop_saveFile = "mod_shop_saveFile.json";
         private const string boost_saveFile = "turbocharger_mod_boost_SaveFile.txt";
-        private const string wear_saveFile = "turbocharger_mod_wear_SaveFile.txt";
-        private const string screwable_saveFile = "turbocharger_mod_screws_SaveFile.txt";
+        private const string wear_saveFile = "wear_saveFile.json";
+        private const string screwable_saveFile = "screwable_saveFile.json";
         
         
         
@@ -426,6 +431,13 @@ namespace SatsumaTurboCharger
         public override void OnLoad()
         {
             ModConsole.Print("DonnerTechRacing Turbocharger Mod [v" + this.Version + " | Screwable: v" + ScrewablePart.apiVersion + "]" + " started loading");
+            saveFileRenamer = new SaveFileRenamer(this, 900);
+            guiDebug = new GuiDebug(Screen.width - 260, 10, 250, "TURBO MOD DEBUG", new List<GuiButtonElement>()
+            {
+                new GuiButtonElement("DEBUG"),
+                new GuiButtonElement("Wear"),
+            });
+
             logger = new Logger(this, logger_saveFile, 100);
             if (!ModLoader.CheckSteam())
             {
@@ -781,6 +793,7 @@ namespace SatsumaTurboCharger
                 soundBoostMaxVolume = 0.3f,
                 soundBoostIncreasement = 4000,
                 soundBoostPitchMultiplicator = 4,
+                boostSettingSteps = 0.05f,
             };
 
             //Temporary
@@ -798,6 +811,7 @@ namespace SatsumaTurboCharger
                 soundBoostMaxVolume = 0.3f,
                 soundBoostIncreasement = 4000,
                 soundBoostPitchMultiplicator = 4,
+                boostSettingSteps = 0.01f,
             };
 
             racingTurbo = new Turbo(this, turboBig_part, "turbocharger_loop.wav", "grinding sound.wav", "turbocharger_blowoff.wav",
@@ -806,27 +820,32 @@ namespace SatsumaTurboCharger
                     true, 
                     false,
                     true
-                }, racingTurboConfig);
+                }, racingTurboConfig, turboBig_blowoff_valve_part.rigidPart.transform.FindChild("blowoff_valve").gameObject);
 
             racingTurbo.turbine = turboBig_part.rigidPart.transform.FindChild("TurboCharger_Big_Compressor_Turbine").gameObject;
             racingTurbo.backfire_Logic = turboBig_exhaust_outlet_straight_part.rigidPart.AddComponent<Backfire_Logic>();
 
-            racingTurboWear = new Wear(turboBig_part, new List<WearCondition>
+
+            Dictionary<string, float> partsWear = Helper.LoadSaveOrReturnNew<Dictionary<string, float>>(this, wear_saveFile);
+
+            racingTurboWear = new Wear("racingTurbo", turboBig_part, new List<WearCondition>
                 {
                     new WearCondition(75, WearCondition.Check.MoreThan, 1, "Looks brand new..."),
                     new WearCondition(50, WearCondition.Check.MoreThan, 1.1f, "Some scratches and a bit of damage. Should be fine I guess..."),
                     new WearCondition(25, WearCondition.Check.MoreThan, 1.3f, "I can hear air escaping more than before"),
                     new WearCondition(15, WearCondition.Check.MoreThan, 1.5f, "It sounds like a leaf blower"),
                     new WearCondition(15, WearCondition.Check.LessThan, 0, "Well... I think it's fucked"),
-                }, 0.003f, 0.5f, 100, 75.2f);
-            intercoolerWear = new Wear(intercooler_part, new List<WearCondition>
+                }, 0.003f, 0.5f, partsWear, 100);
+            intercoolerWear = new Wear("intercooler", intercooler_part, new List<WearCondition>
                 {
                     new WearCondition(75, WearCondition.Check.MoreThan, 1, "Looks brand new..."),
                     new WearCondition(50, WearCondition.Check.MoreThan, 1.1f, "Some scratches and a bit of damage. Should be fine I guess..."),
                     new WearCondition(25, WearCondition.Check.MoreThan, 1.3f, "I can hear air escaping more than before"),
                     new WearCondition(15, WearCondition.Check.MoreThan, 1.5f, "It sounds like a leaf blower"),
                     new WearCondition(15, WearCondition.Check.LessThan, 0, "Well... I think it's fucked"),
-                }, 0.005f, 0.5f, 100, 75.2f);
+                }, 0.005f, 0.5f, partsWear, 100);
+
+            
 
             racingTurbo.wears = new Wear[]
             {
@@ -834,11 +853,10 @@ namespace SatsumaTurboCharger
                 intercoolerWear,
             };
 
-
-            Dictionary<string, Condition> conditions = new Dictionary<string, Condition>();
-            conditions["weberCarb"] = new Condition("weberCarb", 0.5f);
-            conditions["twinCarb"] = new Condition("twinCarb", 0.2f);
-            racingTurbo.SetConditions(conditions);
+            Dictionary<string, Condition> racingTurbo_conditions = new Dictionary<string, Condition>();
+            racingTurbo_conditions["weberCarb"] = new Condition("weberCarb", 0.5f);
+            racingTurbo_conditions["twinCarb"] = new Condition("twinCarb", 0.2f);
+            racingTurbo.SetConditions(racingTurbo_conditions);
 
             gtTurbo = new Turbo(this, turboSmall_part, "turbocharger_loop.wav", "grinding sound.wav", null,
                 new bool[]
@@ -846,7 +864,7 @@ namespace SatsumaTurboCharger
                     false,
                     true,
                     true
-                }, gtTurboConfig);
+                }, gtTurboConfig, turboSmall_part.rigidPart.transform.FindChild("Turbocharger_Small_Wastegate").gameObject);
 
             if (ecu_mod_installed)
             {
@@ -856,8 +874,10 @@ namespace SatsumaTurboCharger
             SetupInspectionPrevention();
             assetsBundle.Unload(false);
             screwableAssetsBundle.Unload(false);
-            ModConsole.Print("DonnerTechRacing Turbocharger Mod [v" + this.Version + "]" + " finished loading");
+            ModConsole.Print("DonnerTechRacing Turbocharger Mod [v" + this.Version + "]" + " finished loading");            
         }
+
+        
 
         private void SetupScrewable()
         {
@@ -978,7 +998,6 @@ namespace SatsumaTurboCharger
             manifold_weber_part.screwablePart.AddClampModel(new Vector3(0.2f, -0.002f, 0.001f), new Vector3(0, 90, 0), new Vector3(0.82f, 0.82f, 0.82f));
             manifold_twinCarb_part.screwablePart.AddClampModel(new Vector3(-0.013f, 0.105f, 0f), new Vector3(90, 0, 0), new Vector3(0.8f, 0.8f, 0.8f));
         }
-
         private void SetupInspectionPrevention()
         {
             GameObject inspectionProcess = GameObject.Find("InspectionProcess");
@@ -1002,7 +1021,6 @@ namespace SatsumaTurboCharger
 
             FsmHook.FsmInject(inspectionProcess, "Results", InspectionResults);
         }
-
         public void InspectionResults()
         {
             if(partsList.Any(part => part.installed))
@@ -1010,12 +1028,10 @@ namespace SatsumaTurboCharger
                 PlayMakerFSM.BroadcastEvent(inspectionFailedEvent);
             }
         }
-
         public override void ModSettings()
         {
             Settings.AddHeader(this, "DEBUG");
-            Settings.AddButton(this, DEBUG_parts_wear, "DEBUG parts wear");
-            Settings.AddButton(this, DEBUG_turbo_values, "DEBUG TurboCharger GUI");
+            Settings.AddCheckBox(this, debugGuiSetting);
             Settings.AddHeader(this, "Settings");
             Settings.AddCheckBox(this, rotateTurbineSetting);
             Settings.AddCheckBox(this, backfireEffectSetting);
@@ -1032,7 +1048,6 @@ namespace SatsumaTurboCharger
                 "4.Gear: " + newGearRatio[5]
                 );
         }
-
         public override void OnSave()
         {
             turboBig_kit.CheckUnpackedOnSave(partBuySave.bought_turboBig_kit);
@@ -1056,6 +1071,12 @@ namespace SatsumaTurboCharger
                 SaveLoad.SerializeSaveFile<PartBuySave>(this, partBuySave, modsShop_saveFile);
                 SaveLoad.SerializeSaveFile<BoostSave>(this, boostSave, boost_saveFile);
                 SaveLoad.SerializeSaveFile<PartsWearSave>(this, partsWearSave, wear_saveFile);
+
+                Dictionary<string, float> partsWear = new Dictionary<string, float>();
+                partsWear = racingTurboWear.GetWear(partsWear);
+                partsWear = intercoolerWear.GetWear(partsWear);
+
+                SaveLoad.SerializeSaveFile<Dictionary<string, float>>(this, partsWear, wear_saveFile);
             }
             catch (System.Exception ex)
             {
@@ -1072,50 +1093,26 @@ namespace SatsumaTurboCharger
                 logger.New("Error while trying to save screws ", $"save file: {screwable_saveFile}", ex);
             }
         }
-        public override bool LoadInMenu => false;
-        public bool turboModDebug = false;
-        public bool wearDebug = false;
-        public bool turboDebug = false;
-
-        public int debugPositionLeft = 10;
-        public int debugPositionTop = 10;
 
         public override void OnGUI()
         {
-            if(/* debug enabled */ true)
+            saveFileRenamer.GuiHandler();
+            if((bool)debugGuiSetting.Value)
             {
-                if(GUI.Button(new Rect(debugPositionLeft, debugPositionTop, 200, 20), "TURBO MOD DEBUG")) { turboModDebug = !turboModDebug; }
-                if (turboModDebug)
-                {
-                    int baseWidth = 200;
-                    GUI.Box(new Rect(debugPositionLeft, debugPositionTop + 25, baseWidth, 95), "DEBUG");
-                    if(GUI.Button(new Rect(debugPositionLeft + 10, debugPositionTop + 60, baseWidth - 20, 20), "Wear")) { wearDebug = !wearDebug; turboDebug = false; }
-                    if(GUI.Button(new Rect(debugPositionLeft + 10, debugPositionTop + 85, baseWidth - 20, 20), "Turbo")) { turboDebug = !turboDebug; wearDebug = false; }
-                }
-
-                if(wearDebug)
-                {
-                    int baseWidth = 300;
-                    GUI.Box(new Rect(debugPositionLeft + 200 + 10, debugPositionTop + 25, baseWidth, 200), "Wear");
-                    GUI.Label(new Rect(debugPositionLeft + 200 + 20, debugPositionTop + 60, baseWidth - 20, 20), "Racing Turbo: " + racingTurboWear.wear.ToString("000.00000"));
-                    GUI.Label(new Rect(debugPositionLeft + 200 + 20, debugPositionTop + 85, baseWidth - 20, 20), "Intercooler: " + intercoolerWear.wear.ToString("000.00000"));
-                }
-
-                if (turboDebug)
-                {
-                    int baseWidth = 300;
-                    int topPosition = debugPositionTop + 25;
-                    GUI.Box(new Rect(debugPositionLeft + 200 + 10, debugPositionTop + 25, baseWidth, 210), "Turbo");
-                    GUI.Label(new Rect(debugPositionLeft + 200 + 20, topPosition + 30, baseWidth - 20, 20), "Engine RPM: " + ((int)engineRPM).ToString());
-                    GUI.Label(new Rect(debugPositionLeft + 200 + 20, topPosition + 50, baseWidth - 20, 20), "Racing Turbo bar: " + racingTurbo.boost.ToString());
-                    GUI.Label(new Rect(debugPositionLeft + 200 + 20, topPosition + 70, baseWidth - 20, 20), "GT Turbo bar: " + gtTurbo.boost.ToString());
-                    GUI.Label(new Rect(debugPositionLeft + 200 + 20, topPosition + 90, baseWidth - 20, 20), "Power multiplier: " + racingTurbo.powerMultiplier.ToString());
-                    GUI.Label(new Rect(debugPositionLeft + 200 + 20, topPosition + 110, baseWidth - 20, 20), "KM/H: " + ((int)satsumaDriveTrain.differentialSpeed));
-                    GUI.Label(new Rect(debugPositionLeft + 200 + 20, topPosition + 130, baseWidth - 20, 20), "Torque: " + satsumaDriveTrain.torque);
-                    GUI.Label(new Rect(debugPositionLeft + 200 + 20, topPosition + 150, baseWidth - 20, 20), "Clutch Max Torque: " + satsumaDriveTrain.clutchMaxTorque);
-                    GUI.Label(new Rect(debugPositionLeft + 200 + 20, topPosition + 170, baseWidth - 20, 20), "Clutch Torque Multiplier: " + satsumaDriveTrain.clutchTorqueMultiplier);
-                }
+                guiDebug.Handle(new List<GuiInfo> {
+                new GuiInfo("Wear", "Racing Turbo", racingTurboWear.wear.ToString("000.00000")),
+                new GuiInfo("Wear", "Intercooler", intercoolerWear.wear.ToString("000.00000")),
+                new GuiInfo("DEBUG", "Engine RPM", ((int)engineRPM).ToString()),
+                new GuiInfo("DEBUG", "Racing Turbo bar", racingTurbo.boost.ToString()),
+                new GuiInfo("DEBUG", "GT Turbo bar", gtTurbo.boost.ToString()),
+                new GuiInfo("DEBUG", "Power multiplier", racingTurbo.powerMultiplier.ToString()),
+                new GuiInfo("DEBUG", "KM/H", ((int)satsumaDriveTrain.differentialSpeed).ToString()),
+                new GuiInfo("DEBUG", "Torque", satsumaDriveTrain.torque.ToString()),
+                new GuiInfo("DEBUG", "Clutch Max Torque", satsumaDriveTrain.clutchMaxTorque.ToString()),
+                new GuiInfo("DEBUG", "Clutch Torque Multiplier", satsumaDriveTrain.clutchTorqueMultiplier.ToString()),
+            });
             }
+
         }
         public override void Update()
         {
@@ -1906,6 +1903,7 @@ namespace SatsumaTurboCharger
 
         private void DetectChangingBoost()
         {
+            return;
             try
             {
                 if (Camera.main != null)

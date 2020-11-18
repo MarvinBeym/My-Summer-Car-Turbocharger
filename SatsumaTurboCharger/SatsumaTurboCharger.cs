@@ -164,10 +164,6 @@ namespace SatsumaTurboCharger
 
         //Mods Shop
         private ShopItem modsShop;
-        private ProductDetails repair_turboBig_Product;
-        private ProductDetails repair_turboSmall_Product;
-        private ProductDetails repair_turboSmall_airfilter_Product;
-        private ProductDetails repair_intercooler_Product;
 
         //
         //Game Objects
@@ -310,7 +306,8 @@ namespace SatsumaTurboCharger
 
         private Wear racingTurboWear;
         private Wear intercoolerWear;
-
+        private Wear gtTurboWear;
+        private Wear gtTurboAirfilterWear;
 
         //Logic
         private GT_Turbocharger_Logic turboSmall_logic;
@@ -404,7 +401,7 @@ namespace SatsumaTurboCharger
          * Gear: 4 = 5
          */
         private RaycastHit hit;
-        private AssetBundle assetsBundle;
+        public AssetBundle assetsBundle;
         private AssetBundle screwableAssetsBundle;
         private TextMesh boostGaugeTextMesh;
         private static bool newGearRatiosEnabled;
@@ -828,24 +825,45 @@ namespace SatsumaTurboCharger
 
             Dictionary<string, float> partsWear = Helper.LoadSaveOrReturnNew<Dictionary<string, float>>(this, wear_saveFile);
 
-            racingTurboWear = new Wear("racingTurbo", turboBig_part, new List<WearCondition>
+            racingTurboWear = new Wear(this, "racingTurbo", turboBig_part, new List<WearCondition>
                 {
                     new WearCondition(75, WearCondition.Check.MoreThan, 1, "Looks brand new..."),
                     new WearCondition(50, WearCondition.Check.MoreThan, 1.1f, "Some scratches and a bit of damage. Should be fine I guess..."),
                     new WearCondition(25, WearCondition.Check.MoreThan, 1.3f, "I can hear air escaping more than before"),
                     new WearCondition(15, WearCondition.Check.MoreThan, 1.5f, "It sounds like a leaf blower"),
                     new WearCondition(15, WearCondition.Check.LessThan, 0, "Well... I think it's fucked"),
-                }, 0.003f, 0.5f, partsWear, 100);
-            intercoolerWear = new Wear("intercooler", intercooler_part, new List<WearCondition>
+                }, 0.003f, 0.5f, partsWear, 4000, "repair_turbocharger_big_ProductImage.png", 100);
+            intercoolerWear = new Wear(this, "intercooler", intercooler_part, new List<WearCondition>
                 {
                     new WearCondition(75, WearCondition.Check.MoreThan, 1, "Looks brand new..."),
                     new WearCondition(50, WearCondition.Check.MoreThan, 1.1f, "Some scratches and a bit of damage. Should be fine I guess..."),
                     new WearCondition(25, WearCondition.Check.MoreThan, 1.3f, "I can hear air escaping more than before"),
                     new WearCondition(15, WearCondition.Check.MoreThan, 1.5f, "It sounds like a leaf blower"),
                     new WearCondition(15, WearCondition.Check.LessThan, 0, "Well... I think it's fucked"),
-                }, 0.005f, 0.5f, partsWear, 100);
+                }, 0.005f, 0.5f, partsWear, 1500, "repair_intercooler_ProductImage.png", 100);
 
-            
+            gtTurboWear = new Wear(this, "gtTurbo", turboSmall_part, new List<WearCondition>
+                {
+                    new WearCondition(75, WearCondition.Check.MoreThan, 1, "Looks brand new..."),
+                    new WearCondition(50, WearCondition.Check.MoreThan, 1.1f, "Some scratches and a bit of damage. Should be fine I guess..."),
+                    new WearCondition(25, WearCondition.Check.MoreThan, 1.3f, "I can hear air escaping more than before"),
+                    new WearCondition(15, WearCondition.Check.MoreThan, 1.5f, "It sounds like a leaf blower"),
+                    new WearCondition(15, WearCondition.Check.LessThan, 0, "Well... I think it's fucked"),
+                }, 0.003f, 0.5f, partsWear, 2500, "repair_turbocharger_small_ProductImage.png", 100);
+
+            //Will currently not work as it should only be a wearReductionMultiplier reducer new Wear class?
+            /*
+            gtTurboAirfilterWear = new Wear(this, "gtTurboAirfilter", turboSmall_airfilter_part, new List<WearCondition>
+                {
+                    new WearCondition(75, WearCondition.Check.MoreThan, 1, "Looks brand new..."),
+                    new WearCondition(50, WearCondition.Check.MoreThan, 1.1f, "Some scratches and a bit of damage. Should be fine I guess..."),
+                    new WearCondition(25, WearCondition.Check.MoreThan, 1.3f, "I can hear air escaping more than before"),
+                    new WearCondition(15, WearCondition.Check.MoreThan, 1.5f, "It sounds like a leaf blower"),
+                    new WearCondition(15, WearCondition.Check.LessThan, 0, "Well... I think it's fucked"),
+                }, 0.0045f, 0.5f, partsWear, 400, "repair_turbocharger_small_airfilter_ProductImage.png", 100);
+            */
+
+
 
             racingTurbo.wears = new Wear[]
             {
@@ -1123,7 +1141,6 @@ namespace SatsumaTurboCharger
             racingTurbo.UpdateCondition("weberCarb", weberCarb_inst.Value);
             racingTurbo.UpdateCondition("twinCarb", twinCarb_inst.Value);
 
-            HandleModsShopRepairWorkaround();
             AddPartsColorMaterial();
             //DetectPaintingPart();
             DetectChangingBoost();
@@ -1327,30 +1344,6 @@ namespace SatsumaTurboCharger
 
         }
 
-        private void HandleModsShopRepairWorkaround()
-        {
-            //ModsShop purchashed workaround
-            List<ModsShop.ShopItems> shopItems = modsShop.fleetariShopItems;
-            foreach (ModsShop.ShopItems shopItem in shopItems)
-            {
-                if (shopItem.details.productName == "REPAIR Racing Turbocharger")
-                {
-                    shopItem.purchashed = false;
-                }
-                else if (shopItem.details.productName == "REPAIR GT Turbocharger")
-                {
-                    shopItem.purchashed = false;
-                }
-                else if (shopItem.details.productName == "REPAIR GT Turbo Airfilter")
-                {
-                    shopItem.purchashed = false;
-                }
-                else if (shopItem.details.productName == "REPAIR Intercooler")
-                {
-                    shopItem.purchashed = false;
-                }
-            }
-        }
 
         [Obsolete("Don't use!", true)]
         private void CheckPartsForDamage()
@@ -1433,57 +1426,12 @@ namespace SatsumaTurboCharger
             }
         }
 
-        private static void SwitchTurboChargerValuesDEBUG()
-        {
-            turboValuesDEBUG = !turboValuesDEBUG;
-        }
-
         private void SetModsShop()
         {
             if (GameObject.Find("Shop for mods") != null)
             {
                 modsShop = GameObject.Find("Shop for mods").GetComponent<ModsShop.ShopItem>();
                 List<ProductInformation> shopItems = new List<ProductInformation>();
-
-                //Repair products.
-                repair_turboBig_Product = new ModsShop.ProductDetails
-                {
-                    productName = "REPAIR Racing Turbocharger",
-                    multiplePurchases = false,
-                    productCategory = "DonnerTech Racing",
-                    productIcon = assetsBundle.LoadAsset<Sprite>("repair_turbocharger_big_ProductImage.png"),
-                    productPrice = 4000
-                };
-                repair_turboSmall_Product = new ModsShop.ProductDetails
-                {
-                    productName = "REPAIR GT Turbocharger",
-                    multiplePurchases = false,
-                    productCategory = "DonnerTech Racing",
-                    productIcon = assetsBundle.LoadAsset<Sprite>("repair_turbocharger_small_ProductImage.png"),
-                    productPrice = 2500
-                };
-
-                repair_turboSmall_airfilter_Product = new ModsShop.ProductDetails
-                {
-                    productName = "REPAIR GT Turbo Airfilter",
-                    multiplePurchases = false,
-                    productCategory = "DonnerTech Racing",
-                    productIcon = assetsBundle.LoadAsset<Sprite>("repair_turbocharger_small_airfilter_ProductImage.png"),
-                    productPrice = 400
-                };
-                repair_intercooler_Product = new ModsShop.ProductDetails
-                {
-                    productName = "REPAIR Intercooler",
-                    multiplePurchases = false,
-                    productCategory = "DonnerTech Racing",
-                    productIcon = assetsBundle.LoadAsset<Sprite>("repair_intercooler_ProductImage.png"),
-                    productPrice = 1500
-                };
-
-                modsShop.Add(this, repair_turboBig_Product, ModsShop.ShopType.Fleetari, RepairPurchaseMadeturboBig, null);
-                modsShop.Add(this, repair_turboSmall_Product, ModsShop.ShopType.Fleetari, RepairPurchaseMadeTurbochargerSmall, null);
-                modsShop.Add(this, repair_turboSmall_airfilter_Product, ModsShop.ShopType.Fleetari, RepairPurchaseMadeTurbochargerSmallAirfilter, null);
-                modsShop.Add(this, repair_intercooler_Product, ModsShop.ShopType.Fleetari, RepairPurchaseMadeIntercooler, null);
 
                 shopItems.Add(new ProductInformation(turboBig_kit.kitBox, "Racing Turbocharger Kit", 8100, null, partBuySave.bought_turboBig_kit));
                 shopItems.Add(new ProductInformation(turboBig_exhaust_outlet_straight_part.activePart, "Racing Turbocharger Straight Exhaust", 1000, null, partBuySave.bought_turboBig_exhaust_outlet_straight));
@@ -1513,67 +1461,7 @@ namespace SatsumaTurboCharger
                "Installation of ModsShop (by piotrulos) needed");
             }
         }
-        public void RepairPurchaseMadeturboBig(ModsShop.PurchaseInfo item)
-        {
-            if(turboBig_part.installed || !turboBig_part.activePart.activeSelf || !Helper.CheckCloseToPosition(turboBig_part.activePart.transform.position, ModsShop.FleetariSpawnLocation.desk, 0.8f))
-            {
-                ModUI.ShowMessage("Please put the part on the desk where the ModsShop sign is and try again" + "\n" + "Money has been refunded");
-                PlayMakerGlobals.Instance.Variables.FindFsmFloat("PlayerMoney").Value += repair_turboBig_Product.productPrice;
-                return;
-            }
-            partsWearSave.turboBig_wear = 100;
-            turboBigColor = new Color(0.800f, 0.800f, 0.800f);
-            originalTurbocchargerBigColor = new Color(0.800f, 0.800f, 0.800f);
-            colorHasToChange = true;
-            turboBig_part.activePart.transform.position = ModsShop.FleetariSpawnLocation.desk;
-            turboBig_part.activePart.SetActive(true);
-        }
-        public void RepairPurchaseMadeTurbochargerSmall(PurchaseInfo purchaseInfo)
-        {
-            if(turboSmall_part.installed || !turboSmall_part.activePart.activeSelf || !Helper.CheckCloseToPosition(turboSmall_part.activePart.transform.position, ModsShop.FleetariSpawnLocation.desk, 0.8f))
-            {
-                ModUI.ShowMessage("Please put the part on the desk where the ModsShop sign is and try again" + "\n" + "Money has been refunded");
-                PlayMakerGlobals.Instance.Variables.FindFsmFloat("PlayerMoney").Value += repair_turboSmall_Product.productPrice;
-                return;
-            }
-            partsWearSave.turboSmall_wear = 100;
-            turbochargerSmallColor = new Color(0.800f, 0.800f, 0.800f);
-            originalTurbochargerSmallColor = new Color(0.800f, 0.800f, 0.800f);
-            colorHasToChange = true;
-            turboSmall_part.activePart.transform.position = ModsShop.FleetariSpawnLocation.desk;
-            turboSmall_part.activePart.SetActive(true);
-        }
-        public void RepairPurchaseMadeTurbochargerSmallAirfilter(PurchaseInfo purchaseInfo)
-        {
-            if(turboSmall_airfilter_part.installed || !turboSmall_airfilter_part.activePart.activeSelf || !Helper.CheckCloseToPosition(turboSmall_airfilter_part.activePart.transform.position, ModsShop.FleetariSpawnLocation.desk, 0.8f))
-            {
-                ModUI.ShowMessage("Please put the part on the desk where the ModsShop sign is and try again" + "\n" + "Money has been refunded");
-                PlayMakerGlobals.Instance.Variables.FindFsmFloat("PlayerMoney").Value += repair_turboSmall_airfilter_Product.productPrice;
-                return;
-            }
-            partsWearSave.airfilter_wear = 100;
-            turboSmall_airfilter_color = new Color(0.800f, 0.800f, 0.800f);
-            original_turboSmall_airfilter_color = new Color(0.800f, 0.800f, 0.800f);
-            colorHasToChange = true;
-            turboSmall_airfilter_part.activePart.transform.position = ModsShop.FleetariSpawnLocation.desk;
-            turboSmall_airfilter_part.activePart.SetActive(true);
-        }
-        public void RepairPurchaseMadeIntercooler(PurchaseInfo purchaseInfo)
-        {
-            if (intercooler_part.installed || !intercooler_part.activePart.activeSelf || !Helper.CheckCloseToPosition(intercooler_part.activePart.transform.position, ModsShop.FleetariSpawnLocation.desk, 0.8f))
-            {
-                ModUI.ShowMessage("Please put the part on the desk where the ModsShop sign is and try again" + "\n" + "Money has been refunded");
-                PlayMakerGlobals.Instance.Variables.FindFsmFloat("PlayerMoney").Value += repair_intercooler_Product.productPrice;
-                return;
-            }
-            partsWearSave.intercooler_wear = 100;
-            intercoolerColor = new Color(0.800f, 0.800f, 0.800f);
-            originalIntercoolerColor = new Color(0.800f, 0.800f, 0.800f);
-            colorHasToChange = true;
-            intercooler_part.activePart.transform.position = ModsShop.FleetariSpawnLocation.desk;
-            intercooler_part.activePart.SetActive(true);
-        }
-        
+
         private void LoadPartsColorSave()
         {
             try

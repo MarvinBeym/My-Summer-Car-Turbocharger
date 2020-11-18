@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ModsShop;
+using MSCLoader;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,10 +11,11 @@ namespace SatsumaTurboCharger.wear
 {
     public class Wear
     {
+        public SatsumaTurboCharger mod;
         public string id = "";
         public SimplePart part;
         public WearLogic activeLogic;
-
+        public WearLogic rigidLogic;
 
         public List<WearCondition> wearConditions;
         public float wear = 100;
@@ -22,14 +25,20 @@ namespace SatsumaTurboCharger.wear
 
         public float timer = 0;
 
-        public Wear(string id, SimplePart part, List<WearCondition> wearConditions, float wearReductionMultiplier, float wearReductionIntervall, Dictionary<string, float> wearSave, int randomFallOff = -1)
+        //Shop
+        private ShopItem modsShop;
+        private ProductDetails repairProduct;
+        public bool repairPurchaseMade = false;
+
+        public Wear(SatsumaTurboCharger mod, string id, SimplePart part, List<WearCondition> wearConditions, float wearReductionMultiplier, float wearReductionIntervall, Dictionary<string, float> wearSave, float productPrice, string productImage, int randomFallOff = -1)
         {
+            this.mod = mod;
             this.id = id;
             this.wearReductionMultiplier = wearReductionMultiplier;
             this.wearConditions = wearConditions;
             this.wearReductionIntervall = wearReductionIntervall;
             this.part = part;
-
+            
             try
             {
                 this.wear = wearSave[id];
@@ -42,7 +51,65 @@ namespace SatsumaTurboCharger.wear
 
 
             activeLogic = part.activePart.AddComponent<WearLogic>();
+            rigidLogic = part.rigidPart.AddComponent<WearLogic>();
             activeLogic.Init(this, wearConditions);
+            rigidLogic.Init(this, wearConditions);
+
+            SetupModsShop(productPrice, productImage);
+            
+            
+        }
+        public void SetupModsShop(float productPrice, string productImage)
+        {
+            if (GameObject.Find("Shop for mods") == null)
+            {
+                ModUI.ShowMessage("ModsShop not found in the game!!");
+                return;
+            }
+
+            modsShop = GameObject.Find("Shop for mods").GetComponent<ShopItem>();
+
+            repairProduct = new ProductDetails
+            {
+                productName = String.Format("REPAIR {0}", part.activePart.name.Replace("(Clone)", "")),
+                multiplePurchases = false,
+                productCategory = "DonnerTech Racing",
+                productIcon = mod.assetsBundle.LoadAsset<Sprite>(productImage),
+                productPrice = 4000
+            };
+            modsShop.Add(mod, repairProduct, ShopType.Fleetari, RepairPurchase, null);
+
+        }
+
+        public void RepairPurchase(PurchaseInfo purchaseInfo)
+        {
+            repairPurchaseMade = true;
+
+            if (part.installed || !part.activePart.activeSelf || !Helper.CheckCloseToPosition(part.activePart.transform.position, ModsShop.FleetariSpawnLocation.desk, 0.8f))
+            {
+                ModUI.ShowMessage("Please put the part on the desk where the ModsShop sign is and try again" + "\n" + "Money has been refunded");
+                PlayMakerGlobals.Instance.Variables.FindFsmFloat("PlayerMoney").Value += repairProduct.productPrice;
+                return;
+            }
+
+            wear = 100;
+            //Color has to then also be reset
+
+            part.activePart.transform.position = FleetariSpawnLocation.desk;
+            part.activePart.SetActive(true);
+        }
+
+        public void ResetModsShopRepairPurchase()
+        {
+            repairPurchaseMade = false;
+            List<ShopItems> shopItems = modsShop.fleetariShopItems;
+            foreach (ShopItems shopItem in shopItems)
+            {
+                if(shopItem.details.productName == repairProduct.productName)
+                {
+                    shopItem.purchashed = false;
+                }
+            }
         }
 
         public float CalculateWearResult(float valueToManipulate)

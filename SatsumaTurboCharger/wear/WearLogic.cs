@@ -21,7 +21,12 @@ namespace SatsumaTurboCharger
         // Update is called once per frame
         void Update()
         {
-            if (Camera.main != null && Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 0.8f, 1 << LayerMask.NameToLayer("Parts")) != false)
+            if (wear.repairPurchaseMade)
+            {
+                wear.ResetModsShopRepairPurchase();
+            }
+
+            if (!wear.part.installed && Camera.main != null && Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 0.8f, 1 << LayerMask.NameToLayer("Parts")) != false)
             {
                 GameObject gameObjectHit;
                 gameObjectHit = hit.collider?.gameObject;

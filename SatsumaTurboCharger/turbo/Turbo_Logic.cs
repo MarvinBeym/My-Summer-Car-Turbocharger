@@ -27,7 +27,7 @@ namespace SatsumaTurboCharger.turbo
         // Update is called once per frame
         void Update()
         {
-            if(!turbo.CheckAllRequiredInstalled())
+            if(!turbo.CheckAllRequiredInstalled() || !mod.engineRunning)
             {
                 //Not all required installed RESET
                 turbo.LoopSound(false);

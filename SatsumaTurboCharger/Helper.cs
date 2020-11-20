@@ -13,10 +13,31 @@ namespace SatsumaTurboCharger
 {
     public static class Helper
     {
-        public static bool DetectRaycastHitObject(GameObject gameObjectToDetect)
+        public static AssetBundle LoadAssetBundle(Mod mod, string fileName, Logger logger)
+        {
+            try
+            {
+                return LoadAssets.LoadBundle(mod, fileName);
+            }
+            catch (Exception ex)
+            {
+                string message = String.Format("AssetBundle file '{0}' could not be loaded", fileName);
+                logger.New(
+                    message,
+                    String.Format("Check: {0}", Path.Combine(ModLoader.GetModAssetsFolder(mod), fileName)),
+                    ex);
+                ModConsole.Error(message);
+                ModUI.ShowYesNoMessage(message + "\n\nClose Game? - RECOMMENDED", delegate ()
+                {
+                    Application.Quit();
+                });
+            }
+            return null;
+        }
+        public static bool DetectRaycastHitObject(GameObject gameObjectToDetect, string layermask = "Parts", float distance = 0.8f)
         {
             RaycastHit hit;
-            if (Camera.main != null && Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 0.8f, 1 << LayerMask.NameToLayer("Parts")) != false)
+            if (Camera.main != null && Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, distance, 1 << LayerMask.NameToLayer(layermask)) != false)
             {
                 GameObject gameObjectHit;
                 gameObjectHit = hit.collider?.gameObject;

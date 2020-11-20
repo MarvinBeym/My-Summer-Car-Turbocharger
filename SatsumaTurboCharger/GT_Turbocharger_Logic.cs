@@ -128,6 +128,7 @@ namespace SatsumaTurboCharger
 
         // Update is called once per frame
         void Update(){
+            /*
             bool allBigInstalled = mod.AllBigInstalled();
             bool allSmallInstalled = mod.AllSmallInstalled();
             bool allOtherInstalled = mod.AllOtherInstalled();
@@ -244,14 +245,6 @@ namespace SatsumaTurboCharger
                         TriggerBlowoff();
                     }
                 }
-
-                turboSmall_max_boost.Value = mod.boostSave.turboSmall_max_boost;
-                turboSmall_exhaust_temp.Value = 0f;
-                turboSmall_intake_temp.Value = 0f;
-                turboSmall_rpm.Value = CalculateRpm(calculated_boost);
-                turboSmall_pressure.Value = calculated_boost;
-                turboSmall_wear.Value = mod.partsWearSave.turboSmall_wear;
-                turboSmall_allInstalled.Value = true;
             }
             else if (!allBigInstalled)
             {
@@ -280,6 +273,7 @@ namespace SatsumaTurboCharger
                 turbocharger_loop_small.Stop();
                 turbocharger_grinding_loop.Stop();
             }
+            */
         }
 
         private float HandleTurboDelay(float calculated_boost, float delay_comparer, float delayAdder){ 
@@ -314,6 +308,7 @@ namespace SatsumaTurboCharger
         }
 
         private void CheckPartsWear(){ 
+            /*
             if (mod.partsWearSave.turboSmall_wear <= 0f)
             {
                 mod.turboSmall_part.removePart();
@@ -363,6 +358,7 @@ namespace SatsumaTurboCharger
                     }
                 }
             }
+            */
         }
 
         private float CalculateRpm(float calculated_boost){ 
@@ -376,6 +372,7 @@ namespace SatsumaTurboCharger
 
         private float HandleWear(float boost){ 
             float newCalculated_boost = boost;
+            /*
             if (mod.partsWearSave.turboSmall_wear <= 0)
             {
                 mod.partsWearSave.turboSmall_wear = 0;
@@ -455,11 +452,12 @@ namespace SatsumaTurboCharger
                     newCalculated_boost = 0;
                 }
             }
-            
+            */
             return newCalculated_boost;
         }
 
         private float CalculateTurboBoost(){
+            /*
             bool intercooler_installedScrewed = mod.intercooler_part.InstalledScrewed();
             if (twinCarb_inst.Value && intercooler_installedScrewed)
             {
@@ -503,8 +501,9 @@ namespace SatsumaTurboCharger
             {
                 calculated_boost = mod.boostSave.turboSmall_max_boost;
             }
-
+            */
             return calculated_boost;
+            
         }
 
         private void CreateTurboGrindingLoop(){ 

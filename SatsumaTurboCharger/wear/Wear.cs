@@ -163,7 +163,7 @@ namespace SatsumaTurboCharger.wear
 
         public Dictionary<string, float> GetWear(Dictionary<string, float> partsWear)
         {
-            partsWear.Add(id, wear);
+            partsWear[id] = wear;
             return partsWear;
         }
     }

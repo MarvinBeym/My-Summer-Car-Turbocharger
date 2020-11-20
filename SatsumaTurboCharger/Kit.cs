@@ -13,14 +13,16 @@ namespace SatsumaTurboCharger
         public SimplePart[] parts;
         private KitLogic logic;
         public int spawnedCounter = 0;
-
-        public Kit(SatsumaTurboCharger mod, GameObject kitBox, SimplePart[] simpleParts, bool boughtKit)
+        public string boughtId;
+        public bool bought;
+        public Kit(SatsumaTurboCharger mod, GameObject kitBox, SimplePart[] simpleParts)
         {
             this.mod = mod;
             this.kitBox = kitBox;
             this.parts = simpleParts;
-
-            if (!boughtKit)
+            boughtId = simpleParts[0].boughtId;
+            bought = simpleParts[0].bought;
+            if (!bought)
             {
                 foreach(SimplePart part in parts)
                 {
@@ -33,9 +35,9 @@ namespace SatsumaTurboCharger
             logic.Init(mod, this);
         }
 
-        public void CheckUnpackedOnSave(bool boughtKit)
+        public void CheckUnpackedOnSave()
         {
-            if (boughtKit)
+            if (parts[0].bought)
             {
                 if (spawnedCounter < parts.Length)
                 {

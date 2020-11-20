@@ -65,7 +65,7 @@ namespace SatsumaTurboCharger.turbo
         private ModAudio grinding_audio = new ModAudio();
         private ModAudio blowoff_audio = new ModAudio();
 
-        public Turbo(SatsumaTurboCharger mod, SimplePart part, string loopSoundFile, string grindingSoundFIle, string blowoffSoundFile, bool[] requiredInstalled, Configuration config, GameObject boostChangingGameObject)
+        public Turbo(SatsumaTurboCharger mod, SimplePart part, Dictionary<string, float> boostSave,string loopSoundFile, string grindingSoundFIle, string blowoffSoundFile, bool[] requiredInstalled, Configuration config, GameObject boostChangingGameObject)
         {
             this.mod = mod;
             this.part = part;
@@ -75,11 +75,15 @@ namespace SatsumaTurboCharger.turbo
             ecu_mod_installed = SetupEcuMod();
             this.boostChangingGameObject = boostChangingGameObject;
             //userSetBoost = config.boostBase;
-            userSetBoost = 2f;
-            //Wont work maybe use percentage of difference to other boost
-            //If max boost usually is 2.5bar and userSetBoos is setto 1.25 (half of max) set the increasement also to 50% 
-            //% of increasement
-            //Load user set boost from save file (for example when the user scrolls up/down while looking at the blowoff valve this value should change and decrease the configured boost limit
+
+            try
+            {
+                userSetBoost = boostSave[part.id];
+            }
+            catch
+            {
+                userSetBoost = config.boostBase;
+            }
 
             bigRequired = requiredInstalled[0];
             smallRequired = requiredInstalled[1];
@@ -107,7 +111,7 @@ namespace SatsumaTurboCharger.turbo
 
         public bool CheckAllRequiredInstalled()
         {
-            return mod.engineRunning && allBigInstalled == bigRequired && allSmallInstalled == smallRequired && allOtherInstalled == otherRequired;
+            return allBigInstalled == bigRequired && allSmallInstalled == smallRequired && allOtherInstalled == otherRequired;
         }
 
         public float CalculateRpm(float boost, float multiplier)
@@ -217,6 +221,12 @@ namespace SatsumaTurboCharger.turbo
                 conditions[id].applyCondition = applyCondition;
                 conditionsHaveUpdated = true;
             }
+        }
+
+        public Dictionary<string, float> GetBoost(Dictionary<string, float> boostSave)
+        {
+            boostSave[part.id] = userSetBoost;
+            return boostSave;
         }
     }
 }

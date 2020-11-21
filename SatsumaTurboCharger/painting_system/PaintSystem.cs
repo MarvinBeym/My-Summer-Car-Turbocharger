@@ -1,61 +1,104 @@
 ﻿using HutongGames.PlayMaker;
 using MSCLoader;
+using SatsumaTurboCharger.gui;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using UnityEngine;
 
-namespace SatsumaTurboCharger
+namespace SatsumaTurboCharger.painting_system
 {
-    public class PaintSystem : MonoBehaviour
+
+    public class PaintSystem
     {
-
-        private MeshRenderer[] sprayCansMeshRenders;
-        private Material regularCarPaintMaterial;
-        private MeshRenderer turboBig_hood_renderer;
-
-        private FsmGameObject itemInHand;
-        private bool isItemInHand = false;
-
-        // Use this for initialization
-        void Start()
+        public enum State
         {
-            itemInHand = PlayMakerGlobals.Instance.Variables.FindFsmGameObject("ItemPivot");
+            Painting,
+            NotPainting
+        }
 
-            Material[] materialCollecion = Resources.FindObjectsOfTypeAll<Material>();
-            foreach (Material material in materialCollecion)
+        public SimplePart part;
+
+
+        public State state = State.NotPainting;
+
+        PaintSystem_Logic activeLogic;
+        PaintSystem_Logic rigidLogic;
+
+        public GameObject sprayCanGameObject;
+        public PlayMakerFSM sprayCanFsm;
+        public FsmColor sprayCanColorFsm;
+
+        public Color color;
+        public Color defaultColor;
+        public bool setupDone = false;
+
+        public PaintSystem(Dictionary<string, SaveableColor> partsColorSave, SimplePart part, Color defaultColor, string[] paintablePartsName = null)
+        {
+            this.part = part;
+            this.defaultColor = defaultColor;
+
+            activeLogic = part.activePart.AddComponent<PaintSystem_Logic>();
+            rigidLogic =  part.rigidPart.AddComponent<PaintSystem_Logic>();
+
+            try
             {
-                if (material.name == "CAR_PAINT_REGULAR")
+                color = SaveableColor.ConvertToColor(partsColorSave[part.id]);
+            }
+            catch
+            {
+                color = defaultColor;
+            }
+
+            if(paintablePartsName == null || paintablePartsName.Length == 0)
+            {
+                paintablePartsName = new string[] { "default" };
+            }
+
+            activeLogic.Init(this, paintablePartsName, color, part.activePart);
+            rigidLogic.Init(this, paintablePartsName, color, part.partTrigger.triggerGameObject);
+
+            sprayCanGameObject = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/SprayCan");
+            sprayCanFsm = sprayCanGameObject.GetComponent<PlayMakerFSM>();
+            sprayCanColorFsm = sprayCanFsm.FsmVariables.FindFsmColor("SprayColor");
+        }
+
+        public void SetAllChildColors(GameObject[] childs, Color color)
+        {
+            foreach (GameObject child in childs)
+            {
+                foreach (Material material in child.GetComponent<MeshRenderer>().materials)
                 {
-                    regularCarPaintMaterial = material;
-                    break;
+                    material.SetColor("_Color", color);
                 }
-
             }
         }
 
-        // Update is called once per frame
-        void Update()
+        public void SetSprayCanColor(Color color)
         {
-            isItemInHand = GetIsItemInHand();
+            this.color = color;
+            SetAllChildColors(activeLogic.paintableChilds, color);
+            SetAllChildColors(rigidLogic.paintableChilds, color);
         }
 
-        private bool GetIsItemInHand()
+        public void SetupPaintSystem()
         {
-            bool returnValue = false;
-            if (itemInHand.Value.GetComponentInChildren<MeshRenderer>() != null)
-            {
-                return isItemInHand;
-            }
+            setupDone = true;
+            FsmHook.FsmInject(sprayCanGameObject, "Stage 1", delegate () { HookPainting(State.NotPainting); });
+            FsmHook.FsmInject(sprayCanGameObject, "Painting", delegate () { HookPainting(State.Painting); });
+        }
 
-            if (itemInHand.Value.GetComponentInChildren<MeshRenderer>().name == "spray can(itemx)" && Input.GetKey(KeyCode.F))
-            {
-                sprayCansMeshRenders = itemInHand.Value.GetComponentsInChildren<MeshRenderer>();
-                returnValue = true;
-            }
-            else if (itemInHand.Value.GetComponentInChildren<MeshRenderer>().name == "spray can(itemx)" && isItemInHand == true)
-            {
-                returnValue = false;
-            }
+        private void HookPainting(State state)
+        {
+            this.state = state;
+        }
 
-            return returnValue;
+        public Dictionary<string, SaveableColor> GetColor(Dictionary<string, SaveableColor> partsColorSave)
+        {
+
+            partsColorSave[part.id] = SaveableColor.ConvertToSaveable(color);
+            return partsColorSave;
         }
     }
 }

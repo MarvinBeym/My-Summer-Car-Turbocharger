@@ -50,7 +50,7 @@ namespace SatsumaTurboCharger
 
             if (boughtId == "")
             {
-                boughtId = "bought_" + id;
+                boughtId = id;
             }
 
             bool bought;

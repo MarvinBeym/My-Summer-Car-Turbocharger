@@ -103,7 +103,9 @@
     <Compile Include="old_file_checker\OldFileRenamer.cs" />
     <Compile Include="painting_system\CustomColors.cs" />
     <Compile Include="painting_system\PaintSystem.cs" />
+    <Compile Include="painting_system\PaintSystem_Logic.cs" />
     <Compile Include="Box.cs" />
+    <Compile Include="painting_system\SaveableColor.cs" />
     <Compile Include="parts\SimplePart.cs" />
     <Compile Include="shop\ProductInformation.cs" />
     <Compile Include="Racing_Exhaust_Outlet_Straight_Logic.cs" />

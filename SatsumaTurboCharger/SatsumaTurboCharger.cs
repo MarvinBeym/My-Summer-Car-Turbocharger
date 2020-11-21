@@ -5,6 +5,7 @@ using ModsShop;
 using MSCLoader;
 using SatsumaTurboCharger.gui;
 using SatsumaTurboCharger.old_file_checker;
+using SatsumaTurboCharger.painting_system;
 using SatsumaTurboCharger.shop;
 using SatsumaTurboCharger.turbo;
 using SatsumaTurboCharger.wear;
@@ -100,6 +101,8 @@ namespace SatsumaTurboCharger
 
 
         //Saves
+
+        public Dictionary<string, SaveableColor> partsColorSave;
         public Dictionary<string, float> partsWearSave;
         public Dictionary<string, bool> partsBuySave;
         public Dictionary<string, float> boostSave;
@@ -109,7 +112,7 @@ namespace SatsumaTurboCharger
         private const string boost_saveFile = "turbocharger_mod_boost_SaveFile.txt";
         private const string wear_saveFile = "wear_saveFile.json";
         private const string screwable_saveFile = "screwable_saveFile.json";
-
+        private const string color_saveFile = "color_saveFile.json";
 
         //
         //Install & Spawn Locations
@@ -308,15 +311,21 @@ namespace SatsumaTurboCharger
         public List<SimplePart> smallPartsList;
         public List<SimplePart> otherPartsList;
 
-
+        //Turbo
         private Turbo racingTurbo;
         private Turbo gtTurbo;
 
+        //Wear
         private Wear racingTurboWear;
         private Wear intercoolerWear;
         private Wear gtTurboWear;
         private Wear gtTurboAirfilterWear;
 
+        //PaintSystem
+        private PaintSystem turboBigPaintSystem;
+        private PaintSystem turboBigHoodPaintSystem;
+        private PaintSystem intercoolerPaintSystem;
+        private PaintSystem turboSmallAirfilterPaintSystem;
         //Logic
         private GT_Turbocharger_Logic turboSmall_logic;
 
@@ -348,7 +357,7 @@ namespace SatsumaTurboCharger
         
         private string partsColorSave_SaveFile;
         //ECU-Mod Communication
-        private bool ecu_mod_installed = false;
+        private bool ecuModInstalled = false;
 
         //Everything Else
         private int currentGear = 0;
@@ -398,8 +407,9 @@ namespace SatsumaTurboCharger
         public override void OnLoad()
         {
             ModConsole.Print("DonnerTechRacing Turbocharger Mod [v" + this.Version + " | Screwable: v" + ScrewablePart.apiVersion + "]" + " started loading");
+            ecuModInstalled = ModLoader.IsModPresent("DonnerTech_ECU_Mod");
             saveFileRenamer = new SaveFileRenamer(this, 900);
-            guiDebug = new GuiDebug(Screen.width - 260, 10, 250, "TURBO MOD DEBUG", new List<GuiButtonElement>()
+            guiDebug = new GuiDebug(Screen.width - 260, 50, 250, "TURBO MOD DEBUG", new List<GuiButtonElement>()
             {
                 new GuiButtonElement("DEBUG"),
                 new GuiButtonElement("Wear"),
@@ -412,7 +422,7 @@ namespace SatsumaTurboCharger
                 ModConsole.Print("Cunt detected");
             }
             resetPosSetting.DoAction = PosReset;
-            ecu_mod_installed = ModLoader.IsModPresent("SatsumaTurboCharger");
+            
 
             //PaintSystem
             modSprayColors[0] = new Color(205f / 255, 205f / 255, 205f / 255, 1f);    // white
@@ -482,6 +492,7 @@ namespace SatsumaTurboCharger
 
             try
             {
+                partsColorSave = Helper.LoadSaveOrReturnNew<Dictionary<string, SaveableColor>>(this, color_saveFile);
                 partsWearSave = Helper.LoadSaveOrReturnNew<Dictionary<string, float>>(this, wear_saveFile);
                 partsBuySave = Helper.LoadSaveOrReturnNew<Dictionary<string, bool>>(this, modsShop_saveFile);
                 boostSave = Helper.LoadSaveOrReturnNew<Dictionary<string, float>>(this, boost_saveFile);
@@ -821,6 +832,14 @@ namespace SatsumaTurboCharger
 
 
 
+            turboBigPaintSystem = new PaintSystem(partsColorSave, turboBig_part, new Color(0.8f, 0.8f, 0.8f), new string[] { "TurboCharger_Big_Compressor_Turbine", "TurboCharger_Big_Exhaust_Turbine" });
+            turboBigHoodPaintSystem = new PaintSystem(partsColorSave, turboBig_hood_part, new Color(0.8f, 0.8f, 0.8f));
+            //intercoolerPaintSystem = new PaintSystem(partsColorSave, intercooler_part, new Color(0.8f, 0.8f, 0.8f));
+            //turboSmallAirfilterPaintSystem = new PaintSystem(partsColorSave, turboSmall_airfilter_part, new Color(0.8f, 0.8f, 0.8f));
+            //-> Issue with component. Paintable components have to be gameobjects on their own
+            //-> Another way would be that paintability is defined by a material name on the object (like "paintable_material")
+
+
             racingTurbo.wears = new Wear[]
             {
                 racingTurboWear,
@@ -1001,14 +1020,13 @@ namespace SatsumaTurboCharger
         {
             Settings.AddHeader(this, "DEBUG");
             Settings.AddCheckBox(this, debugGuiSetting);
+            Settings.AddButton(this, resetPosSetting, "Reset uninstalled part location");
             Settings.AddHeader(this, "Settings");
             Settings.AddCheckBox(this, rotateTurbineSetting);
             Settings.AddCheckBox(this, backfireEffectSetting);
             Settings.AddCheckBox(this, partsWearSetting);
-
             Settings.AddCheckBox(this, toggleNewGearRatios);
             Settings.AddCheckBox(this, useDefaultColorsSetting);
-            Settings.AddButton(this, resetPosSetting, "reset part location");
             Settings.AddHeader(this, "", Color.clear);
             Settings.AddText(this, "New Gear ratios\n" +
                 "1.Gear: " + newGearRatio[2] + "\n" +
@@ -1034,6 +1052,13 @@ namespace SatsumaTurboCharger
             {
                 logger.New("Error while trying to save part", "", ex);
             }
+
+            partsColorSave = turboBigPaintSystem.GetColor(partsColorSave);
+            partsColorSave = turboBigHoodPaintSystem.GetColor(partsColorSave);
+            //partsColorSave = intercoolerPaintSystem.GetColor(partsColorSave);
+            //partsColorSave = turboSmallAirfilterPaintSystem.GetColor(partsColorSave);
+            SaveLoad.SerializeSaveFile<Dictionary<string, SaveableColor>>(this, partsColorSave, color_saveFile);
+
 
             try
             {
@@ -1091,8 +1116,7 @@ namespace SatsumaTurboCharger
 
         }
 
-        public bool turboErrorCaused = false;
-
+        public bool turboErr = false;
         public override void Update()
         {
             bool allBig = AllBigInstalled();
@@ -1104,23 +1128,24 @@ namespace SatsumaTurboCharger
             racingTurbo.UpdateCondition("twinCarb", twinCarb_inst.Value);
 
             //Todo
-            if (!racingTurbo.CheckAllRequiredInstalled() && !gtTurbo.CheckAllRequiredInstalled() && !turboErrorCaused)
+            if (!racingTurbo.CheckAllRequiredInstalled() && !gtTurbo.CheckAllRequiredInstalled())
             {
-                if (!hasPower) { 
+                if (hasPower)
+                {
+                    turboErr = true;
+                    SetBoostGaugeText("ERR");
                 }
-                turboErrorCaused = true;
-                SetBoostGaugeText("ERR");
+                else
+                {
+                    turboErr = false;
+                    SetBoostGaugeText("");
+                }
             }
-            else if (!hasPower)
+            else if (turboErr)
             {
+                turboErr = false;
                 SetBoostGaugeText("");
             }
-            else
-            {
-                SetBoostGaugeText("");
-                turboErrorCaused = false;
-            }
-
             AddPartsColorMaterial();
             DetectChangingBoost();
             HandleExhaustSystem();
@@ -1669,7 +1694,7 @@ namespace SatsumaTurboCharger
         }
         public void SetBoostGaugeText(string valueToDisplay)
         {
-            if (!boost_gauge_part.InstalledScrewed())
+            if (!boost_gauge_part.InstalledScrewed() )
             {
                 return;
             }

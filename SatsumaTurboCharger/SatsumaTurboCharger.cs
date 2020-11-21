@@ -101,7 +101,6 @@ namespace SatsumaTurboCharger
 
 
         //Saves
-
         public Dictionary<string, SaveableColor> partsColorSave;
         public Dictionary<string, float> partsWearSave;
         public Dictionary<string, bool> partsBuySave;
@@ -219,9 +218,6 @@ namespace SatsumaTurboCharger
         private FsmBool exhaustMuffler_inst;
         private FsmBool exhaustMufflerDualTip_inst;
 
-        //Part Tightness
-        private FsmFloat racingExhaustPipeTightness;
-        private FsmFloat exhaustPipeTightness;
         //Engine Values
         //private FsmState n2oBottle;
         //private FsmFloat n2oBottlePSI;
@@ -229,52 +225,19 @@ namespace SatsumaTurboCharger
         //private Axles satsumaAxles;
 
         //NOS
-        private FsmState n2oState;
-        private FsmState no_n2oState;
-        private GameObject N2O;
-        private PlayMakerFSM n2oPlayMaker;
+        //private FsmState n2oState;
+        //private FsmState no_n2oState;
+        //private GameObject N2O;
+        //private PlayMakerFSM n2oPlayMaker;
 
-        //Painting System
-        private MeshRenderer[] sprayCansMeshRenders;
-        private Material regularCarPaintMaterial;
-        private MeshRenderer turboBig_hood_renderer;
-
-        //Audio
-
-        private ModAudio turbocharger_loop_small = new ModAudio();
-        private AudioSource turboLoopSmall;
-
-        private ModAudio turbocharger_loop_big = new ModAudio();
-        private ModAudio turbocharger_blowoff = new ModAudio();
-        private ModAudio turbocharger_grinding_loop = new ModAudio();
-
-
-        private AudioSource turboLoopBig;
-        private AudioSource turboGrindingLoop;
-        private AudioSource turboBlowOffShot;
-        private AudioSource backfire_fx_big_turbo_exhaust_straight;
 
         //Mod Settings
-        private static bool partsWearDEBUG = false;
-        private static bool turboValuesDEBUG = false;
-        private static bool useDefaultColors = false;
 
         private Settings debugGuiSetting = new Settings("debugGuiSetting", "Show DEBUG GUI", false);
-
-        private Settings useDefaultColorsSetting = new Settings("useDefaultColors", "Use default game colors for painting", false, new Action(ToggleUseDefaultColors));
         private Settings resetPosSetting = new Settings("resetPos", "Reset", Helper.WorkAroundAction);
-        private static Settings toggleNewGearRatios = new Settings("toggleNewGearRatios", "Enable/Disable New Gear Ratios", false, new Action(ToggleNewGearRatios));
-
         public Settings partsWearSetting = new Settings("partsWearSetting", "Use parts wear system", true);
         public Settings rotateTurbineSetting = new Settings("rotateTurbineSetting", "Allow turbo turbine rotation", false);
         public Settings backfireEffectSetting = new Settings("backfireEffectSetting", "Allow backfire effect for turbo", false);
-        //Car values
-        private float engineRPM = 0;
-        private float enginePowerMultiplier;
-        private float enginePowerCurrent;
-        private FsmFloat _enginePowerMultiplier;
-        private float newTurboChargerBar = 0;
-        private bool isItemInHand;
 
         //
         //ModApi Parts
@@ -329,39 +292,12 @@ namespace SatsumaTurboCharger
         //Logic
         private GT_Turbocharger_Logic turboSmall_logic;
 
-        //Part Coloring
-        private Color pickedUPsprayCanColor;
 
-        private Color turboBig_hoodColor = new Color(0.800f, 0.800f, 0.800f);
-        private Color turboBigColor = new Color(0.800f, 0.800f, 0.800f);
-        private Color intercoolerColor = new Color(0.800f, 0.800f, 0.800f);
-        private Color turbochargerSmallColor = new Color(0.800f, 0.800f, 0.800f);
-        private Color turbochargerManifoldWeberColor = new Color(0.800f, 0.800f, 0.800f);
-        private Color turbochargerManifoldTwinCarbColor = new Color(0.800f, 0.800f, 0.800f);
-        private Color turboBigBlowoffValveColor = new Color(0.800f, 0.800f, 0.800f);
-        private Color turboSmall_airfilter_color = new Color(0.800f, 0.800f, 0.800f);
 
-        private Color originalTurbocchargerBigColor = new Color(0.800f, 0.800f, 0.800f);
-        private Color originalIntercoolerColor = new Color(0.800f, 0.800f, 0.800f);
-        private Color originalTurbochargerSmallColor = new Color(0.800f, 0.800f, 0.800f);
-        private Color originalTurbochargerManifoldWeberColor = new Color(0.800f, 0.800f, 0.800f);
-        private Color originalTurbochargerManifoldTwinCarbColor = new Color(0.800f, 0.800f, 0.800f);
-        private Color originalturboBigBlowoffValveColor = new Color(0.800f, 0.800f, 0.800f);
-        private Color original_turboSmall_airfilter_color = new Color(0.800f, 0.800f, 0.800f);
-
-        private Color[] modSprayColors = new Color[13];
-        public static bool colorHasToChange = false;
-        
-        
-        
-        
-        private string partsColorSave_SaveFile;
         //ECU-Mod Communication
         private bool ecuModInstalled = false;
 
         //Everything Else
-        private int currentGear = 0;
-        private bool errorDetected = false;
         private static float[] originalGearRatios;
         private static float[] newGearRatio = new float[]
         {
@@ -379,17 +315,9 @@ namespace SatsumaTurboCharger
          * Gear: 3 = 4
          * Gear: 4 = 5
          */
-        private RaycastHit hit;
         public AssetBundle assetsBundle;
         private AssetBundle screwableAssetsBundle;
         private TextMesh boostGaugeTextMesh;
-        private static bool newGearRatiosEnabled;
-        GameObject turboBig_turbine;
-
-        private static void SwitchPartsWearDEBUG()
-        {
-            partsWearDEBUG = !partsWearDEBUG;
-        }
 
         public override void OnNewGame()
         {
@@ -401,8 +329,6 @@ namespace SatsumaTurboCharger
             SaveLoad.SerializeSaveFile<BoostSave>(this, null, boost_saveFile);
             SaveLoad.SerializeSaveFile<Dictionary<string, float>>(this, null, wear_saveFile);
         }
-
-
 
         public override void OnLoad()
         {
@@ -422,22 +348,6 @@ namespace SatsumaTurboCharger
                 ModConsole.Print("Cunt detected");
             }
             resetPosSetting.DoAction = PosReset;
-            
-
-            //PaintSystem
-            modSprayColors[0] = new Color(205f / 255, 205f / 255, 205f / 255, 1f);    // white
-            modSprayColors[1] = new Color(40f / 255, 40f / 255, 40f / 255, 1f);       // black
-            modSprayColors[2] = new Color(205f / 255, 0f / 255, 0f / 255, 1f);        // red
-            modSprayColors[3] = new Color(0f / 255, 0f / 255, 220f / 255, 1f);        // blue
-            modSprayColors[4] = new Color(130f / 255, 60f / 255, 0f / 255, 1f);       // brown
-            modSprayColors[5] = new Color(250f / 255, 105f / 255, 0f / 255, 1f);      // orange
-            modSprayColors[6] = new Color(190f / 255, 190f / 255, 0f / 255, 1f);      // yellow
-            modSprayColors[7] = new Color(0f / 255, 120f / 255, 0f / 255, 1f);        // green
-            modSprayColors[8] = new Color(0f / 255, 170f / 255, 210f / 255, 1f);      // lightblue
-            modSprayColors[9] = new Color(130f / 255, 130f / 255, 130f / 255, 1f);    // grey
-            modSprayColors[10] = new Color(220f / 255, 55f / 255, 220f / 255, 1f);     // pink
-            modSprayColors[11] = new Color(0f / 255, 0f / 255, 220f / 255, 1f);        // turquoise
-            modSprayColors[12] = new Color(40f / 255, 40f / 255, 40f / 255, 1f);       // mattblack
 
             assetsBundle = Helper.LoadAssetBundle(this, "turbochargermod.unity3d", logger);
             screwableAssetsBundle = Helper.LoadAssetBundle(this, "screwableapi.unity3d", logger);
@@ -502,19 +412,6 @@ namespace SatsumaTurboCharger
                 logger.New("Error while trying to deserialize save file", "Please check paths to save files", ex);
             }
 
-
-            //PaintSystem
-            partsColorSave_SaveFile = ModLoader.GetModConfigFolder(this) + "\\turbocharger_parts_ColorSave.xml";
-            Material[] materialCollecion = Resources.FindObjectsOfTypeAll<Material>();
-            foreach (Material material in materialCollecion)
-            {
-                if (material.name == "CAR_PAINT_REGULAR")
-                {
-                    regularCarPaintMaterial = material;
-                    break;
-                }
-
-            }
 
             turboBig_part = new SimplePart(
                 SimplePart.LoadData(this, "turboBig", partsBuySave, "turboBig_kit"),
@@ -1025,8 +922,6 @@ namespace SatsumaTurboCharger
             Settings.AddCheckBox(this, rotateTurbineSetting);
             Settings.AddCheckBox(this, backfireEffectSetting);
             Settings.AddCheckBox(this, partsWearSetting);
-            Settings.AddCheckBox(this, toggleNewGearRatios);
-            Settings.AddCheckBox(this, useDefaultColorsSetting);
             Settings.AddHeader(this, "", Color.clear);
             Settings.AddText(this, "New Gear ratios\n" +
                 "1.Gear: " + newGearRatio[2] + "\n" +
@@ -1089,7 +984,7 @@ namespace SatsumaTurboCharger
             {
                 ScrewablePart.SaveScrews(this, Helper.GetScrewablePartsArrayFromPartsList(partsList), screwable_saveFile);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 logger.New("Error while trying to save screws ", $"save file: {screwable_saveFile}", ex);
             }
@@ -1103,7 +998,7 @@ namespace SatsumaTurboCharger
                 guiDebug.Handle(new List<GuiInfo> {
                 new GuiInfo("Wear", "Racing Turbo", racingTurboWear.wear.ToString("000.00000")),
                 new GuiInfo("Wear", "Intercooler", intercoolerWear.wear.ToString("000.00000")),
-                new GuiInfo("DEBUG", "Engine RPM", ((int)engineRPM).ToString()),
+                new GuiInfo("DEBUG", "Engine RPM", ((int)satsumaDriveTrain.rpm).ToString()),
                 new GuiInfo("DEBUG", "Racing Turbo bar", racingTurbo.boost.ToString()),
                 new GuiInfo("DEBUG", "GT Turbo bar", gtTurbo.boost.ToString()),
                 new GuiInfo("DEBUG", "Power multiplier", racingTurbo.powerMultiplier.ToString()),
@@ -1146,8 +1041,6 @@ namespace SatsumaTurboCharger
                 turboErr = false;
                 SetBoostGaugeText("");
             }
-            AddPartsColorMaterial();
-            DetectChangingBoost();
             HandleExhaustSystem();
             HandlePartsTrigger();
         }
@@ -1347,7 +1240,6 @@ namespace SatsumaTurboCharger
 
         }
 
-  
         private void SetModsShop()
         {
             if (GameObject.Find("Shop for mods") != null)
@@ -1380,318 +1272,6 @@ namespace SatsumaTurboCharger
             }
         }
 
-        private void LoadPartsColorSave()
-        {
-            try
-            {
-                if (File.Exists(partsColorSave_SaveFile))
-                {
-                    XmlReader xmlReader = XmlReader.Create(partsColorSave_SaveFile);
-                    while (xmlReader.Read())
-                    {
-                        if ((xmlReader.NodeType == XmlNodeType.Element))
-                        {
-                            if (xmlReader.HasAttributes)
-                            {
-                                string r = xmlReader.GetAttribute("r");
-                                string g = xmlReader.GetAttribute("g");
-                                string b = xmlReader.GetAttribute("b");
-                                float rFloat = 0f;
-                                float gFloat = 0f;
-                                float bFloat = 0f;
-
-                                float.TryParse(r, out rFloat);
-                                float.TryParse(g, out gFloat);
-                                float.TryParse(b, out bFloat);
-                                if (xmlReader.Name == "turboBig_hood-color")
-                                {
-                                    turboBig_hoodColor = new Color(rFloat, gFloat, bFloat);
-                                }
-                                else if (xmlReader.Name == "intercooler-color")
-                                {
-                                    intercoolerColor = new Color(rFloat, gFloat, bFloat);
-                                }
-                                else if (xmlReader.Name == "turbocharger_big-color")
-                                {
-                                    turboBigColor = new Color(rFloat, gFloat, bFloat);
-                                }
-                                else if (xmlReader.Name == "turbochargerSmall-color")
-                                {
-                                    turbochargerSmallColor = new Color(rFloat, gFloat, bFloat);
-                                }
-                                else if (xmlReader.Name == "weber-color")
-                                {
-                                    turbochargerManifoldWeberColor = new Color(rFloat, gFloat, bFloat);
-                                }
-                                else if (xmlReader.Name == "twincarb-color")
-                                {
-                                    turbochargerManifoldTwinCarbColor = new Color(rFloat, gFloat, bFloat);
-                                }
-                                else if (xmlReader.Name == "blowoffValve-color")
-                                {
-                                    turboBigBlowoffValveColor = new Color(rFloat, gFloat, bFloat);
-                                }
-                                else if (xmlReader.Name == "turbocharger_small_airfilter-color")
-                                {
-                                    turboSmall_airfilter_color = new Color(rFloat, gFloat, bFloat);
-                                }
-                                else if (xmlReader.Name == "original_intercooler-color")
-                                {
-                                    originalIntercoolerColor = new Color(rFloat, gFloat, bFloat);
-                                }
-                                else if (xmlReader.Name == "original_turbocharger_big-color")
-                                {
-                                    originalTurbocchargerBigColor = new Color(rFloat, gFloat, bFloat);
-                                }
-                                else if (xmlReader.Name == "original_turbochargerSmall-color")
-                                {
-                                    originalTurbochargerSmallColor = new Color(rFloat, gFloat, bFloat);
-                                }
-                                else if (xmlReader.Name == "original_weber-color")
-                                {
-                                    originalTurbochargerManifoldWeberColor = new Color(rFloat, gFloat, bFloat);
-                                }
-                                else if (xmlReader.Name == "original_twincarb-color")
-                                {
-                                    originalTurbochargerManifoldTwinCarbColor = new Color(rFloat, gFloat, bFloat);
-                                }
-                                else if (xmlReader.Name == "original_blowoffValve-color")
-                                {
-                                    originalturboBigBlowoffValveColor = new Color(rFloat, gFloat, bFloat);
-                                }
-                                else if (xmlReader.Name == "original_turbocharger_small_airfilter-color")
-                                {
-                                    turboSmall_airfilter_color = new Color(rFloat, gFloat, bFloat);
-                                }
-                            }
-                        }
-                    }
-                    xmlReader.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-            }
-            
-        }
-
-        private void WritePartsColorSave(bool newGame)
-        {
-            try
-            {
-                partsColorSave_SaveFile = ModLoader.GetModConfigFolder(this) + "\\turbocharger_parts_ColorSave.xml";
-                XmlWriter xmlWriter = XmlWriter.Create(partsColorSave_SaveFile);
-                xmlWriter.WriteStartDocument();
-                xmlWriter.WriteStartElement("color-save");
-                if (newGame == false)
-                {
-                    WriteXMLColorSaveElement(xmlWriter, "turboBig_hood-color", turboBig_hoodColor);
-                    WriteXMLColorSaveElement(xmlWriter, "intercooler-color", intercoolerColor);
-                    WriteXMLColorSaveElement(xmlWriter, "turbocharger_big-color", turboBigColor);
-                    WriteXMLColorSaveElement(xmlWriter, "turbochargerSmall-color", turbochargerSmallColor);
-                    WriteXMLColorSaveElement(xmlWriter, "turbocharger_small_airfilter-color", turboSmall_airfilter_color);
-
-                    WriteXMLColorSaveElement(xmlWriter, "weber-color", turbochargerManifoldWeberColor);
-                    WriteXMLColorSaveElement(xmlWriter, "twincarb-color", turbochargerManifoldTwinCarbColor);
-                    WriteXMLColorSaveElement(xmlWriter, "blowoffValve-color", turboBigBlowoffValveColor);
-
-                    WriteXMLColorSaveElement(xmlWriter, "original_intercooler-color", originalIntercoolerColor);
-                    WriteXMLColorSaveElement(xmlWriter, "original_turbocharger_big-color", originalTurbocchargerBigColor);
-                    WriteXMLColorSaveElement(xmlWriter, "original_turbochargerSmall-color", originalTurbochargerSmallColor);
-                    WriteXMLColorSaveElement(xmlWriter, "original_turbocharger_small_airfilter-color", original_turboSmall_airfilter_color);
-
-                    WriteXMLColorSaveElement(xmlWriter, "original_weber-color", originalTurbochargerManifoldWeberColor);
-                    WriteXMLColorSaveElement(xmlWriter, "original_twincarb-color", originalTurbochargerManifoldTwinCarbColor);
-                    WriteXMLColorSaveElement(xmlWriter, "original_blowoffValve-color", originalturboBigBlowoffValveColor);
-                }
-
-                else
-                {
-                    Color defaultColor = new Color(0.800f, 0.800f, 0.800f);
-                    WriteXMLColorSaveElement(xmlWriter, "turboBig_hood-color", defaultColor);
-                    WriteXMLColorSaveElement(xmlWriter, "intercooler-color", defaultColor);
-                    WriteXMLColorSaveElement(xmlWriter, "turbocharger_big-color", defaultColor);
-                    WriteXMLColorSaveElement(xmlWriter, "turbochargerSmall-color", defaultColor);
-                    WriteXMLColorSaveElement(xmlWriter, "weber-color", defaultColor);
-                    WriteXMLColorSaveElement(xmlWriter, "twincarb-color", defaultColor);
-                    WriteXMLColorSaveElement(xmlWriter, "blowoffValve-color", defaultColor);
-                    WriteXMLColorSaveElement(xmlWriter, "turbocharger_small_airfilter-color", defaultColor);
-
-                    WriteXMLColorSaveElement(xmlWriter, "original_intercooler-color", defaultColor);
-                    WriteXMLColorSaveElement(xmlWriter, "original_turbocharger_big-color", defaultColor);
-                    WriteXMLColorSaveElement(xmlWriter, "original_turbochargerSmall-color", defaultColor);
-                    WriteXMLColorSaveElement(xmlWriter, "original_turbocharger_small_airfilter-color", defaultColor);
-                    WriteXMLColorSaveElement(xmlWriter, "original_weber-color", defaultColor);
-                    WriteXMLColorSaveElement(xmlWriter, "original_twincarb-color", defaultColor);
-                    WriteXMLColorSaveElement(xmlWriter, "original_blowoffValve-color", defaultColor);
-                }
-                xmlWriter.WriteEndElement();
-                xmlWriter.WriteEndDocument();
-                xmlWriter.Close();
-            }
-            catch (Exception ex)
-            {
-            }
-            
-        }
-
-        private void WriteXMLColorSaveElement(XmlWriter xmlWriter, string elementName, Color colorToSave)
-        {
-            try
-            {
-                xmlWriter.WriteStartElement(elementName);
-                xmlWriter.WriteAttributeString("r", colorToSave.r.ToString());
-                xmlWriter.WriteAttributeString("g", colorToSave.g.ToString());
-                xmlWriter.WriteAttributeString("b", colorToSave.b.ToString());
-                xmlWriter.WriteEndElement();
-            }
-            catch(Exception ex)
-            {
-            }
-        }
-
-        private void AddPartsColorMaterial()
-        {
-            if (colorHasToChange)
-            {
-                colorHasToChange = false;
-                try
-                {
-                    turboBig_hood_renderer = turboBig_hood_part.rigidPart.GetComponentInChildren<MeshRenderer>();
-                    if (turboBig_hood_renderer == null)
-                    {
-                        turboBig_hood_renderer = turboBig_hood_part.activePart.GetComponentInChildren<MeshRenderer>();
-
-                    }
-                    if (turboBig_hood_renderer != null)
-                    {
-                        if (turboBig_hood_renderer.material.name != "CAR_PAINT_REGULAR (Instance)")
-                        {
-                            turboBig_hood_renderer.material = regularCarPaintMaterial;
-                        }
-                    }
-                }
-                catch(Exception ex)
-                {
-                }
-                try
-                {
-                    if (useDefaultColors)
-                    {
-                        SetPartMaterialColor(turboBig_hood_part, turboBig_hoodColor);
-                        SetPartMaterialColor(turboBig_part, originalTurbocchargerBigColor);
-                        SetPartMaterialColor(turboSmall_part, originalTurbochargerSmallColor);
-                        SetPartMaterialColor(intercooler_part, originalIntercoolerColor);
-                        SetPartMaterialColor(manifold_weber_part, originalTurbochargerManifoldWeberColor);
-                        SetPartMaterialColor(manifold_twinCarb_part, originalTurbochargerManifoldTwinCarbColor);
-                        SetPartMaterialColor(turboBig_blowoff_valve_part, originalturboBigBlowoffValveColor);
-                        SetPartMaterialColor(turboSmall_airfilter_part, original_turboSmall_airfilter_color);
-                    }
-                    else
-                    {
-                        SetPartMaterialColor(turboBig_hood_part, turboBig_hoodColor);
-                        SetPartMaterialColor(turboBig_part, turboBigColor);
-                        SetPartMaterialColor(turboSmall_part, turbochargerSmallColor);
-                        SetPartMaterialColor(intercooler_part, intercoolerColor);
-                        SetPartMaterialColor(manifold_weber_part, turbochargerManifoldWeberColor);
-                        SetPartMaterialColor(manifold_twinCarb_part, turbochargerManifoldTwinCarbColor);
-                        SetPartMaterialColor(turboBig_blowoff_valve_part, turboBigBlowoffValveColor);
-                        SetPartMaterialColor(turboSmall_airfilter_part, turboSmall_airfilter_color);
-                    }
-                }
-                catch(Exception ex)
-                {
-                }
-            }
-        }
-
-        private void SetPartMaterialColor(Part part, Color colorToPaint)
-        {
-            try
-            {
-                MeshRenderer meshRenderer;
-                if (part == turboBig_part)
-                {
-                    meshRenderer = GameObject.Find("TurboCharger_Big_Compressor_Turbine").GetComponentInChildren<MeshRenderer>();
-                    if (meshRenderer.material.name == "Red_Acent (Instance)" || meshRenderer.material.name == "CAR_PAINT_REGULAR (Instance)")
-                    {
-                        if (useDefaultColors != true)
-                        {
-                            meshRenderer.material.SetColor("_Color", colorToPaint);
-                        }
-
-                    }
-                    meshRenderer = GameObject.Find("TurboCharger_Big_Exhaust_Turbine").GetComponentInChildren<MeshRenderer>();
-                    if (meshRenderer.material.name == "Red_Acent (Instance)" || meshRenderer.material.name == "CAR_PAINT_REGULAR (Instance)")
-                    {
-                        if (useDefaultColors != true)
-                        {
-                            meshRenderer.material.SetColor("_Color", colorToPaint);
-                        }
-                    }
-                }
-                else if (part == turboSmall_part)
-                {
-                    try
-                    {
-                        meshRenderer = GameObject.Find("Turbocharger_Small_Wastegate").GetComponentInChildren<MeshRenderer>();
-                        if (meshRenderer.material.name == "Red_Acent (Instance)" || meshRenderer.material.name == "CAR_PAINT_REGULAR (Instance)")
-                        {
-                            if (useDefaultColors != true)
-                            {
-                                meshRenderer.material.SetColor("_Color", colorToPaint);
-                            }
-
-                        }
-                        meshRenderer = GameObject.Find("Turbocharger_Small_Exhaust_Turbine").GetComponentInChildren<MeshRenderer>();
-                        if (meshRenderer.material.name == "Red_Acent (Instance)" || meshRenderer.material.name == "CAR_PAINT_REGULAR (Instance)")
-                        {
-                            if (useDefaultColors != true)
-                            {
-                                meshRenderer.material.SetColor("_Color", colorToPaint);
-                            }
-
-                        }
-                        meshRenderer = GameObject.Find("Turbocharger_Small_Compressor_Turbine").GetComponentInChildren<MeshRenderer>();
-                        if (meshRenderer.material.name == "Red_Acent (Instance)" || meshRenderer.material.name == "CAR_PAINT_REGULAR (Instance)")
-                        {
-                            if (useDefaultColors != true)
-                            {
-                                meshRenderer.material.SetColor("_Color", colorToPaint);
-                            }
-
-                        }
-                    }
-                    catch
-                    {
-
-                    }
-
-                }
-                else
-                {
-                    meshRenderer = part.rigidPart.GetComponentInChildren<MeshRenderer>();
-                    if (meshRenderer == null)
-                    {
-                        meshRenderer = part.activePart.GetComponentInChildren<MeshRenderer>();
-                    }
-                    if (meshRenderer.material.color != colorToPaint)
-                    {
-                        for (int i = 0; i < meshRenderer.materials.Length; i++)
-                        {
-                            if (meshRenderer.materials[i].name == "Red_Acent (Instance)" || meshRenderer.materials[i].name == "CAR_PAINT_REGULAR (Instance)")
-                            {
-                                meshRenderer.materials[i].SetColor("_Color", colorToPaint);
-                            }
-                        }
-                    }
-                }
-            }
-            catch(Exception ex)
-            {
-            }
-            
-        }
         public void SetBoostGaugeText(string valueToDisplay)
         {
             if (!boost_gauge_part.InstalledScrewed() )
@@ -1705,255 +1285,6 @@ namespace SatsumaTurboCharger
             }
 
             boostGaugeTextMesh.text = valueToDisplay;
-        }
-
-        private void DetectChangingBoost()
-        {
-            return;
-            /*
-            try
-            {
-                if (Camera.main != null)
-                {
-                    if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 0.8f, 1 << LayerMask.NameToLayer("Parts")) != false)
-                    {
-                        GameObject gameObjectHit;
-                        gameObjectHit = hit.collider?.gameObject;
-                        if (gameObjectHit != null)
-                        {
-                            if (hit.collider)
-                            {
-                                if (gameObjectHit.name == "blowoff_valve" || gameObjectHit.name == "blowoff_valve(Clone)")
-                                {
-                                    if (turboBig_blowoff_valve_part.InstalledScrewed())
-                                    {
-                                        if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
-                                        {
-                                            if (boostSave.turboBig_max_boost < boostSave.turboBig_max_boost_limit)
-                                            {
-                                                boostSave.turboBig_max_boost += 0.05f;
-                                                if (boostSave.turboBig_max_boost >= boostSave.turboBig_max_boost_limit)
-                                                {
-                                                    boostSave.turboBig_max_boost = boostSave.turboBig_max_boost_limit;
-                                                }
-                                            }
-                                        }
-                                        else if (Input.GetAxis("Mouse ScrollWheel") < 0f) // backwards
-                                        {
-                                            if (boostSave.turboBig_max_boost > 1.55f)
-                                            {
-                                                boostSave.turboBig_max_boost -= 0.05f;
-                                                if (boostSave.turboBig_max_boost <= 1.55f)
-                                                {
-                                                    boostSave.turboBig_max_boost = 1.55f;
-                                                }
-                                            }
-                                        }
-                                        ModClient.guiInteract("Increase/Decrease Max Boost: " + boostSave.turboBig_max_boost.ToString("0.00"));
-                                    }
-                                }
-                                else if (gameObjectHit.name == "Turbocharger_Small_Wastegate" || gameObjectHit.name == "Turbocharger_Small_Wastegate(Clone)")
-                                {
-                                    if (turboSmall_airfilter_part.InstalledScrewed())
-                                    {
-                                        if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
-                                        {
-                                            if (boostSave.turboSmall_max_boost < boostSave.turboSmall_max_boost_limit)
-                                            {
-                                                boostSave.turboSmall_max_boost += 0.01f;
-                                                if (boostSave.turboSmall_max_boost >= boostSave.turboSmall_max_boost_limit)
-                                                {
-                                                    boostSave.turboSmall_max_boost = boostSave.turboSmall_max_boost_limit;
-                                                }
-                                            }
-                                        }
-                                        else if (Input.GetAxis("Mouse ScrollWheel") < 0f) // backwards
-                                        {
-
-                                            if (boostSave.turboSmall_max_boost > 0.8f)
-                                            {
-                                                boostSave.turboSmall_max_boost -= 0.01f;
-                                                if (boostSave.turboSmall_max_boost <= 0.8f)
-                                                {
-                                                    boostSave.turboSmall_max_boost = 0.8f;
-                                                }
-                                            }
-                                        }
-                                        ModClient.guiInteract("Increase/Decrease Max Boost: " + boostSave.turboSmall_max_boost.ToString("0.00"));
-                                    }
-
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch
-            {
-            }
-            */
-        }
-
-        private void DetectPaintingPart()
-        {
-            try
-            {
-                FsmGameObject itemInHand = PlayMakerGlobals.Instance.Variables.FindFsmGameObject("ItemPivot");
-                if (itemInHand.Value.GetComponentInChildren<MeshRenderer>() != null)
-                {
-
-                    if (itemInHand.Value.GetComponentInChildren<MeshRenderer>().name == "spray can(itemx)" && Input.GetKey(KeyCode.F))
-                    {
-                        sprayCansMeshRenders = itemInHand.Value.GetComponentsInChildren<MeshRenderer>();
-                        isItemInHand = true;
-                    }
-                    else if(itemInHand.Value.GetComponentInChildren<MeshRenderer>().name == "spray can(itemx)" && isItemInHand == true)
-                    {
-                        isItemInHand = false;
-                    }
-
-                }
-                if (Camera.main != null)
-                {
-                    if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 0.8f, 1 << LayerMask.NameToLayer("Parts")) != false)
-                    {
-                        GameObject gameObjectHit;
-                        gameObjectHit = hit.collider?.gameObject;
-                        if (gameObjectHit != null)
-                        {
-                            if (hit.collider)
-                            {
-                                if (isItemInHand)
-                                {
-                                    if (
-                                     gameObjectHit.name == "Racing Turbocharger Hood(Clone)"
-                                     || gameObjectHit.name == "Intercooler(Clone)"
-                                     || gameObjectHit.name == "Racing Turbocharger(Clone)"
-                                     || gameObjectHit.name == "GT Turbocharger(Clone)"
-                                     || gameObjectHit.name == "Weber Manifold(Clone)"
-                                     || gameObjectHit.name == "TwinCarb Manifold(Clone)"
-                                     || gameObjectHit.name == "GT Turbocharger Airfilter(Clone)"
-                                     || gameObjectHit.name == "Racing Turbocharger Blowoff Valve(Clone)"
-                                     )
-                                    {
-                                        if (Input.GetMouseButton(0))
-                                        {
-                                            pickedUPsprayCanColor = sprayCansMeshRenders[1].material.color;
-                                            string test2 = sprayCansMeshRenders[1].material.name;
-                                            int colorID = 0;
-                                            if (sprayCansMeshRenders[1].material.name == "colormatte01 (Instance)")
-                                            {
-                                                colorID = 13;
-                                            }
-                                            else
-                                            {
-                                                colorID = Convert.ToInt32(sprayCansMeshRenders[1].material.name.Replace("color", "").Replace(" (Instance)", ""));
-                                            }
-                                            int arrIndex = colorID - 1;
-                                            if (arrIndex < 0 || arrIndex > 12)
-                                            {
-                                                arrIndex = 0;
-                                            }
-
-
-                                            if (gameObjectHit.name == "Racing Turbocharger Hood" || gameObjectHit.name == "Racing Turbocharger Hood(Clone)")
-                                            {
-                                                turboBig_hoodColor = pickedUPsprayCanColor;
-
-                                            }
-                                            if (gameObjectHit.name == "Intercooler" || gameObjectHit.name == "Intercooler(Clone)")
-                                            {
-                                                intercoolerColor = modSprayColors[arrIndex];
-                                                originalIntercoolerColor = pickedUPsprayCanColor;
-                                            }
-
-                                            if (gameObjectHit.name == "Racing Turbocharger" || gameObjectHit.name == "Racing Turbocharger(Clone)")
-                                            {
-                                                turboBigColor = modSprayColors[arrIndex];
-                                                originalTurbocchargerBigColor = pickedUPsprayCanColor;
-                                            }
-
-                                            if (gameObjectHit.name == "GT Turbocharger" || gameObjectHit.name == "GT Turbocharger(Clone)")
-                                            {
-                                                turbochargerSmallColor = modSprayColors[arrIndex];
-                                                originalTurbochargerSmallColor = pickedUPsprayCanColor;
-                                            }
-                                            if (gameObjectHit.name == "Weber Manifold" || gameObjectHit.name == "Weber Manifold(Clone)")
-                                            {
-                                                turbochargerManifoldWeberColor = modSprayColors[arrIndex];
-                                                originalTurbochargerManifoldWeberColor = pickedUPsprayCanColor;
-                                            }
-
-                                            if (gameObjectHit.name == "TwinCarb Manifold" || gameObjectHit.name == "TwinCarb Manifold(Clone)")
-                                            {
-                                                turbochargerManifoldTwinCarbColor = modSprayColors[arrIndex];
-                                                originalTurbochargerManifoldTwinCarbColor = pickedUPsprayCanColor;
-                                            }
-
-                                            if (gameObjectHit.name == "Racing Turbocharger Blowoff Valve" || gameObjectHit.name == "Racing Turbocharger Blowoff Valve(Clone)")
-                                            {
-                                                turboBigBlowoffValveColor = modSprayColors[arrIndex];
-                                                originalturboBigBlowoffValveColor = pickedUPsprayCanColor;
-                                            }
-                                            if(gameObjectHit.name == "GT Turbocharger Airfilter" || gameObjectHit.name == "GT Turbocharger Airfilter(Clone)")
-                                            {
-                                                turboSmall_airfilter_color = modSprayColors[arrIndex];
-                                                original_turboSmall_airfilter_color = pickedUPsprayCanColor;
-                                            }
-                                            MeshRenderer partRenderer;
-                                            if (gameObjectHit.name == "Racing Turbocharger" || gameObjectHit.name == "Racing Turbocharger(Clone)")
-                                            {
-                                                if (turboBig_turbine == null)
-                                                {
-                                                    turboBig_turbine = GameObject.Find("TurboCharger_Big_Compressor_Turbine");
-                                                }
-                                                if (turboBig_turbine != null)
-                                                {
-                                                    partRenderer = turboBig_turbine.GetComponentInChildren<MeshRenderer>();
-                                                }
-                                                else
-                                                {
-                                                    partRenderer = null;
-                                                }
-                                               
-                                            }
-
-                                            colorHasToChange = true;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch(Exception ex)
-            {
-                
-            }
-            
-        }
-
-        private static void ToggleUseDefaultColors()
-        {
-            useDefaultColors = !useDefaultColors;
-        }
-
-        private static void ToggleNewGearRatios()
-        {
-            if (toggleNewGearRatios.Value is bool value)
-            {
-                if (value == true)
-                {
-                    newGearRatiosEnabled = true;
-                    satsumaDriveTrain.gearRatios = newGearRatio;
-                }
-                else if (value == false)
-                {
-                    newGearRatiosEnabled = false;
-                    satsumaDriveTrain.gearRatios = originalGearRatios;
-                }
-            }
         }
 
         private void PosReset()
@@ -1973,11 +1304,6 @@ namespace SatsumaTurboCharger
                 ModConsole.Error(ex.Message);
             }
             
-        }
-
-        public float GetTurboChargerBoost()
-        {
-            return newTurboChargerBar;
         }
 
         public bool AllBigInstalled(bool ignoreScrewable = false)

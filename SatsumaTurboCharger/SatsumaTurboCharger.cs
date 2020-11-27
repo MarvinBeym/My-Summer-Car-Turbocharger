@@ -159,8 +159,8 @@ namespace SatsumaTurboCharger
         private Vector3 manifold_twinCarb_installLocation = new Vector3(0.0075f, -0.265f, 0.006f);                 //Cylinder Head
         private Vector3 boost_gauge_installLocation = new Vector3(0.5f, -0.04f, 0.125f);                           //Dashboard
         private Vector3 intercooler_installLocation = new Vector3(0.0f, -0.162f, 1.6775f);                          //Satsuma
-        private Vector3 intercooler_manifold_tube_weber_installLocation = new Vector3(-0.34f, -0.047f, 1.445f);    //Satsuma
-        private Vector3 intercooler_manifold_tube_twinCarb_installLocation = new Vector3(-0.332f, -0.047f, 1.445f); //Satsuma
+        private Vector3 intercooler_manifold_weber_tube_installLocation = new Vector3(-0.34f, -0.047f, 1.445f);    //Satsuma
+        private Vector3 intercooler_manifold_twinCarb_tube_installLocation = new Vector3(-0.332f, -0.047f, 1.445f); //Satsuma
         private Vector3 exhaust_header_installLocation = new Vector3(-0.005f, -0.089f, -0.064f);               //Cylinder Head
 
         public static Vector3 exhaust_header_spawnLocation = new Vector3(1555.136f, 5.8f, 737.2324f);
@@ -169,8 +169,8 @@ namespace SatsumaTurboCharger
         public static Vector3 manifold_twinCarb_spawnLocation = new Vector3(1555.07f, 5.8f, 737.6261f);
         public static Vector3 boost_gauge_spawnLocation = new Vector3(1555.383f, 5.8f, 737.058f);
         public static Vector3 intercooler_spawnLocation = new Vector3(1555.382f, 5.8f, 737.3588f);
-        public static Vector3 intercooler_manifold_tube_weber_spawnLocation = new Vector3(1554.56f, 5f, 737.2017f);
-        public static Vector3 intercooler_manifold_tube_twinCarb_spawnLocation = new Vector3(1554.339f, 5.5f, 737.913f);
+        public static Vector3 intercooler_manifold_weber_tube_spawnLocation = new Vector3(1554.56f, 5f, 737.2017f);
+        public static Vector3 intercooler_manifold_twinCarb_tube_spawnLocation = new Vector3(1554.339f, 5.5f, 737.913f);
 
         //Mods Shop
         private ShopItem modsShop;
@@ -266,8 +266,8 @@ namespace SatsumaTurboCharger
         public SimplePart manifold_twinCarb_part;
         public SimplePart boost_gauge_part;
         public SimplePart intercooler_part;
-        public SimplePart intercooler_manifold_tube_weber_part;
-        public SimplePart intercooler_manifold_tube_twinCarb_part;
+        public SimplePart intercooler_manifold_weber_tube_part;
+        public SimplePart intercooler_manifold_twinCarb_tube_part;
 
         public List<SimplePart> partsList = new List<SimplePart>();
         public List<SimplePart> bigPartsList;
@@ -557,18 +557,18 @@ namespace SatsumaTurboCharger
                intercooler_installLocation,
                new Quaternion { eulerAngles = new Vector3(-5, 180, 0) }
            );
-            intercooler_manifold_tube_weber_part = new SimplePart(
-                SimplePart.LoadData(this, "intercooler_manifold_tube_weber", partsBuySave, "manifold_weber_kit"),
-                Helper.LoadPartAndSetName(assetsBundle, "intercooler_manifold_tube_weber.prefab", "Weber Intercooler-Manifold Tube"),
+            intercooler_manifold_weber_tube_part = new SimplePart(
+                SimplePart.LoadData(this, "intercooler_manifold_weber_tube", partsBuySave, "manifold_weber_kit"),
+                Helper.LoadPartAndSetName(assetsBundle, "intercooler_manifold_weber_tube.prefab", "Weber Intercooler-Manifold Tube"),
                 satsuma,
-                intercooler_manifold_tube_weber_installLocation,
+                intercooler_manifold_weber_tube_installLocation,
                 new Quaternion { eulerAngles = new Vector3(0, 180, 0) }
             );
-            intercooler_manifold_tube_twinCarb_part = new SimplePart(
-                SimplePart.LoadData(this, "intercooler_manifold_tube_twinCarb", partsBuySave, "manifold_twinCarb_kit"),
-                Helper.LoadPartAndSetName(assetsBundle, "intercooler_manifold_tube_twinCarb.prefab", "TwinCarb Intercooler-Manifold Tube"),
+            intercooler_manifold_twinCarb_tube_part = new SimplePart(
+                SimplePart.LoadData(this, "intercooler_manifold_twinCarb_tube", partsBuySave, "manifold_twinCarb_kit"),
+                Helper.LoadPartAndSetName(assetsBundle, "intercooler_manifold_twinCarb_tube.prefab", "TwinCarb Intercooler-Manifold Tube"),
                 satsuma,
-                intercooler_manifold_tube_twinCarb_installLocation,
+                intercooler_manifold_twinCarb_tube_installLocation,
                 new Quaternion { eulerAngles = new Vector3(0, 180, 0) }
             );
 
@@ -598,8 +598,8 @@ namespace SatsumaTurboCharger
                 manifold_twinCarb_part,
                 boost_gauge_part,
                 intercooler_part,
-                intercooler_manifold_tube_weber_part,
-                intercooler_manifold_tube_twinCarb_part,
+                intercooler_manifold_weber_tube_part,
+                intercooler_manifold_twinCarb_tube_part,
                 turboBig_hood_part,
                 exhaust_header_part,
             };
@@ -629,14 +629,14 @@ namespace SatsumaTurboCharger
             manifoldWeber_kit = new Kit(this, manifoldWeber_kitBox,
                 new SimplePart[]{
                     manifold_weber_part,
-                    intercooler_manifold_tube_weber_part
+                    intercooler_manifold_weber_tube_part
                 });
 
             manifoldTwinCarb_kit = new Kit(this, manifoldTwinCarb_kitBox,
                 new SimplePart[]
                 {
                     manifold_twinCarb_part,
-                    intercooler_manifold_tube_twinCarb_part
+                    intercooler_manifold_twinCarb_tube_part
                 });
 
             SetModsShop();
@@ -846,11 +846,11 @@ namespace SatsumaTurboCharger
                     new Screw(new Vector3(-0.2215f, 0.081f, 0.039f), new Vector3(180, 0, 0), 0.6f, 10),
                     new Screw(new Vector3(0.239f, 0.081f, 0.039f), new Vector3(180, 0, 0), 0.6f, 10),
                 });
-            intercooler_manifold_tube_weber_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, intercooler_manifold_tube_weber_part.rigidPart,
+            intercooler_manifold_weber_tube_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, intercooler_manifold_weber_tube_part.rigidPart,
                 new Screw[] {
                     new Screw(new Vector3(-0.0473f, -0.1205f, -0.241f), new Vector3(180, 0, 0), 0.4f, 10),
                 });
-            intercooler_manifold_tube_twinCarb_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, intercooler_manifold_tube_twinCarb_part.rigidPart,
+            intercooler_manifold_twinCarb_tube_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, intercooler_manifold_twinCarb_tube_part.rigidPart,
                 new Screw[] {
                     new Screw(new Vector3(-0.0425f, -0.1205f, -0.241f), new Vector3(180, 0, 0), 0.4f, 10),
                 });
@@ -878,8 +878,8 @@ namespace SatsumaTurboCharger
             turboSmall_exhaust_outlet_tube_part.screwablePart.AddClampModel(new Vector3(-0.068f, 0.1445f, -0.0235f), new Vector3(0, 0, 0), new Vector3(0.67f, 0.67f, 0.67f));
             turboSmall_manifold_twinCarb_tube_part.screwablePart.AddClampModel(new Vector3(-0.106f, -0.07f, -0.116f), new Vector3(-90, 0, 0), new Vector3(0.5f, 0.5f, 0.5f));
 
-            intercooler_manifold_tube_weber_part.screwablePart.AddClampModel(new Vector3(-0.047f, -0.1465f, -0.232f), new Vector3(0, 90, 0), new Vector3(0.68f, 0.68f, 0.68f));
-            intercooler_manifold_tube_twinCarb_part.screwablePart.AddClampModel(new Vector3(-0.042f, -0.1465f, -0.232f), new Vector3(0, 90, 0), new Vector3(0.68f, 0.68f, 0.68f));
+            intercooler_manifold_weber_tube_part.screwablePart.AddClampModel(new Vector3(-0.047f, -0.1465f, -0.232f), new Vector3(0, 90, 0), new Vector3(0.68f, 0.68f, 0.68f));
+            intercooler_manifold_twinCarb_tube_part.screwablePart.AddClampModel(new Vector3(-0.042f, -0.1465f, -0.232f), new Vector3(0, 90, 0), new Vector3(0.68f, 0.68f, 0.68f));
             manifold_weber_part.screwablePart.AddClampModel(new Vector3(0.2f, -0.002f, 0.001f), new Vector3(0, 90, 0), new Vector3(0.82f, 0.82f, 0.82f));
             manifold_twinCarb_part.screwablePart.AddClampModel(new Vector3(-0.013f, 0.105f, 0f), new Vector3(90, 0, 0), new Vector3(0.8f, 0.8f, 0.8f));
         }
@@ -1089,18 +1089,18 @@ namespace SatsumaTurboCharger
 
             if (weberCarb_inst.Value)
             {
-                intercooler_manifold_tube_twinCarb_part.partTrigger.triggerGameObject.SetActive(false);
+                intercooler_manifold_twinCarb_tube_part.partTrigger.triggerGameObject.SetActive(false);
                 manifold_twinCarb_part.partTrigger.triggerGameObject.SetActive(false);
                 turboSmall_manifold_twinCarb_tube_part.partTrigger.triggerGameObject.SetActive(false);
 
-                if (intercooler_manifold_tube_twinCarb_part.installed) { intercooler_manifold_tube_twinCarb_part.removePart(); }
+                if (intercooler_manifold_twinCarb_tube_part.installed) { intercooler_manifold_twinCarb_tube_part.removePart(); }
                 if (manifold_twinCarb_part.installed) { manifold_twinCarb_part.removePart(); }
                 if (turboSmall_manifold_twinCarb_tube_part.installed) { turboSmall_manifold_twinCarb_tube_part.removePart(); }
 
             }
             else
             {
-                intercooler_manifold_tube_twinCarb_part.partTrigger.triggerGameObject.SetActive(true);
+                intercooler_manifold_twinCarb_tube_part.partTrigger.triggerGameObject.SetActive(true);
                 manifold_twinCarb_part.partTrigger.triggerGameObject.SetActive(true);
                 turboSmall_manifold_twinCarb_tube_part.partTrigger.triggerGameObject.SetActive(true);
             }
@@ -1108,15 +1108,15 @@ namespace SatsumaTurboCharger
             if (twinCarb_inst.Value)
             {
                 manifold_weber_part.partTrigger.triggerGameObject.SetActive(false);
-                intercooler_manifold_tube_weber_part.partTrigger.triggerGameObject.SetActive(false);
+                intercooler_manifold_weber_tube_part.partTrigger.triggerGameObject.SetActive(false);
 
                 if (manifold_weber_part.installed) { manifold_weber_part.removePart(); }
-                if (intercooler_manifold_tube_weber_part.installed) { intercooler_manifold_tube_weber_part.removePart(); }
+                if (intercooler_manifold_weber_tube_part.installed) { intercooler_manifold_weber_tube_part.removePart(); }
             }
             else
             {
                 manifold_weber_part.partTrigger.triggerGameObject.SetActive(true);
-                intercooler_manifold_tube_weber_part.partTrigger.triggerGameObject.SetActive(true);
+                intercooler_manifold_weber_tube_part.partTrigger.triggerGameObject.SetActive(true);
             }
 
 
@@ -1326,7 +1326,7 @@ namespace SatsumaTurboCharger
                 return (manifold_weber_part.InstalledScrewed(ignoreScrewable) || manifold_twinCarb_part.InstalledScrewed(ignoreScrewable)) &&
                     (
                     (intercooler_part.InstalledScrewed(ignoreScrewable) &&
-                    (intercooler_manifold_tube_weber_part.InstalledScrewed(ignoreScrewable) || intercooler_manifold_tube_twinCarb_part.InstalledScrewed(ignoreScrewable))
+                    (intercooler_manifold_weber_tube_part.InstalledScrewed(ignoreScrewable) || intercooler_manifold_twinCarb_tube_part.InstalledScrewed(ignoreScrewable))
                     ) ||
                     turboSmall_manifold_twinCarb_tube_part.InstalledScrewed(ignoreScrewable)) &&
                     exhaust_header_part.InstalledScrewed(ignoreScrewable);

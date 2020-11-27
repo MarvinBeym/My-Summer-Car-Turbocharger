@@ -48,7 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Editor\CreateAssetBundles.cs" />
      <None Include="Assets\Materials\Fire\AdditiveTintable.shader" />
-     <None Include="Assets\Custom3DTextDigital.shader" />
+     <None Include="Assets\other stuff\Custom3DTextDigital.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>P:/Unity 5.0.0/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

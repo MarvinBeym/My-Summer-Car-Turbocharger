@@ -1,4 +1,5 @@
 ﻿using ModsShop;
+using SatsumaTurboCharger.parts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,14 +22,24 @@ namespace SatsumaTurboCharger.shop
         public string gameObjectName;
 
         public ProductDetails product;
-        public ProductInformation(Kit kit, string productName, float price, string iconName, bool bought)
+        public ProductInformation(Kit kit, string productName, float price, string iconName)
         {
             this.gameObject = kit.kitBox;
             parts = kit.parts;
             this.productName = productName;
             this.price = price;
             this.iconName = iconName;
-            this.bought = bought;
+            this.bought = kit.bought;
+        }
+
+        public ProductInformation(Box box, string productName, float price, string iconName)
+        {
+            this.gameObject = box.box;
+            parts = box.parts;
+            this.productName = productName;
+            this.price = price;
+            this.iconName = iconName;
+            this.bought = box.bought;
         }
 
         public ProductInformation(SimplePart part, string productName, float price, string iconName)

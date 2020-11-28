@@ -99,7 +99,7 @@ namespace SatsumaTurboCharger.turbo
 
         private void HandleBoostChanging()
         {
-            if (turbo.boostChangingGameObject == null || !Helper.DetectRaycastHitObject(turbo.boostChangingGameObject))
+            if (turbo.boostChangingGameObject == null || !Helper.DetectRaycastHitObject(turbo.boostChangingGameObject, "Default"))
             {
                 return;
             }

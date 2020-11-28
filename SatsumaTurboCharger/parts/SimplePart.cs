@@ -12,11 +12,6 @@ namespace SatsumaTurboCharger
 {
     public class SimplePart : Part
     {
-        /**
-         * returnArray[0] = Mod
-         * returnArray[1] = save file string
-         * returnArray[2] = Loaded save file. or null if not found/not bought
-         */
         protected SatsumaTurboCharger mod;
         public ScrewablePart screwablePart { get; set; } = null;
         public Vector3 installLocation;
@@ -41,7 +36,7 @@ namespace SatsumaTurboCharger
             this.installLocation = installLocation;
             
             fixRigidPartNaming();
-            UnityEngine.Object.Destroy(part);
+            //UnityEngine.Object.Destroy(part);
         }
 
         public static List<Object> LoadData(SatsumaTurboCharger mod, string id, Dictionary<string, bool> partsBuySave, string boughtId = "")

@@ -19,7 +19,7 @@ namespace SatsumaTurboCharger.old_file_checker
             oldToNew.Add("turbocharger_big_exhaust_inlet_tube_partSave.txt", "turboBig_exhaustInlet_tube_saveFile.json");
             oldToNew.Add("turbocharger_big_exhaust_outlet_tube_partSave.txt", "turboBig_exhaustOutlet_tube_saveFile.json");
             oldToNew.Add("turbocharger_big_blowoff_valve_partSave.txt", "turboBig_blowoffValve_saveFile.json");
-            oldToNew.Add("turbocharger_big_exhaust_outlet_straight_partSave.txt", "turboBig_exhaustOutlet_straight_saveFile.json");
+            oldToNew.Add("turbocharger_big_exhaust_outlet_straight_partSave.txt", "turboBig_exhaust_outlet_straight_saveFile.json");
             oldToNew.Add("turbocharger_hood_partSave.txt", "turboBig_hood_saveFile.json");
             oldToNew.Add("turbocharger_turboBig_hood_partSave.txt", "turboBig_hood_saveFile.json");
 

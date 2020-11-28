@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 4185170273
+CRC: 2433841892
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 020e33da59a93d2fe9e043569efaa16f
+    Hash: ae29d866779af6405f5fed92251b751d
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 0c73e18da946a47a6de048761462cf21
+    Hash: 86a98480e8aea1e11fcc3b15858e08a8
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -31,15 +31,9 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 65
   Script: {instanceID: 0}
-- Class: 82
-  Script: {instanceID: 0}
-- Class: 83
-  Script: {instanceID: 0}
 - Class: 102
   Script: {instanceID: 0}
 - Class: 128
-  Script: {instanceID: 0}
-- Class: 135
   Script: {instanceID: 0}
 - Class: 136
   Script: {instanceID: 0}
@@ -55,18 +49,17 @@ Assets:
 - Assets/ProductImages/repair_turbocharger_small_ProductImage.png
 - Assets/ProductImages/turbocharger_manifold_twinCarb_kit_ProductImage.png
 - Assets/turboBig.prefab
-- Assets/bolt-stuff/bolt_nut.prefab
 - Assets/ProductImages/repair_intercooler_ProductImage.png
 - Assets/turboBig_exhaust_outlet_tube.prefab
 - Assets/turboSmall_intercooler_tube.prefab
 - Assets/ProductImages/repair_turbocharger_big_ProductImage.png
-- Assets/bodykit.prefab
+- Assets/bodykit/bodykit.prefab
 - Assets/turboSmall_airfilter.prefab
 - Assets/ProductImages/turbocharger_big_exhaust_outlet_straight_ProductImage.png
 - Assets/ProductImages/turbocharger_manifold_weber_kit_ProductImage.png
 - Assets/boost_gauge.prefab
 - Assets/turboBig_blowoff_valve.prefab
-- Assets/intercooler_manifold_tube_twinCarb.prefab
+- Assets/intercooler_manifold_twinCarb_tube.prefab
 - Assets/turboBig_exhaust_inlet_tube.prefab
 - Assets/exhaust_header.prefab
 - Assets/turboSmall_exhaust_outlet_tube.prefab
@@ -76,7 +69,7 @@ Assets:
 - Assets/Materials/bolt-texture.mat
 - Assets/turboBig_box.prefab
 - Assets/ProductImages/turbocharger_boost_gauge_ProductImage.png
-- Assets/intercooler_manifold_tube_weber.prefab
+- Assets/intercooler_manifold_weber_tube.prefab
 - Assets/turboSmall.prefab
 - Assets/ProductImages/turbocharger_small_airfilter_ProductImage.png
 - Assets/turboBig_intercooler_tube.prefab

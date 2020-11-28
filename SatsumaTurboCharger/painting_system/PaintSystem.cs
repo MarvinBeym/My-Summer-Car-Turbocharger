@@ -1,6 +1,7 @@
 ﻿using HutongGames.PlayMaker;
 using MSCLoader;
 using SatsumaTurboCharger.gui;
+using SatsumaTurboCharger.parts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace SatsumaTurboCharger.painting_system
             NotPainting
         }
 
-        public SimplePart part;
+        public AdvPart part;
 
 
         public State state = State.NotPainting;
@@ -34,7 +35,7 @@ namespace SatsumaTurboCharger.painting_system
         public Color defaultColor;
         public bool setupDone = false;
 
-        public PaintSystem(Dictionary<string, SaveableColor> partsColorSave, SimplePart part, Color defaultColor, string[] paintablePartsName = null)
+        public PaintSystem(Dictionary<string, SaveableColor> partsColorSave, AdvPart part, Color defaultColor, string[] paintablePartsName = null)
         {
             this.part = part;
             this.defaultColor = defaultColor;

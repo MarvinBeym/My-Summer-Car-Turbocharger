@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SatsumaTurboCharger.parts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,12 +11,12 @@ namespace SatsumaTurboCharger
     {
         private SatsumaTurboCharger mod;
         public GameObject kitBox;
-        public SimplePart[] parts;
+        public AdvPart[] parts;
         private KitLogic logic;
         public int spawnedCounter = 0;
         public string boughtId;
         public bool bought;
-        public Kit(SatsumaTurboCharger mod, GameObject kitBox, SimplePart[] simpleParts)
+        public Kit(SatsumaTurboCharger mod, GameObject kitBox, AdvPart[] simpleParts)
         {
             this.mod = mod;
             this.kitBox = kitBox;
@@ -24,7 +25,7 @@ namespace SatsumaTurboCharger
             bought = simpleParts[0].bought;
             if (!bought)
             {
-                foreach (SimplePart part in parts)
+                foreach (AdvPart part in parts)
                 {
                     part.removePart();
                     part.activePart.SetActive(false);
@@ -41,7 +42,7 @@ namespace SatsumaTurboCharger
             {
                 if (spawnedCounter < parts.Length)
                 {
-                    foreach (SimplePart part in parts)
+                    foreach (AdvPart part in parts)
                     {
                         if (!part.installed && !part.activePart.activeSelf)
                         {

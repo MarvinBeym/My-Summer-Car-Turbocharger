@@ -1,5 +1,6 @@
 ﻿using ModsShop;
 using MSCLoader;
+using SatsumaTurboCharger.parts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace SatsumaTurboCharger.wear
     {
         public SatsumaTurboCharger mod;
         public string id = "";
-        public SimplePart part;
+        public AdvPart part;
         public WearLogic activeLogic;
         public WearLogic rigidLogic;
 
@@ -30,7 +31,7 @@ namespace SatsumaTurboCharger.wear
         private ProductDetails repairProduct;
         public bool repairPurchaseMade = false;
 
-        public Wear(SatsumaTurboCharger mod, string id, SimplePart part, List<WearCondition> wearConditions, float wearReductionMultiplier, float wearReductionIntervall, Dictionary<string, float> wearSave, float productPrice, string productImage, int randomFallOff = -1)
+        public Wear(SatsumaTurboCharger mod, string id, AdvPart part, List<WearCondition> wearConditions, float wearReductionMultiplier, float wearReductionIntervall, Dictionary<string, float> wearSave, float productPrice, string productImage, int randomFallOff = -1)
         {
             this.mod = mod;
             this.id = id;

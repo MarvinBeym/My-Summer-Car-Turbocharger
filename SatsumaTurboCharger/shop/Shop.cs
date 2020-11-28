@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using SatsumaTurboCharger.parts;
 
 namespace SatsumaTurboCharger
 {
@@ -40,7 +41,7 @@ namespace SatsumaTurboCharger
                     }
                     else
                     {
-                        foreach(SimplePart part in productInformation.parts)
+                        foreach(AdvPart part in productInformation.parts)
                         {
                             SetPartBought(true, part);
                         }
@@ -51,7 +52,7 @@ namespace SatsumaTurboCharger
             });
         }
         
-        private void SetPartBought(bool bought, SimplePart part)
+        private void SetPartBought(bool bought, AdvPart part)
         {
             part.bought = true;
         }

@@ -8,6 +8,7 @@ using System.Text;
 using UnityEngine;
 using ScrewablePartAPI;
 using HutongGames.PlayMaker;
+using SatsumaTurboCharger.parts;
 
 namespace SatsumaTurboCharger
 {
@@ -49,11 +50,11 @@ namespace SatsumaTurboCharger
         {
             return FsmVariables.GlobalVariables.FindFsmString("PlayerCurrentVehicle").Value == "Satsuma";
         }
-        public static ScrewablePart[] GetScrewablePartsArrayFromPartsList(List<SimplePart> partsList)
+        public static ScrewablePart[] GetScrewablePartsArrayFromPartsList(List<AdvPart> partsList)
         {
             List<ScrewablePart> screwableParts = new List<ScrewablePart>();
 
-            partsList.ForEach(delegate (SimplePart part)
+            partsList.ForEach(delegate (AdvPart part)
             {
                 if (part.screwablePart != null)
                 {

@@ -8,7 +8,7 @@ using System.Text;
 using UnityEngine;
 using Object = System.Object;
 
-namespace SatsumaTurboCharger
+namespace SatsumaTurboCharger.parts
 {
     public class SimplePart : Part
     {

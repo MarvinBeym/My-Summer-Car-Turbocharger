@@ -11,8 +11,8 @@ namespace SatsumaTurboCharger.shop
     class ProductInformation
     {
         public GameObject gameObject;
-        public SimplePart part;
-        public SimplePart[] parts;
+        public AdvPart part;
+        public AdvPart[] parts;
         public bool usingSimplePart = false;
 
         public string productName;
@@ -42,7 +42,7 @@ namespace SatsumaTurboCharger.shop
             this.bought = box.bought;
         }
 
-        public ProductInformation(SimplePart part, string productName, float price, string iconName)
+        public ProductInformation(AdvPart part, string productName, float price, string iconName)
         {
             usingSimplePart = true;
             this.part = part;

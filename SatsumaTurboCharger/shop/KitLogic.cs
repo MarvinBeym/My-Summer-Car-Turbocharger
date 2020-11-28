@@ -1,5 +1,6 @@
 ﻿using ModApi;
 using MSCLoader;
+using SatsumaTurboCharger.parts;
 using System;
 using UnityEngine;
 
@@ -31,7 +32,7 @@ namespace SatsumaTurboCharger
                         ModClient.guiInteraction = string.Format("Press [{0}] to {1}", cInput.GetText("Use"), "Unpack " + kit.parts[kit.spawnedCounter].activePart.name.Replace("(Clone)", ""));
                         if (Helper.UseButtonDown)
                         {
-                            SimplePart part = kit.parts[kit.spawnedCounter];
+                            AdvPart part = kit.parts[kit.spawnedCounter];
 
                             part.activePart.transform.position = hit.point;
 

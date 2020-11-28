@@ -1,5 +1,6 @@
 ﻿using HutongGames.PlayMaker;
 using MSCLoader;
+using SatsumaTurboCharger.parts;
 using SatsumaTurboCharger.wear;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace SatsumaTurboCharger.turbo
     {
 
         protected SatsumaTurboCharger mod;
-        protected SimplePart part;
+        protected AdvPart part;
         protected Turbo_Logic logic;
         protected bool ecu_mod_installed = false;
         protected PlayMakerFSM ecu_installedFSM;
@@ -65,7 +66,7 @@ namespace SatsumaTurboCharger.turbo
         private ModAudio grinding_audio = new ModAudio();
         private ModAudio blowoff_audio = new ModAudio();
 
-        public Turbo(SatsumaTurboCharger mod, SimplePart part, Dictionary<string, float> boostSave,string loopSoundFile, string grindingSoundFIle, string blowoffSoundFile, bool[] requiredInstalled, Configuration config, GameObject boostChangingGameObject)
+        public Turbo(SatsumaTurboCharger mod, AdvPart part, Dictionary<string, float> boostSave,string loopSoundFile, string grindingSoundFIle, string blowoffSoundFile, bool[] requiredInstalled, Configuration config, GameObject boostChangingGameObject)
         {
             this.mod = mod;
             this.part = part;

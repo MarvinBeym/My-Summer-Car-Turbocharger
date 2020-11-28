@@ -90,6 +90,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="parts\AdvPart.cs" />
+    <Compile Include="parts\NewPart.cs" />
     <Compile Include="shop\BoxLogic.cs" />
     <Compile Include="GT_Turbocharger_Logic.cs" />
     <Compile Include="gui\GuiInfo.cs" />

@@ -13,22 +13,19 @@ namespace SatsumaTurboCharger
     {
         private string logging_filePath = "";
         private string file_name = "";
-        private SatsumaTurboCharger mod;
+        private Mod mod;
         private int maxErrorsToLog = 0;
         private int errorsLogged = 0;
-        public Logger(SatsumaTurboCharger mod, string file_name, int maxErrorsToLog)
+        public Logger(Mod mod, string file_name, int maxErrorsToLog)
         {
             this.mod = mod;
             this.file_name = file_name;
             this.maxErrorsToLog = maxErrorsToLog;
             logging_filePath = Path.Combine(ModLoader.GetModConfigFolder(mod), file_name);
-            if (!File.Exists(logging_filePath)){
-                WriteBaseInformationToFile();
-            }
-
+            InitLoggerFile();
         }
 
-        private void WriteBaseInformationToFile()
+        private void InitLoggerFile()
         {
             string os = SystemInfo.operatingSystem;
             int build = int.Parse(os.Split('(')[1].Split(')')[0].Split('.')[2]);
@@ -91,7 +88,7 @@ $@"╔{GenerateHeader(" Environment ", maxLineLength)}
 
         public void New(string message, string additionalInfo = "", Exception ex = null)
         {
-            if(errorsLogged <= maxErrorsToLog)
+            if (errorsLogged <= maxErrorsToLog)
             {
                 errorsLogged++;
 
@@ -100,8 +97,8 @@ $@"╔{GenerateHeader(" Environment ", maxLineLength)}
                     DateTime dateTime = DateTime.Now;
                     string formatedDateTime = dateTime.ToString("G", CultureInfo.CreateSpecificCulture("de-DE"));
                     string errorLogLine = $"[{formatedDateTime}] {message}{Environment.NewLine}";
-                  
-                    if(additionalInfo != null || additionalInfo != "")
+
+                    if (additionalInfo != null || additionalInfo != "")
                     {
                         string additionalInfoLogLine = $"=> Additional infos: {additionalInfo}{Environment.NewLine}";
                         errorLogLine += additionalInfoLogLine;
@@ -116,7 +113,7 @@ $@"╔{GenerateHeader(" Environment ", maxLineLength)}
                     sw.Write(errorLogLine);
                 }
             }
-            
+
         }
 
         private string BoolToCracked(bool steamValid)
@@ -126,11 +123,6 @@ $@"╔{GenerateHeader(" Environment ", maxLineLength)}
                 return "Steam detected";
             }
             return "NO Steam detected";
-        }
-
-        public void WriteToFile(string message)
-        {
-
         }
     }
 }

@@ -55,6 +55,7 @@ namespace SatsumaTurboCharger
          * Added old file renaming tool
          * Added copying of old save files to folder "AUTO_BACKUP" before changing name
          * Added clear error message when mod can't load the AssetBundle
+         * Added logger
          * 
          */
 

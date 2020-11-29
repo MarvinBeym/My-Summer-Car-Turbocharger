@@ -120,23 +120,13 @@ namespace SatsumaTurboCharger
         //
 
         //Big Turbo
-        private Vector3 turboBig_installLocation = new Vector3(-0.2705f, -0.064f, 0.273f);
+        private Vector3 turboBig_installLocation = new Vector3(-0.066f, 0.288f, -0.079f);                                       //Done
         private Vector3 turboBig_intercooler_tube_installLocation = new Vector3(0.345f, 0.04f, 1.4425f);                        //Done
 
-        private Vector3 turboBig_exhaust_inlet_tube_installLocation = new Vector3(-0.179f, -0.1506f, -0.037f);
-        private Vector3 turboBig_exhaust_outlet_tube_installLocation = new Vector3(-0.217f, -0.229f, -0.059f);
-        private Vector3 turboBig_blowoff_valve_installLocation = new Vector3(0.315f, 0.258f, 1.332f);
-        private Vector3 turboBig_exhaust_outlet_straight_installLocation = new Vector3(-0.316f, -0.2f, 0.307f);
-
-        public static Vector3 turboBig_spawnLocation = new Vector3(1558.366f, 5f, 742.5068f);
-        public static Vector3 turboBig_intercooler_tube_spawnLocation = new Vector3(1556.846f, 5f, 741.4836f);
-        public static Vector3 turboBig_exhaust_inlet_tube_spawnLocation = new Vector3(1557.866f, 5.5f, 741.9728f);
-        public static Vector3 turboBig_exhaust_outlet_tube_spawnLocation = new Vector3(1557.352f, 5f, 741.7303f);
-
- 
-
-        public static Vector3 turboBig_blowoff_valve_spawnLocation = new Vector3(1555.136f, 5.8f, 737.2324f);
-        public static Vector3 turboBig_exhaust_outlet_straight_spawnLocation = new Vector3(1555.136f, 5.8f, 737.2324f);
+        private Vector3 turboBig_exhaust_inlet_tube_installLocation = new Vector3(-0.234f, -0.02f, 0.099f);                     //Done
+        private Vector3 turboBig_exhaust_outlet_tube_installLocation = new Vector3(-0.3075f, 1.044f, 0.458f);                   //Done
+        private Vector3 turboBig_blowoff_valve_installLocation = new Vector3(0.027f, 0.1385f, 0.1635f);                         //Done
+        private Vector3 turboBig_exhaust_outlet_straight_installLocation = new Vector3(-0.0185f, 0.0385f, 0.159f);              //Done
 
         //Small Turbo
         private Vector3 turboSmall_installLocation = new Vector3(-0.25f, -0.1665f, 0.0001f);
@@ -146,32 +136,16 @@ namespace SatsumaTurboCharger
         private Vector3 turboSmall_exhaust_outlet_tube_installLocation = new Vector3(-0.1825f, -0.267f, -0.145f);
         private Vector3 turboSmall_airfilter_installLocation = new Vector3(-0.25f, -0.04f, 0.0001f);
 
-        public static Vector3 turboSmall_spawnLocation = new Vector3(1457.509f, -1.8f, 716.0f);
-        public static Vector3 turboSmall_exhaust_inlet_tube_spawnLocation = new Vector3(1457.509f, -1.8f, 715.5f);
-        public static Vector3 turboSmall_exhaust_outlet_tube_spawnLocation = new Vector3(1457.509f, -1.8f, 715.0f);
-        public static Vector3 turboSmall_manifold_twinCarb_tube_spawnLocation = new Vector3(1457.509f, -1.8f, 714.5f);
-        public static Vector3 turboSmall_airfilter_spawnLocation = new Vector3(1555.174f, 5.8f, 736.9866f);
-        public static Vector3 turboSmall_intercooler_tube_spawnLocation = new Vector3(1554.144f, 5f, 738.733f);
-
         //Other Parts
         private Vector3 turboBig_hood_installLocation = new Vector3(0.0f, 0.295f, 1.326f);                                      //Done
-        private Vector3 manifold_weber_installLocation = new Vector3(0.002f, -0.167f, 0.065f);                                  //Done
+        private Vector3 manifold_weber_installLocation = new Vector3(0.002f, -0.167f, 0.065f);
 
         private Vector3 manifold_twinCarb_installLocation = new Vector3(0.0075f, -0.265f, 0.006f);
         private Vector3 boost_gauge_installLocation = new Vector3(0.5f, -0.04f, 0.125f);                                        //Done
-        private Vector3 intercooler_installLocation = new Vector3(0.0f, -0.162f, 1.6775f);
-        private Vector3 intercooler_manifold_weber_tube_installLocation = new Vector3(0.36f, 0.002f, -0.097f);                  //Done
+        private Vector3 intercooler_installLocation = new Vector3(0.0f, -0.162f, 1.6775f);                                      //Done
+        private Vector3 intercooler_manifold_weber_tube_installLocation = new Vector3(0.36f, 0.227f, 0.472f);
         private Vector3 intercooler_manifold_twinCarb_tube_installLocation = new Vector3(-0.332f, -0.047f, 1.445f);
         private Vector3 exhaust_header_installLocation = new Vector3(-0.005f, -0.089f, -0.064f);
-
-        public static Vector3 exhaust_header_spawnLocation = new Vector3(1555.136f, 5.8f, 737.2324f);
-        public static Vector3 turboBig_hood_spawnLocation = new Vector3(1559.46f, 5f, 742.296f);
-        public static Vector3 manifold_weber_spawnLocation = new Vector3(1555.18f, 5.8f, 737.8821f);
-        public static Vector3 manifold_twinCarb_spawnLocation = new Vector3(1555.07f, 5.8f, 737.6261f);
-        public static Vector3 boost_gauge_spawnLocation = new Vector3(1555.383f, 5.8f, 737.058f);
-        public static Vector3 intercooler_spawnLocation = new Vector3(1555.382f, 5.8f, 737.3588f);
-        public static Vector3 intercooler_manifold_weber_tube_spawnLocation = new Vector3(1554.56f, 5f, 737.2017f);
-        public static Vector3 intercooler_manifold_twinCarb_tube_spawnLocation = new Vector3(1554.339f, 5.5f, 737.913f);
 
         //Mods Shop
         private ShopItem modsShop;
@@ -594,7 +568,7 @@ turboBig_part = new SimplePart(
 
             intercooler_manifold_weber_tube_part = new AdvPart(this,
                 "intercooler_manifold_weber_tube", "Weber Intercooler-Manifold Tube", intercooler_part.part, "",
-                intercooler_manifold_weber_tube_installLocation, new Vector3(90, 0, 0), 
+                intercooler_manifold_weber_tube_installLocation, new Vector3(0, 0, 0), 
                 assetsBundle, partsBuySave, "manifold_weber_kit");
 
             intercooler_manifold_twinCarb_tube_part = new AdvPart(this,
@@ -607,14 +581,25 @@ turboBig_part = new SimplePart(
                 exhaust_header_installLocation, new Vector3(90, 0, 0),
                 assetsBundle, partsBuySave);
 
+            turboBig_exhaust_inlet_tube_part = new AdvPart(this,
+                "turboBig_exhaust_inlet_tube", "Racing Turbo Exhaust Inlet Tube", exhaust_header_part.part, "",
+                turboBig_exhaust_inlet_tube_installLocation, new Vector3(0, 0, 0),
+                assetsBundle, partsBuySave, "turboBig_kit");
+
+            turboBig_exhaust_outlet_tube_part = new AdvPart(this,
+                "turboBig_exhaust_outlet_tube", "Racing Turbo Exhaust Outlet Tube", GameObject.Find("racing exhaust(Clone)"), "",
+                turboBig_exhaust_outlet_tube_installLocation, new Vector3(90, 0, 0),
+                assetsBundle, partsBuySave, "turboBig_kit");
+
+
             turboBig_part = new AdvPart(this,
-                "turboBig", "Racing Turbo", originalCylinerHead, "",
-                turboBig_installLocation, new Vector3(90, 0, 0), 
+                "turboBig", "Racing Turbo", turboBig_exhaust_inlet_tube_part.part, "",
+                turboBig_installLocation, new Vector3(0, 0, 0), 
                 assetsBundle, partsBuySave, "turboBig_kit");
 
             turboBig_exhaust_outlet_straight_part = new AdvPart(this,
-                "turboBig_exhaust_outlet_straight", "Racing Turbo Exhaust Straight", originalCylinerHead, "",
-                turboBig_exhaust_outlet_straight_installLocation, new Vector3(90, 0, 0),
+                "turboBig_exhaust_outlet_straight", "Racing Turbo Exhaust Straight", turboBig_part.part, "",
+                turboBig_exhaust_outlet_straight_installLocation, new Vector3(0, 0, 0),
                 assetsBundle, partsBuySave);
 
             turboBig_intercooler_tube_part = new AdvPart(this,
@@ -622,19 +607,9 @@ turboBig_part = new SimplePart(
                 turboBig_intercooler_tube_installLocation, new Vector3(0, 180, 0),
                 assetsBundle, partsBuySave, "turboBig_kit");
 
-            turboBig_exhaust_inlet_tube_part = new AdvPart(this,
-                "turboBig_exhaust_inlet_tube", "Racing Turbo Exhaust Inlet Tube", originalCylinerHead, "",
-                turboBig_exhaust_inlet_tube_installLocation, new Vector3(90, 0, 0),
-                assetsBundle, partsBuySave, "turboBig_kit");
-
-            turboBig_exhaust_outlet_tube_part = new AdvPart(this,
-                "turboBig_exhaust_outlet_tube", "Racing Turbo Exhaust Outlet Tube", originalCylinerHead, "",
-                turboBig_exhaust_outlet_tube_installLocation, new Vector3(90, 0, 0),
-                assetsBundle, partsBuySave, "turboBig_kit");
-
             turboBig_blowoff_valve_part = new AdvPart(this,
-                "turboBig_blowoff_valve", "Racing Turbo Blowoff Valve", satsuma, "",
-                turboBig_exhaust_outlet_tube_installLocation, new Vector3(0, 180, 0),
+                "turboBig_blowoff_valve", "Racing Turbo Blowoff Valve", turboBig_intercooler_tube_part.part, "",
+                turboBig_blowoff_valve_installLocation, new Vector3(0, 0, 45),
                 assetsBundle, partsBuySave);
 
             turboBig_hood_part = new AdvPart(this,
@@ -643,7 +618,7 @@ turboBig_part = new SimplePart(
                 assetsBundle, partsBuySave);
 
             turboSmall_part = new AdvPart(this,
-                "turboSmall", "Racing Turbo Hood", originalCylinerHead, "",
+                "turboSmall", "GT Turbo", originalCylinerHead, "",
                 turboSmall_installLocation, new Vector3(90, 0, 0),
                 assetsBundle, partsBuySave, "turboSmall_kit");
             turboSmall_logic = turboSmall_part.rigidPart.AddComponent<GT_Turbocharger_Logic>();
@@ -737,13 +712,11 @@ turboBig_part = new SimplePart(
                     turboSmall_intercooler_tube_part,
                 });
 
-            /*
             manifoldWeber_kit = new Kit(this, manifoldWeber_kitBox,
-                new SimplePart[]{
+                new AdvPart[]{
                     manifold_weber_part,
                     intercooler_manifold_weber_tube_part
                 });
-            */
             manifoldTwinCarb_kit = new Kit(this, manifoldTwinCarb_kitBox,
                 new AdvPart[]
                 {
@@ -1368,8 +1341,8 @@ turboBig_part = new SimplePart(
                     new ProductInformation(turboSmall_manifold_twinCarb_tube_part, "GT Turbocharger TwinCarb Tube", 300, null),
                     new ProductInformation(turboSmall_airfilter_part, "GT Turbocharger Airfilter", 800, null),
                     new ProductInformation(manifoldTwinCarb_kit, "TwinCarb Manifold Kit", 1950, null),
-                    //new ProductInformation(manifoldWeber_kit, "Weber Manifold Kit", 2250, null),
-                    //new ProductInformation(intercooler_part, "Intercooler", 3500, null),
+                    new ProductInformation(manifoldWeber_kit, "Weber Manifold Kit", 2250, null),
+                    new ProductInformation(intercooler_part, "Intercooler", 3500, null),
                     new ProductInformation(boost_gauge_part, "Boost Gauge", 180, null),
                     new ProductInformation(exhaust_header_part, "Turbocharger Exhaust Header", 2100, null),
                 };

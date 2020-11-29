@@ -25,19 +25,11 @@ namespace SatsumaTurboCharger.parts
         public List<NewPart> childParts;
         public bool bought;
 
-        public AdvPart(Mod mod, string id, string name, NewPart parentPart, string prefabName, Vector3 installPosition, Vector3 installRotation, AssetBundle assetBundle, Dictionary<string, bool> partsBuySave = null, string boughtId = null)
+        public void DefineBaseInfo(Mod mod, string id, Dictionary<string, bool> partsBuySave, string boughtId)
         {
             this.mod = mod;
             this.id = id;
-            this.parentPart = parentPart;
-            saveFile = id + "_saveFile.json";
-
-            if(prefabName == null || prefabName == "")
-            {
-                prefabName = id + ".prefab";
-            }
-
-            partGameObject = Helper.LoadPartAndSetName(assetBundle, prefabName, name);
+            this.saveFile = id + "_saveFile.json";
 
             if (boughtId == null || boughtId == "")
             {
@@ -47,6 +39,32 @@ namespace SatsumaTurboCharger.parts
             {
                 this.boughtId = boughtId;
             }
+            this.bought = CheckBought(partsBuySave, this.boughtId);
+        }
+        public void DefineBasePartCalls(NewPart part)
+        {
+            part.SetOnAssemble(new Action(OnAssemble));
+            part.SetOnDisassemble(new Action(OnDisassemble));
+            FixRigidPartNaming(part);
+        }
+        private string DefinePrefabName(string prefabName)
+        {
+            if (prefabName == null || prefabName == "")
+            {
+                prefabName = id + ".prefab";
+            }
+            return prefabName;
+        }
+
+        public AdvPart(Mod mod, string id, string name, NewPart parentPart, GameObject objectToInstantiate, Vector3 installPosition, Vector3 installRotation, Dictionary<string, bool> partsBuySave = null, string boughtId = null)
+        {
+            DefineBaseInfo(mod, id, partsBuySave, boughtId);
+
+            this.parentPart = parentPart;
+
+            partGameObject = GameObject.Instantiate(objectToInstantiate);
+
+            Helper.SetObjectNameTagLayer(partGameObject, name + "(Clone)");
 
             bought = CheckBought(partsBuySave, boughtId);
             PartSaveInfo partSaveInfo = GetPartSaveInfo(bought, mod, saveFile);
@@ -60,29 +78,38 @@ namespace SatsumaTurboCharger.parts
                 installRotation);
             parentPart.AddChildPart(part);
 
-            part.SetOnAssemble(new Action(OnAssemble));
-            part.SetOnDisassemble(new Action(OnDisassemble));
-            fixRigidPartNaming();
+            DefineBasePartCalls(part);
         }
-        public AdvPart(Mod mod, string id, string name, GameObject parentPart, string prefabName, Vector3 installPosition, Vector3 installRotation, AssetBundle assetBundle, Dictionary<string, bool> partsBuySave = null, string boughtId = null)
-        {
-            this.mod = mod;
-            this.id = id;
-            string saveFile = id + "_saveFile.json";
 
-            if (prefabName == null || prefabName == "")
-            {
-                prefabName = id + ".prefab";
-            }
+        public AdvPart(Mod mod, string id, string name, NewPart parentPart, string prefabName, Vector3 installPosition, Vector3 installRotation, AssetBundle assetBundle, Dictionary<string, bool> partsBuySave = null, string boughtId = null)
+        {
+            DefineBaseInfo(mod, id, partsBuySave, boughtId);
+            prefabName = DefinePrefabName(prefabName);
+
+            this.parentPart = parentPart;
 
             partGameObject = Helper.LoadPartAndSetName(assetBundle, prefabName, name);
 
-            if (boughtId == null || boughtId == "")
-            {
-                boughtId = id;
-            }
+            PartSaveInfo partSaveInfo = GetPartSaveInfo(bought, mod, saveFile);
 
-            bought = CheckBought(partsBuySave, boughtId);
+            part = new NewPart(
+                partSaveInfo,
+                partGameObject,
+                parentPart.rigidPart,
+                new Trigger(id + "_trigger", parentPart.rigidPart, installPosition, new Quaternion(0, 0, 0, 0), new Vector3(triggerSize, triggerSize, triggerSize), false),
+                installPosition,
+                installRotation);
+            parentPart.AddChildPart(part);
+
+            DefineBasePartCalls(part);
+        }
+        public AdvPart(Mod mod, string id, string name, GameObject parentPart, string prefabName, Vector3 installPosition, Vector3 installRotation, AssetBundle assetBundle, Dictionary<string, bool> partsBuySave = null, string boughtId = null)
+        {
+            DefineBaseInfo(mod, id, partsBuySave, boughtId);
+            prefabName = DefinePrefabName(prefabName);
+
+            partGameObject = Helper.LoadPartAndSetName(assetBundle, prefabName, name);
+
             PartSaveInfo partSaveInfo = GetPartSaveInfo(bought, mod, saveFile);
 
             part = new NewPart(
@@ -93,12 +120,10 @@ namespace SatsumaTurboCharger.parts
                 installPosition,
                 installRotation);
 
-            part.SetOnAssemble(new Action(OnAssemble));
-            part.SetOnDisassemble(new Action(OnDisassemble));
-            fixRigidPartNaming();
+            DefineBasePartCalls(part);
         }
 
-        private void fixRigidPartNaming()
+        private void FixRigidPartNaming(NewPart part)
         {
             part.rigidPart.name = part.rigidPart.name.Replace("(Clone)(Clone)", "(Clone)");
         }

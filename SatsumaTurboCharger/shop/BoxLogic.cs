@@ -13,7 +13,7 @@ namespace SatsumaTurboCharger
         private Box box;
         private string actionToDisplay;
         private SatsumaTurboCharger mod;
-        private SimplePart[] parts;
+        private AdvPart[] parts;
         private RaycastHit hit;
         // Use this for initialization
         void Start()
@@ -29,7 +29,7 @@ namespace SatsumaTurboCharger
                 ModClient.guiInteraction = string.Format("Press [{0}] to {1}", cInput.GetText("Use"), actionToDisplay);
                 if (Helper.UseButtonDown)
                 {
-                    SimplePart part = parts[box.spawnedCounter];
+                    AdvPart part = parts[box.spawnedCounter];
 
                     part.activePart.transform.position = hit.point;
 
@@ -43,7 +43,7 @@ namespace SatsumaTurboCharger
             }
         }
 
-        public void Init(SatsumaTurboCharger mod, SimplePart[] parts, string actionToDisplay, Box box)
+        public void Init(SatsumaTurboCharger mod, AdvPart[] parts, string actionToDisplay, Box box)
         {
             this.box = box;
             this.mod = mod;

@@ -112,13 +112,20 @@ namespace SatsumaTurboCharger.parts
 
             PartSaveInfo partSaveInfo = GetPartSaveInfo(bought, mod, saveFile);
 
-            part = new NewPart(
-                partSaveInfo,
-                partGameObject,
-                parentPart,
-                new Trigger(id + "_trigger", parentPart, installPosition, new Quaternion(0, 0, 0, 0), new Vector3(triggerSize, triggerSize, triggerSize), false),
-                installPosition,
-                installRotation);
+            try
+            {
+                part = new NewPart(
+                    partSaveInfo,
+                    partGameObject,
+                    parentPart,
+                    new Trigger(id + "_trigger", parentPart, installPosition, new Quaternion(0, 0, 0, 0), new Vector3(triggerSize, triggerSize, triggerSize), false),
+                    installPosition,
+                    installRotation);
+            } catch(Exception ex)
+            {
+
+            }
+
 
             DefineBasePartCalls(part);
         }

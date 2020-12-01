@@ -197,7 +197,7 @@ namespace SatsumaTurboCharger.turbo
             }
             catch (Exception ex)
             {
-                mod.logger.New("Ecu mod gameobject could not be found or the component is missing", "Mod was found but not gameobject", ex);
+                Logger.New("Ecu mod gameobject could not be found or the component is missing", "Mod was found but not gameobject", ex);
                 return false;
             }
             return true;

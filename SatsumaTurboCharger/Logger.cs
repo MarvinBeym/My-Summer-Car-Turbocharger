@@ -9,23 +9,21 @@ using UnityEngine;
 
 namespace SatsumaTurboCharger
 {
-    public class Logger
+    public static class Logger
     {
-        private string logging_filePath = "";
-        private string file_name = "";
-        private Mod mod;
-        private int maxErrorsToLog = 0;
-        private int errorsLogged = 0;
-        public Logger(Mod mod, string file_name, int maxErrorsToLog)
+        private static string logging_filePath = "";
+        private static Mod mod;
+        private static int maxErrorsToLog = 0;
+        private static int errorsLogged = 0;
+        public static void InitLogger(Mod mod, string file_name, int maxErrorsToLog)
         {
-            this.mod = mod;
-            this.file_name = file_name;
-            this.maxErrorsToLog = maxErrorsToLog;
+            Logger.mod = mod;
+            Logger.maxErrorsToLog = maxErrorsToLog;
             logging_filePath = Path.Combine(ModLoader.GetModConfigFolder(mod), file_name);
-            InitLoggerFile();
+            InitFile();
         }
 
-        private void InitLoggerFile()
+        private static void InitFile()
         {
             string os = SystemInfo.operatingSystem;
             int build = int.Parse(os.Split('(')[1].Split(')')[0].Split('.')[2]);
@@ -44,7 +42,7 @@ namespace SatsumaTurboCharger
             int maxLineLength = 62;
             foreach (Mod mod in ModLoader.LoadedMods)
             {
-                // Ignore MSCLoader or MOP.
+                // Ignore MSCLoader.
                 if (mod.ID == "MSCLoader_Console" || mod.ID == "MSCLoader_Settings")
                     continue;
 
@@ -60,9 +58,9 @@ $@"╔{GenerateHeader(" Environment ", maxLineLength)}
 ║ Steam:        { BoolToCracked(ModLoader.CheckSteam()) }
 ║ OS:           { os }
 ╠{GenerateHeader(" Mod ", maxLineLength)}
-║ Name:         { this.mod.Name }
-║ Version:      { this.mod.Version }
-║ Author:       { this.mod.Author }
+║ Name:         { mod.Name }
+║ Version:      { mod.Version }
+║ Author:       { mod.Author }
 ╠{GenerateHeader(" ModLoader ", maxLineLength)}
 ║ Version:      { ModLoader.MSCLoader_Ver }
 ║ Dev:          { ModLoader.devMode}
@@ -78,7 +76,7 @@ $@"╔{GenerateHeader(" Environment ", maxLineLength)}
             }
         }
 
-        private string GenerateHeader(string description, int maxLineLength, char headerLine = '═')
+        private static string GenerateHeader(string description, int maxLineLength, char headerLine = '═')
         {
             string header = "════";
             header += description;
@@ -86,7 +84,31 @@ $@"╔{GenerateHeader(" Environment ", maxLineLength)}
             return header;
         }
 
-        public void New(string message, string additionalInfo = "", Exception ex = null)
+        private static string AddBaseLogLine(string message)
+        {
+            DateTime dateTime = DateTime.Now;
+            string formatedDateTime = dateTime.ToString("G", CultureInfo.CreateSpecificCulture("de-DE"));
+            return $"[{formatedDateTime}] {message}{Environment.NewLine}";
+        }
+
+        private static string AddAdditionalInfoLine(string errorLogLine, string info)
+        {
+            if (info != null || info != "")
+            {
+                errorLogLine += $"=> Additional infos: {info}{Environment.NewLine}";
+            }
+            return errorLogLine;
+        }
+        private static string AddExceptionLine(string errorLogLine, Exception ex)
+        {
+            if (ex != null)
+            {
+                errorLogLine += $"=> Exception message: {ex.Message}{Environment.NewLine}";
+            }
+            return errorLogLine;
+        }
+
+        public static void New(string message)
         {
             if (errorsLogged <= maxErrorsToLog)
             {
@@ -94,29 +116,63 @@ $@"╔{GenerateHeader(" Environment ", maxLineLength)}
 
                 using (StreamWriter sw = new StreamWriter(logging_filePath, true))
                 {
-                    DateTime dateTime = DateTime.Now;
-                    string formatedDateTime = dateTime.ToString("G", CultureInfo.CreateSpecificCulture("de-DE"));
-                    string errorLogLine = $"[{formatedDateTime}] {message}{Environment.NewLine}";
-
-                    if (additionalInfo != null || additionalInfo != "")
-                    {
-                        string additionalInfoLogLine = $"=> Additional infos: {additionalInfo}{Environment.NewLine}";
-                        errorLogLine += additionalInfoLogLine;
-                    }
-                    if (ex != null)
-                    {
-                        string exceptionLogLine = $"=> Exception message: {ex.Message}{Environment.NewLine}";
-                        errorLogLine += exceptionLogLine;
-                    }
-
+                    string errorLogLine = AddBaseLogLine(message);
                     errorLogLine += Environment.NewLine;
                     sw.Write(errorLogLine);
                 }
             }
-
         }
 
-        private string BoolToCracked(bool steamValid)
+        public static void New(string message, string additionalInfo)
+        {
+            if (errorsLogged <= maxErrorsToLog)
+            {
+                errorsLogged++;
+
+                using (StreamWriter sw = new StreamWriter(logging_filePath, true))
+                {
+                    string errorLogLine = AddBaseLogLine(message);
+                    errorLogLine = AddAdditionalInfoLine(errorLogLine, additionalInfo);
+                    errorLogLine += Environment.NewLine;
+                    sw.Write(errorLogLine);
+                }
+            }
+        }
+        public static void New(string message, Exception ex)
+        {
+            if (errorsLogged <= maxErrorsToLog)
+            {
+                errorsLogged++;
+
+                using (StreamWriter sw = new StreamWriter(logging_filePath, true))
+                {
+                    string errorLogLine = AddBaseLogLine(message);
+                    errorLogLine = AddExceptionLine(errorLogLine, ex);
+                    errorLogLine += Environment.NewLine;
+                    sw.Write(errorLogLine);
+                }
+            }
+        }
+
+        public static void New(string message, string additionalInfo, Exception ex)
+        {
+            if (errorsLogged <= maxErrorsToLog)
+            {
+                errorsLogged++;
+
+                using (StreamWriter sw = new StreamWriter(logging_filePath, true))
+                {
+                    string errorLogLine = AddBaseLogLine(message);
+                    errorLogLine = AddAdditionalInfoLine(errorLogLine, additionalInfo);
+                    errorLogLine = AddExceptionLine(errorLogLine, ex);
+                    errorLogLine += Environment.NewLine;
+                    sw.Write(errorLogLine);
+                }
+            }
+        }
+
+
+        private static string BoolToCracked(bool steamValid)
         {
             if (steamValid)
             {

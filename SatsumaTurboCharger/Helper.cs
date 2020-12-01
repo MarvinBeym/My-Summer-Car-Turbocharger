@@ -9,12 +9,24 @@ using UnityEngine;
 using ScrewablePartAPI;
 using HutongGames.PlayMaker;
 using SatsumaTurboCharger.parts;
-
 namespace SatsumaTurboCharger
 {
     public static class Helper
     {
-        public static AssetBundle LoadAssetBundle(Mod mod, string fileName, Logger logger)
+        public static GameObject GetGameObjectFromFsm(GameObject fsmGameObject, string fsmToUse = "Data")
+        {
+            foreach(PlayMakerFSM fsm in fsmGameObject.GetComponents<PlayMakerFSM>())
+            {
+                if(fsm.FsmName == fsmToUse)
+                {
+                    return fsm.FsmVariables.FindFsmGameObject("ThisPart").Value;
+                }
+            }
+            Logger.New("Unable to find base gameobject on supplied fsm gameobject", fsmGameObject.name + "fsmToUse: " + fsmToUse);
+            return null;
+        }
+
+        public static AssetBundle LoadAssetBundle(Mod mod, string fileName)
         {
             try
             {
@@ -23,7 +35,7 @@ namespace SatsumaTurboCharger
             catch (Exception ex)
             {
                 string message = String.Format("AssetBundle file '{0}' could not be loaded", fileName);
-                logger.New(
+                Logger.New(
                     message,
                     String.Format("Check: {0}", Path.Combine(ModLoader.GetModAssetsFolder(mod), fileName)),
                     ex);

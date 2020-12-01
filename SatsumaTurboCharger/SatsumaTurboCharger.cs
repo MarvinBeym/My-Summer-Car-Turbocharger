@@ -56,6 +56,7 @@ namespace SatsumaTurboCharger
          * Added copying of old save files to folder "AUTO_BACKUP" before changing name
          * Added clear error message when mod can't load the AssetBundle
          * Added logger
+         * Fixed some errors that could happen sometimes on launch
          * 
          */
 
@@ -88,11 +89,10 @@ namespace SatsumaTurboCharger
         public override string ID => "SatsumaTurboCharger"; //Your mod ID (unique)
         public override string Name => "DonnerTechRacing Turbocharger"; //You mod name
         public override string Author => "DonnerPlays"; //Your Username
-        public override string Version => "2.1.7"; //Version
+        public override string Version => "2.2"; //Version
         public override bool UseAssetsFolder => true;
 
         public SaveFileRenamer saveFileRenamer;
-        public Logger logger;
         public GuiDebug guiDebug;
 
         //Kits
@@ -309,6 +309,7 @@ namespace SatsumaTurboCharger
         public override void OnLoad()
         {
             ModConsole.Print("DonnerTechRacing Turbocharger Mod [v" + this.Version + " | Screwable: v" + ScrewablePart.apiVersion + "]" + " started loading");
+            Logger.InitLogger(this, logger_saveFile, 100);
             ecuModInstalled = ModLoader.IsModPresent("DonnerTech_ECU_Mod");
             saveFileRenamer = new SaveFileRenamer(this, 900);
             guiDebug = new GuiDebug(Screen.width - 260, 50, 250, "TURBO MOD DEBUG", new List<GuiButtonElement>()
@@ -317,7 +318,6 @@ namespace SatsumaTurboCharger
                 new GuiButtonElement("Wear"),
             });
 
-            logger = new Logger(this, logger_saveFile, 100);
             if (!ModLoader.CheckSteam())
             {
                 ModUI.ShowMessage("Cunt", "CUNT");
@@ -325,8 +325,8 @@ namespace SatsumaTurboCharger
             }
             resetPosSetting.DoAction = PosReset;
 
-            assetsBundle = Helper.LoadAssetBundle(this, "turbochargermod.unity3d", logger);
-            screwableAssetsBundle = Helper.LoadAssetBundle(this, "screwableapi.unity3d", logger);
+            assetsBundle = Helper.LoadAssetBundle(this, "turbochargermod.unity3d");
+            screwableAssetsBundle = Helper.LoadAssetBundle(this, "screwableapi.unity3d");
 
             try
             {
@@ -345,8 +345,8 @@ namespace SatsumaTurboCharger
                 originalExhaustPipeRacePosition = new Vector3(exhaustFromPipe.transform.localPosition.x, exhaustFromPipe.transform.localPosition.y, exhaustFromPipe.transform.localPosition.z);
                 originalExhaustPipeRaceRotation = new Quaternion(exhaustFromPipe.transform.localRotation.x, exhaustFromPipe.transform.localRotation.y, exhaustFromPipe.transform.localRotation.z, exhaustFromPipe.transform.localRotation.w);
 
-                weberCarb = GameObject.Find("racing carburators(Clone)");
-                twinCarb = GameObject.Find("twin carburators(Clone)");
+                weberCarb = Helper.GetGameObjectFromFsm(GameObject.Find("Racing Carburators"));
+                twinCarb = Helper.GetGameObjectFromFsm(GameObject.Find("Twin Carburators"));
 
                 weberCarb_inst = GameObject.Find("Racing Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
                 twinCarb_inst = GameObject.Find("Twin Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
@@ -371,7 +371,7 @@ namespace SatsumaTurboCharger
             } 
             catch(Exception ex)
             {
-                logger.New("Error while trying to load required game objects/values", "Gameobject.Find has failed to return the desired object", ex);
+                Logger.New("Error while trying to load required game objects/values", "Gameobject.Find has failed to return the desired object", ex);
             }
 
             
@@ -385,16 +385,16 @@ namespace SatsumaTurboCharger
             }
             catch(Exception ex)
             {
-                logger.New("Error while trying to deserialize save file", "Please check paths to save files", ex);
+                Logger.New("Error while trying to deserialize save file", "Please check paths to save files", ex);
             }
 
             manifold_weber_part = new AdvPart(this,
-                "manifold_weber", "Weber Manifold", GameObject.Find("racing carburators(Clone)"), "",
+                "manifold_weber", "Weber Manifold", weberCarb, "",
                 manifold_weber_installLocation, new Vector3(80, 0, 0),
                 assetsBundle, partsBuySave, "manifold_weber_kit");
 
             manifold_twinCarb_part = new AdvPart(this,
-                "manifold_twinCarb", "TwinCarb Manifold", GameObject.Find("twin carburators(Clone)"), "",
+                "manifold_twinCarb", "TwinCarb Manifold", twinCarb, "",
                 manifold_twinCarb_installLocation, new Vector3(90, 0, 0),
                 assetsBundle, partsBuySave);
 
@@ -1032,7 +1032,7 @@ turboBig_part = new SimplePart(
             }
             catch (Exception ex)
             {
-                logger.New("Error while trying to save part", "", ex);
+                Logger.New("Error while trying to save part", "", ex);
             }
 
             partsColorSave = turboBigPaintSystem.GetColor(partsColorSave);
@@ -1063,7 +1063,7 @@ turboBig_part = new SimplePart(
             }
             catch (Exception ex)
             {
-                logger.New("Error while trying to save save file", "", ex);
+                Logger.New("Error while trying to save save file", "", ex);
             }
 
 
@@ -1073,7 +1073,7 @@ turboBig_part = new SimplePart(
             }
             catch (Exception ex)
             {
-                logger.New("Error while trying to save screws ", $"save file: {screwable_saveFile}", ex);
+                Logger.New("Error while trying to save screws ", $"save file: {screwable_saveFile}", ex);
             }
         }
 

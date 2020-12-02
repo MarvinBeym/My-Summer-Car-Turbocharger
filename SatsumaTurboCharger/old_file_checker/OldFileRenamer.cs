@@ -13,9 +13,9 @@ namespace SatsumaTurboCharger
         public Dictionary<string, string> renamedFiles { get; set; } = new Dictionary<string, string>();
         public Dictionary<string, string> oldToNew { get; set; } = new Dictionary<string, string>();
         public bool showGui { get; set; } = false;
-        private SatsumaTurboCharger mod;
+        private Mod mod;
         private int guiWidth;
-        public OldFileRenamer(SatsumaTurboCharger mod, int guiWidth)
+        public OldFileRenamer(Mod mod, int guiWidth)
         {
             this.mod = mod;
             this.guiWidth = guiWidth;
@@ -53,32 +53,57 @@ namespace SatsumaTurboCharger
 
         public void RenameOldFiles(string directoryToCheck, Dictionary<string, string> oldToNew)
         {
-            foreach(KeyValuePair<string, string> oldNewName in oldToNew)
+            foreach (KeyValuePair<string, string> oldNewName in oldToNew)
             {
                 string filePathOld = Path.Combine(directoryToCheck, oldNewName.Key);
                 string filePathBackupFolder = Helper.CombinePaths(new string[] { directoryToCheck, "AUTO_BACKUP" });
-                if (!File.Exists(filePathBackupFolder))
-                {
-                    Directory.CreateDirectory(filePathBackupFolder);
-                }
+                Directory.CreateDirectory(filePathBackupFolder);
+
                 string filePathBackup = Helper.CombinePaths(new string[] { filePathBackupFolder, oldNewName.Key });
+                Helper.CreatePathIfNotExists(filePathBackup.Replace("\\" + Path.GetFileName(oldNewName.Key), ""));
+
 
                 string filePathNew = Path.Combine(directoryToCheck, oldNewName.Value);
                 if (File.Exists(filePathOld) && !File.Exists(filePathNew))
                 {
                     try
                     {
-                        File.Copy(filePathOld, filePathBackup);
+                        bool fileBackupAlreadyExists = false;
+
+                        if (File.Exists(filePathBackup))
+                        {
+                            fileBackupAlreadyExists = true;
+                            int counter = 1;
+                            while (fileBackupAlreadyExists)
+                            {
+                                if (File.Exists(filePathBackup + counter.ToString()))
+                                {
+                                    counter++;
+                                    continue;
+                                }
+                                else
+                                {
+                                    File.Copy(filePathOld, filePathBackup + counter.ToString(), true);
+                                    fileBackupAlreadyExists = false;
+                                }
+
+                            }
+                        }
+                        else
+                        {
+                            File.Copy(filePathOld, filePathBackup, true);
+                        }
+
                         File.Move(filePathOld, filePathNew);
                         renamedFiles.Add(oldNewName.Key, oldNewName.Value);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         ModConsole.Print("File " + oldNewName.Key + "could not be renamed to " + oldNewName.Value + " | Reason: " + ex.Message);
                     }
                 }
             }
-            if(renamedFiles.Count > 0)
+            if (renamedFiles.Count > 0)
             {
                 SetGui(true);
             }

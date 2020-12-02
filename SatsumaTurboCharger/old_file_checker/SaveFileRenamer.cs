@@ -9,10 +9,8 @@ namespace SatsumaTurboCharger.old_file_checker
 {
     public class SaveFileRenamer : OldFileRenamer
     {
-        private SatsumaTurboCharger mod;
-        public SaveFileRenamer(SatsumaTurboCharger mod, int guiWidth) : base(mod, guiWidth)
+        public SaveFileRenamer(Mod mod, int guiWidth) : base(mod, guiWidth)
         {
-            this.mod = mod;
             //Big Turbo
             oldToNew.Add("turbocharger_big_partSave.txt", "turboBig_saveFile.json");
             oldToNew.Add("turbocharger_big_intercooler_tube_partSave.txt", "turboBig_intercooler_tube_saveFile.json");

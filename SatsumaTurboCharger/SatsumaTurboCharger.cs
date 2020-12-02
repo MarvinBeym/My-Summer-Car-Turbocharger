@@ -86,10 +86,10 @@ namespace SatsumaTurboCharger
          *  Use Key still has to be "F" for Painting
          */
 
-        public override string ID => "SatsumaTurboCharger"; //Your mod ID (unique)
-        public override string Name => "DonnerTechRacing Turbocharger"; //You mod name
-        public override string Author => "DonnerPlays"; //Your Username
-        public override string Version => "2.2"; //Version
+        public override string ID => "SatsumaTurboCharger";
+        public override string Name => "DonnerTechRacing Turbocharger";
+        public override string Author => "DonnerPlays";
+        public override string Version => "2.2";
         public override bool UseAssetsFolder => true;
 
         public SaveFileRenamer saveFileRenamer;
@@ -308,7 +308,7 @@ namespace SatsumaTurboCharger
 
         public override void OnLoad()
         {
-            ModConsole.Print("DonnerTechRacing Turbocharger Mod [v" + this.Version + " | Screwable: v" + ScrewablePart.apiVersion + "]" + " started loading");
+            ModConsole.Print(this.Name + $" [v{this.Version} | Screwable v{ScrewablePart.apiVersion}] started loading");
             Logger.InitLogger(this, logger_saveFile, 100);
             ecuModInstalled = ModLoader.IsModPresent("DonnerTech_ECU_Mod");
             saveFileRenamer = new SaveFileRenamer(this, 900);
@@ -845,7 +845,7 @@ turboBig_part = new SimplePart(
             SetupInspectionPrevention();
             assetsBundle.Unload(false);
             screwableAssetsBundle.Unload(false);
-            ModConsole.Print("DonnerTechRacing Turbocharger Mod [v" + this.Version + "]" + " finished loading");            
+            ModConsole.Print(this.Name + $" [v{this.Version} | Screwable v{ScrewablePart.apiVersion}] finished loading");         
         }
 
         

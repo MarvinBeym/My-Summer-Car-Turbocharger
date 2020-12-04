@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 522901196
+CRC: 1906631390
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 795ac452c5de9d47eb58eb8fa67ffe8f
+    Hash: 848467ac0a9b1fae6477bdf5c1e75286
   TypeTreeHash:
     serializedVersion: 2
     Hash: 86a98480e8aea1e11fcc3b15858e08a8
@@ -48,9 +48,9 @@ Assets:
 - Assets/ProductImages/turbocharger_big_blowoff_valve_ProductImage.png
 - Assets/ProductImages/repair_turbocharger_small_ProductImage.png
 - Assets/ProductImages/turbocharger_manifold_twinCarb_kit_ProductImage.png
-- Assets/turboBig.prefab
+- Assets/turboBig/turboBig.prefab
 - Assets/ProductImages/repair_intercooler_ProductImage.png
-- Assets/turboBig_exhaust_outlet_tube.prefab
+- Assets/turboBig/turboBig_exhaust_outlet_tube.prefab
 - Assets/turboSmall_intercooler_tube.prefab
 - Assets/ProductImages/repair_turbocharger_big_ProductImage.png
 - Assets/bodykit/bodykit.prefab
@@ -58,29 +58,29 @@ Assets:
 - Assets/ProductImages/turbocharger_big_exhaust_outlet_straight_ProductImage.png
 - Assets/ProductImages/turbocharger_manifold_weber_kit_ProductImage.png
 - Assets/boost_gauge.prefab
-- Assets/turboBig_blowoff_valve.prefab
+- Assets/turboBig/turboBig_blowoff_valve.prefab
 - Assets/intercooler_manifold_twinCarb_tube.prefab
-- Assets/turboBig_exhaust_inlet_tube.prefab
+- Assets/turboBig/turboBig_exhaust_inlet_tube.prefab
 - Assets/exhaust_header.prefab
 - Assets/turboSmall_exhaust_outlet_tube.prefab
 - Assets/manifold_twinCarb.prefab
 - Assets/turboSmall_manifold_twinCarb_tube.prefab
 - Assets/ProductImages/turbocharger_small_intercooler_tube_ProductImage.png
 - Assets/Materials/bolt-texture.mat
-- Assets/turboBig_box.prefab
+- Assets/turboBig/turboBig_box.prefab
 - Assets/ProductImages/turbocharger_boost_gauge_ProductImage.png
-- Assets/intercooler_manifold_weber_tube.prefab
+- Assets/other/intercooler_manifold_weber_tube.prefab
 - Assets/turboSmall.prefab
 - Assets/ProductImages/turbocharger_small_airfilter_ProductImage.png
-- Assets/turboBig_intercooler_tube.prefab
+- Assets/turboBig/turboBig_intercooler_tube.prefab
 - Assets/intercooler.prefab
 - Assets/ProductImages/turbocharger_big_kit_ProductImage.png
-- Assets/manifold_weber.prefab
+- Assets/other/manifold_weber.prefab
 - Assets/ProductImages/turbocharger_hood_ProductImage.png
-- Assets/turboBig_exhaust_outlet_straight.prefab
+- Assets/turboBig/turboBig_exhaust_outlet_straight.prefab
 - Assets/ProductImages/repair_turbocharger_small_airfilter_ProductImage.png
 - Assets/turboSmall_exhaust_inlet_tube.prefab
 - Assets/ProductImages/turbocharger_intercooler_ProductImage.png
-- Assets/fx_fire.prefab
-- Assets/turboBig_hood.prefab
+- Assets/turboBig/fx_fire.prefab
+- Assets/turboBig/turboBig_hood.prefab
 Dependencies: []

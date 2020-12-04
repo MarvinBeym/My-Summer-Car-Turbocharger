@@ -122,7 +122,7 @@ namespace SatsumaTurboCharger
 
         //Big Turbo
         private Vector3 turboBig_installLocation = new Vector3(-0.066f, 0.288f, -0.079f);                                       //Done
-        private Vector3 turboBig_intercooler_tube_installLocation = new Vector3(0.345f, 0.04f, 1.4425f);                        //Done
+        private Vector3 turboBig_intercooler_tube_installLocation = new Vector3(0.344f, 0.04f, 1.4355f);                        //Done
 
         private Vector3 turboBig_exhaust_inlet_tube_installLocation = new Vector3(-0.234f, -0.02f, 0.099f);                     //Done
         private Vector3 turboBig_exhaust_outlet_tube_installLocation = new Vector3(-0.3075f, 1.044f, 0.458f);                   //Done
@@ -139,8 +139,8 @@ namespace SatsumaTurboCharger
 
         //Other Parts
         private Vector3 turboBig_hood_installLocation = new Vector3(0.0f, 0.295f, 1.326f);                                      //Done
-        private Vector3 manifold_weber_installLocation = new Vector3(0.002f, -0.167f, 0.065f);
 
+        private Vector3 manifold_weber_installLocation = new Vector3(-0.0075f, -0.1165f, 0.03f);
         private Vector3 manifold_twinCarb_installLocation = new Vector3(0.0075f, -0.265f, 0.006f);
         private Vector3 boost_gauge_installLocation = new Vector3(0.5f, -0.04f, 0.125f);                                        //Done
         private Vector3 intercooler_installLocation = new Vector3(0.0f, -0.162f, 1.6775f);                                      //Done
@@ -390,7 +390,7 @@ namespace SatsumaTurboCharger
 
             manifold_weber_part = new AdvPart(this,
                 "manifold_weber", "Weber Manifold", weberCarb, "",
-                manifold_weber_installLocation, new Vector3(80, 0, 0),
+                manifold_weber_installLocation, new Vector3(72.5f, 0, 0),
                 assetsBundle, partsBuySave, "manifold_weber_kit");
 
             manifold_twinCarb_part = new AdvPart(this,

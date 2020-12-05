@@ -13,6 +13,12 @@ namespace SatsumaTurboCharger
 {
     public static class Helper
     {
+        public static bool GetPartInstalled(GameObject part)
+        {
+            return false;
+            //return (gameObject.transform.parent != null && gameObject.transform.parent.name == parentInstalledName);
+        }
+
         public static GameObject GetGameObjectFromFsm(GameObject fsmGameObject, string fsmToUse = "Data")
         {
             foreach(PlayMakerFSM fsm in fsmGameObject.GetComponents<PlayMakerFSM>())

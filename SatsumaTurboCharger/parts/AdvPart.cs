@@ -1,4 +1,5 @@
-﻿using ModApi.Attachable;
+﻿using HutongGames.PlayMaker;
+using ModApi.Attachable;
 using MSCLoader;
 using ScrewablePartAPI;
 using System;
@@ -112,22 +113,67 @@ namespace SatsumaTurboCharger.parts
 
             PartSaveInfo partSaveInfo = GetPartSaveInfo(bought, mod, saveFile);
 
+            part = new NewPart(
+                partSaveInfo,
+                partGameObject,
+                parentPart,
+                new Trigger(id + "_trigger", parentPart, installPosition, new Quaternion(0, 0, 0, 0), new Vector3(triggerSize, triggerSize, triggerSize), false),
+                installPosition,
+                installRotation);
+
+            AttachParentUninstallFsm(parentPart);
+
+            DefineBasePartCalls(part);
+        }
+
+
+        private void AttachParentUninstallFsm(GameObject parentPart)
+        {
             try
             {
-                part = new NewPart(
-                    partSaveInfo,
-                    partGameObject,
-                    parentPart,
-                    new Trigger(id + "_trigger", parentPart, installPosition, new Quaternion(0, 0, 0, 0), new Vector3(triggerSize, triggerSize, triggerSize), false),
-                    installPosition,
-                    installRotation);
-            } catch(Exception ex)
+                PlayMakerFSM[] fSMs = parentPart.GetComponents<PlayMakerFSM>();
+                foreach (PlayMakerFSM fSM in fSMs)
+                {
+                    if (fSM.FsmName == "Removal")
+                    {
+                        int requiredStatesFound = 0;
+                        foreach (FsmState state in fSM.FsmStates)
+                        {
+                            if (state.Name == "Remove part" || state.Name == "Mouse off")
+                            {
+                                requiredStatesFound++;
+                            }
+                        }
+                        if (requiredStatesFound == 2)
+                        {
+                            FsmHook.FsmInject(parentPart, "Remove part", delegate(){ ParentUninstallActionFsm(parentPart); });
+                            FsmHook.FsmInject(parentPart, "Mouse off", delegate () { ParentInstallActionFsm(parentPart); });
+                        }
+                    }
+                }
+
+            }
+            catch
             {
 
             }
+        }
 
+        private void ParentInstallActionFsm(GameObject parent)
+        {
+            if(parent.transform.parent)
+            ModConsole.Warning("Parent Installed");
+            partTrigger.triggerGameObject.SetActive(true);
+        }
 
-            DefineBasePartCalls(part);
+        private void ParentUninstallActionFsm(GameObject parent)
+        {
+            ModConsole.Warning("Parent uninstall");
+            partTrigger.triggerGameObject.SetActive(false);
+            if (installed)
+            {
+                removePart();
+            }
         }
 
         private void FixRigidPartNaming(NewPart part)

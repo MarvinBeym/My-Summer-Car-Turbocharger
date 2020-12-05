@@ -128,6 +128,7 @@ namespace SatsumaTurboCharger
         private Vector3 turboBig_exhaust_outlet_tube_installLocation = new Vector3(-0.3075f, 1.044f, 0.458f);                   //Done
         private Vector3 turboBig_blowoff_valve_installLocation = new Vector3(0.027f, 0.1385f, 0.1635f);                         //Done
         private Vector3 turboBig_exhaust_outlet_straight_installLocation = new Vector3(-0.0185f, 0.0385f, 0.159f);              //Done
+        private Vector3 turboBig_hood_installLocation = new Vector3(0.0f, 0.295f, 1.326f);                                      //Done
 
         //Small Turbo
         private Vector3 turboSmall_installLocation = new Vector3(-0.25f, -0.1665f, 0.0001f);
@@ -137,16 +138,14 @@ namespace SatsumaTurboCharger
         private Vector3 turboSmall_exhaust_outlet_tube_installLocation = new Vector3(-0.1825f, -0.267f, -0.145f);
         private Vector3 turboSmall_airfilter_installLocation = new Vector3(-0.25f, -0.04f, 0.0001f);
 
-        //Other Parts
-        private Vector3 turboBig_hood_installLocation = new Vector3(0.0f, 0.295f, 1.326f);                                      //Done
-        
+        //Other Parts        
         private Vector3 manifold_weber_installLocation = new Vector3(-0.01f, -0.12f, 0.031f);                                   //Done
-        private Vector3 manifold_twinCarb_installLocation = new Vector3(0.0075f, -0.265f, 0.006f);
+        private Vector3 manifold_twinCarb_installLocation = new Vector3(-0.006411f, -0.1355f, -0.031f);                         //Done
         private Vector3 boost_gauge_installLocation = new Vector3(0.5f, -0.04f, 0.125f);                                        //Done
         private Vector3 intercooler_installLocation = new Vector3(0.0f, -0.162f, 1.6775f);                                      //Done
         private Vector3 intercooler_manifold_weber_tube_installLocation = new Vector3(0.39f, 0.1775f, 0.4745f);                 //Done
-        private Vector3 intercooler_manifold_twinCarb_tube_installLocation = new Vector3(-0.332f, -0.047f, 1.445f);
-        private Vector3 exhaust_header_installLocation = new Vector3(-0.005f, -0.089f, -0.064f);
+        private Vector3 intercooler_manifold_twinCarb_tube_installLocation = new Vector3(0.348f, 0.082f, 0.324f);               //Done
+        private Vector3 exhaust_header_installLocation = new Vector3(-0.005f, -0.089f, -0.064f);                                //Done
 
         //Mods Shop
         private ShopItem modsShop;
@@ -574,7 +573,7 @@ turboBig_part = new SimplePart(
 
             intercooler_manifold_twinCarb_tube_part = new AdvPart(this,
                 "intercooler_manifold_twinCarb_tube", "TwinCarb Intercooler-Manifold Tube", intercooler_part.part, "",
-                intercooler_manifold_twinCarb_tube_installLocation, new Vector3(5, 180, 0), 
+                intercooler_manifold_twinCarb_tube_installLocation, new Vector3(5, 0, 0), 
                 assetsBundle, partsBuySave, "manifold_twinCarb_kit");
 
             exhaust_header_part = new AdvPart(this,

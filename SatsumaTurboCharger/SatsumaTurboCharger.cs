@@ -139,12 +139,12 @@ namespace SatsumaTurboCharger
 
         //Other Parts
         private Vector3 turboBig_hood_installLocation = new Vector3(0.0f, 0.295f, 1.326f);                                      //Done
-
-        private Vector3 manifold_weber_installLocation = new Vector3(-0.0075f, -0.1165f, 0.03f);
+        
+        private Vector3 manifold_weber_installLocation = new Vector3(-0.01f, -0.12f, 0.031f);                                   //Done
         private Vector3 manifold_twinCarb_installLocation = new Vector3(0.0075f, -0.265f, 0.006f);
         private Vector3 boost_gauge_installLocation = new Vector3(0.5f, -0.04f, 0.125f);                                        //Done
         private Vector3 intercooler_installLocation = new Vector3(0.0f, -0.162f, 1.6775f);                                      //Done
-        private Vector3 intercooler_manifold_weber_tube_installLocation = new Vector3(0.36f, 0.227f, 0.472f);
+        private Vector3 intercooler_manifold_weber_tube_installLocation = new Vector3(0.39f, 0.1775f, 0.4745f);                 //Done
         private Vector3 intercooler_manifold_twinCarb_tube_installLocation = new Vector3(-0.332f, -0.047f, 1.445f);
         private Vector3 exhaust_header_installLocation = new Vector3(-0.005f, -0.089f, -0.064f);
 
@@ -569,12 +569,12 @@ turboBig_part = new SimplePart(
 
             intercooler_manifold_weber_tube_part = new AdvPart(this,
                 "intercooler_manifold_weber_tube", "Weber Intercooler-Manifold Tube", intercooler_part.part, "",
-                intercooler_manifold_weber_tube_installLocation, new Vector3(0, 0, 0), 
+                intercooler_manifold_weber_tube_installLocation, new Vector3(5, 0, 0), 
                 assetsBundle, partsBuySave, "manifold_weber_kit");
 
             intercooler_manifold_twinCarb_tube_part = new AdvPart(this,
                 "intercooler_manifold_twinCarb_tube", "TwinCarb Intercooler-Manifold Tube", intercooler_part.part, "",
-                intercooler_manifold_twinCarb_tube_installLocation, new Vector3(0, 180, 0), 
+                intercooler_manifold_twinCarb_tube_installLocation, new Vector3(5, 180, 0), 
                 assetsBundle, partsBuySave, "manifold_twinCarb_kit");
 
             exhaust_header_part = new AdvPart(this,

@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1906631390
+CRC: 2863059373
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 848467ac0a9b1fae6477bdf5c1e75286
+    Hash: d538dc956096fcc393c266e240ad6c08
   TypeTreeHash:
     serializedVersion: 2
     Hash: 86a98480e8aea1e11fcc3b15858e08a8
@@ -54,6 +54,7 @@ Assets:
 - Assets/turboSmall_intercooler_tube.prefab
 - Assets/ProductImages/repair_turbocharger_big_ProductImage.png
 - Assets/bodykit/bodykit.prefab
+- Assets/other/intercooler_manifold_weber_tube.prefab
 - Assets/turboSmall_airfilter.prefab
 - Assets/ProductImages/turbocharger_big_exhaust_outlet_straight_ProductImage.png
 - Assets/ProductImages/turbocharger_manifold_weber_kit_ProductImage.png
@@ -61,7 +62,7 @@ Assets:
 - Assets/turboBig/turboBig_blowoff_valve.prefab
 - Assets/intercooler_manifold_twinCarb_tube.prefab
 - Assets/turboBig/turboBig_exhaust_inlet_tube.prefab
-- Assets/exhaust_header.prefab
+- Assets/other/exhaust_header.prefab
 - Assets/turboSmall_exhaust_outlet_tube.prefab
 - Assets/manifold_twinCarb.prefab
 - Assets/turboSmall_manifold_twinCarb_tube.prefab
@@ -69,11 +70,10 @@ Assets:
 - Assets/Materials/bolt-texture.mat
 - Assets/turboBig/turboBig_box.prefab
 - Assets/ProductImages/turbocharger_boost_gauge_ProductImage.png
-- Assets/other/intercooler_manifold_weber_tube.prefab
 - Assets/turboSmall.prefab
 - Assets/ProductImages/turbocharger_small_airfilter_ProductImage.png
 - Assets/turboBig/turboBig_intercooler_tube.prefab
-- Assets/intercooler.prefab
+- Assets/other/intercooler.prefab
 - Assets/ProductImages/turbocharger_big_kit_ProductImage.png
 - Assets/other/manifold_weber.prefab
 - Assets/ProductImages/turbocharger_hood_ProductImage.png

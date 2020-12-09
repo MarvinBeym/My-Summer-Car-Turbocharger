@@ -11,12 +11,15 @@ using SatsumaTurboCharger.shop;
 using SatsumaTurboCharger.turbo;
 using SatsumaTurboCharger.wear;
 using ScrewablePartAPI;
+using ScrewablePartAPI.New;
+using ScrewablePartAPI.V2;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
 using UnityEngine;
+using static ScrewablePartAPI.NewScrewablePart;
 using Random = System.Random;
 
 namespace SatsumaTurboCharger
@@ -113,7 +116,10 @@ namespace SatsumaTurboCharger
         private const string modsShop_saveFile = "mod_shop_saveFile.json";
         private const string boost_saveFile = "turbocharger_mod_boost_SaveFile.txt";
         private const string wear_saveFile = "wear_saveFile.json";
+
+        [Obsolete("No longer used", true)]
         private const string screwable_saveFile = "screwable_saveFile.json";
+        private const string screwableV2_saveFile = "screwableV2_saveFile.json";
         private const string color_saveFile = "color_saveFile.json";
 
         //
@@ -140,11 +146,11 @@ namespace SatsumaTurboCharger
 
         //Other Parts        
         private Vector3 manifold_weber_installLocation = new Vector3(-0.01f, -0.12f, 0.031f);                                   //Done
-        private Vector3 manifold_twinCarb_installLocation = new Vector3(-0.006411f, -0.1355f, -0.031f);                         //Done
+        private Vector3 manifold_twinCarb_installLocation = new Vector3(-0.006411f, -0.137f, -0.032f);                         //Done
         private Vector3 boost_gauge_installLocation = new Vector3(0.5f, -0.04f, 0.125f);                                        //Done
         private Vector3 intercooler_installLocation = new Vector3(0.0f, -0.162f, 1.6775f);                                      //Done
-        private Vector3 intercooler_manifold_weber_tube_installLocation = new Vector3(0.39f, 0.1775f, 0.4745f);                 //Done
-        private Vector3 intercooler_manifold_twinCarb_tube_installLocation = new Vector3(0.348f, 0.082f, 0.324f);               //Done
+        private Vector3 intercooler_manifold_weber_tube_installLocation = new Vector3(0.37f, -0.0845f, -0.175f);                //Done
+        private Vector3 intercooler_manifold_twinCarb_tube_installLocation = new Vector3(0.33f, -0.18f, -0.298f);               //Done
         private Vector3 exhaust_header_installLocation = new Vector3(-0.005f, -0.089f, -0.064f);                                //Done
 
         //Mods Shop
@@ -307,8 +313,9 @@ namespace SatsumaTurboCharger
 
         public override void OnLoad()
         {
-            ModConsole.Print(this.Name + $" [v{this.Version} | Screwable v{ScrewablePart.apiVersion}] started loading");
+            ModConsole.Print(this.Name + $" [v{this.Version} | Screwable v{ScrewablePartV2.version}] started loading");
             Logger.InitLogger(this, logger_saveFile, 100);
+
             ecuModInstalled = ModLoader.IsModPresent("DonnerTech_ECU_Mod");
             saveFileRenamer = new SaveFileRenamer(this, 900);
             guiDebug = new GuiDebug(Screen.width - 260, 50, 250, "TURBO MOD DEBUG", new List<GuiButtonElement>()
@@ -404,176 +411,19 @@ namespace SatsumaTurboCharger
 
             boostGaugeTextMesh = boost_gauge_part.rigidPart.GetComponentInChildren<TextMesh>();
 
-            /*
-
-                        manifold_weber_part = new SimplePart(
-                SimplePart.LoadData(this, "manifold_weber", partsBuySave, "manifold_weber_kit"),
-                Helper.LoadPartAndSetName(assetsBundle, "manifold_weber.prefab", "Weber Manifold"),
-                GameObject.Find("racing carburators(Clone)"),
-                manifold_weber_installLocation,
-                new Quaternion { eulerAngles = new Vector3(80, 0, 0) }
-            );
-
-                        manifold_twinCarb_part = new SimplePart(
-                SimplePart.LoadData(this, "manifold_twinCarb", partsBuySave, "manifold_twinCarb_kit"),
-                Helper.LoadPartAndSetName(assetsBundle, "manifold_twinCarb.prefab", "TwinCarb Manifold"),
-                GameObject.Find("twin carburators(Clone)"),
-                manifold_twinCarb_installLocation,
-                new Quaternion { eulerAngles = new Vector3(90, 0, 0) }
-            );
-            boost_gauge_part = new SimplePart(
-                SimplePart.LoadData(this, "boost_gauge", partsBuySave),
-                Helper.LoadPartAndSetName(assetsBundle, "boost_gauge.prefab", "Boost Gauge"),
-                GameObject.Find("dashboard(Clone)"),
-                boost_gauge_installLocation,
-                new Quaternion { eulerAngles = new Vector3(90, 0, 0) }
-            );
-
-
-intercooler_part = new SimplePart(
-   SimplePart.LoadData(this, "intercooler", partsBuySave),
-   Helper.LoadPartAndSetName(assetsBundle, "intercooler.prefab", "Intercooler"),
-   satsuma,
-   intercooler_installLocation,
-   new Quaternion { eulerAngles = new Vector3(-5, 180, 0) }
-);
-
-intercooler_manifold_weber_tube_part = new SimplePart(
-    SimplePart.LoadData(this, "intercooler_manifold_weber_tube", partsBuySave, "manifold_weber_kit"),
-    Helper.LoadPartAndSetName(assetsBundle, "intercooler_manifold_weber_tube.prefab", "Weber Intercooler-Manifold Tube"),
-    intercooler_part.rigidPart,
-    intercooler_manifold_weber_tube_installLocation,
-    new Quaternion { eulerAngles = new Vector3(90, 0, 0) }
-);
-
-intercooler_manifold_twinCarb_tube_part = new SimplePart(
-    SimplePart.LoadData(this, "intercooler_manifold_twinCarb_tube", partsBuySave, "manifold_twinCarb_kit"),
-    Helper.LoadPartAndSetName(assetsBundle, "intercooler_manifold_twinCarb_tube.prefab", "TwinCarb Intercooler-Manifold Tube"),
-    intercooler_part.rigidPart,
-    intercooler_manifold_twinCarb_tube_installLocation,
-    new Quaternion { eulerAngles = new Vector3(0, 180, 0) }
-);
-
-exhaust_header_part = new SimplePart(
-    SimplePart.LoadData(this, "exhaust_header", partsBuySave),
-    Helper.LoadPartAndSetName(assetsBundle, "exhaust_header.prefab", "Turbo Exhaust Header"),
-    originalCylinerHead,
-    exhaust_header_installLocation,
-    new Quaternion { eulerAngles = new Vector3(90, 0, 0) }
-);
-
-turboBig_part = new SimplePart(
-    SimplePart.LoadData(this, "turboBig", partsBuySave, "turboBig_kit"),
-    Helper.LoadPartAndSetName(assetsBundle, "turboBig.prefab", "Racing Turbo"),
-    originalCylinerHead,
-    turboBig_installLocation,
-    new Quaternion { eulerAngles = new Vector3(90, 0, 0) }
-);
-
-                        turboBig_exhaust_outlet_straight_part = new SimplePart(
-                SimplePart.LoadData(this, "turboBig_exhaust_outlet_straight", partsBuySave),
-                Helper.LoadPartAndSetName(assetsBundle, "turboBig_exhaust_outlet_straight.prefab", "Racing Turbo Exhaust Straight"),
-                originalCylinerHead,
-                turboBig_exhaust_outlet_straight_installLocation,
-                new Quaternion { eulerAngles = new Vector3(90, 0, 0) }
-            );
-
-            turboBig_intercooler_tube_part = new SimplePart(
-                SimplePart.LoadData(this, "turboBig_intercooler_tube", partsBuySave),
-                Helper.LoadPartAndSetName(assetsBundle, "turboBig_intercooler_tube.prefab", "Racing Turbo Intercooler Tube"),
-                satsuma,
-                turboBig_intercooler_tube_installLocation,
-                new Quaternion { eulerAngles = new Vector3(0, 180, 0) }
-            );
-
-                        turboBig_exhaust_inlet_tube_part = new SimplePart(
-                SimplePart.LoadData(this, "turboBig_exhaust_inlet_tube", partsBuySave),
-                Helper.LoadPartAndSetName(assetsBundle, "turboBig_exhaust_inlet_tube.prefab", "Racing Turbo Exhaust Inlet Tube"),
-                originalCylinerHead,
-                turboBig_exhaust_inlet_tube_installLocation,
-                new Quaternion { eulerAngles = new Vector3(90, 0, 0) }
-            );
-            turboBig_exhaust_outlet_tube_part = new SimplePart(
-                SimplePart.LoadData(this, "turboBig_exhaust_outlet_tube", partsBuySave, "turboBig_kit"),
-                Helper.LoadPartAndSetName(assetsBundle, "turboBig_exhaust_outlet_tube.prefab", "Racing Turbo Exhaust Outlet Tube"),
-                originalCylinerHead,
-                turboBig_exhaust_outlet_tube_installLocation,
-                new Quaternion { eulerAngles = new Vector3(90, 0, 0) }
-            );
-
-                        turboBig_blowoff_valve_part = new SimplePart(
-                SimplePart.LoadData(this, "turboBig_blowoff_valve", partsBuySave),
-                Helper.LoadPartAndSetName(assetsBundle, "turboBig_blowoff_valve.prefab", "Racing Turbo Blowoff Valve"),
-                satsuma,
-                turboBig_blowoff_valve_installLocation,
-                new Quaternion { eulerAngles = new Vector3(0, 180, 0) }
-            );
-            turboBig_hood_part = new SimplePart(
-                SimplePart.LoadData(this, "turboBig_hood", partsBuySave),
-                Helper.LoadPartAndSetName(assetsBundle, "turboBig_hood.prefab", "Racing Turbo Hood"),
-                satsuma,
-                turboBig_hood_installLocation,
-                new Quaternion(0, 180, 0, 0)
-            );
-
-                        turboSmall_part = new SimplePart(
-                SimplePart.LoadData(this, "turboSmall", true),
-                Helper.LoadPartAndSetName(assetsBundle, "turboSmall.prefab", "GT Turbo"),
-                originalCylinerHead,
-                turboSmall_installLocation,
-                new Quaternion { eulerAngles = new Vector3(90, 0, 0) }
-            );
-                        turboSmall_intercooler_tube_part = new SimplePart(
-                SimplePart.LoadData(this, "turboSmall_intercooler_tube", partsBuySave),
-                Helper.LoadPartAndSetName(assetsBundle, "turboSmall_intercooler_tube.prefab", "GT Turbo Intercooler Tube"),
-                satsuma,
-                turboSmall_intercooler_tube_installLocation,
-                new Quaternion { eulerAngles = new Vector3(0, 180, 0) }
-            );
-            turboSmall_manifold_twinCarb_tube_part = new SimplePart(
-                SimplePart.LoadData(this, "turboSmall_manifold_twinCarb_tube", true),
-                Helper.LoadPartAndSetName(assetsBundle, "turboSmall_manifold_twinCarb_tube.prefab", "GT Turbo Manifold TwinCarb Tube"),
-                originalCylinerHead,
-                turboSmall_manifold_twinCarb_tube_installLocation,
-                new Quaternion { eulerAngles = new Vector3(90, 0, 0) }
-            );
-            turboSmall_airfilter_part = new SimplePart(
-                SimplePart.LoadData(this, "turboSmall_airfilter", partsBuySave),
-                Helper.LoadPartAndSetName(assetsBundle, "turboSmall_airfilter.prefab", "GT Turbo Airfilter"),
-                originalCylinerHead,
-                turboSmall_airfilter_installLocation,
-                new Quaternion { eulerAngles = new Vector3(90, 0, 0) }
-            );
-
-                        turboSmall_exhaust_inlet_tube_part = new SimplePart(
-                SimplePart.LoadData(this, "turboSmall_exhaust_inlet_tube", true),
-                Helper.LoadPartAndSetName(assetsBundle, "turboSmall_exhaust_inlet_tube.prefab", "GT Turbo Exhaust Inlet Tube"),
-                originalCylinerHead,
-                turboSmall_exhaust_inlet_tube_installLocation,
-                new Quaternion { eulerAngles = new Vector3(90, 0, 0) }
-            );
-            turboSmall_exhaust_outlet_tube_part = new SimplePart(
-                SimplePart.LoadData(this, "turboSmall_exhaust_outlet_tube", true),
-                Helper.LoadPartAndSetName(assetsBundle, "turboSmall_exhaust_outlet_tube.prefab", "GT Turbo Exhaust Outlet Tube"),
-                originalCylinerHead,
-                turboSmall_exhaust_outlet_tube_installLocation,
-                new Quaternion { eulerAngles = new Vector3(90, 0, 0) }
-            );
-*/
-
             intercooler_part = new AdvPart(this,
                 "intercooler", "Intercooler", satsuma, "",
                 intercooler_installLocation, new Vector3(-5, 180, 0),
                 assetsBundle, partsBuySave);
 
             intercooler_manifold_weber_tube_part = new AdvPart(this,
-                "intercooler_manifold_weber_tube", "Weber Intercooler-Manifold Tube", intercooler_part.part, "",
-                intercooler_manifold_weber_tube_installLocation, new Vector3(5, 0, 0), 
+                "intercooler_manifold_weber_tube", "Weber Intercooler-Manifold Tube", manifold_weber_part.part, "",
+                intercooler_manifold_weber_tube_installLocation, new Vector3(17.5f, 0, 0), 
                 assetsBundle, partsBuySave, "manifold_weber_kit");
 
             intercooler_manifold_twinCarb_tube_part = new AdvPart(this,
-                "intercooler_manifold_twinCarb_tube", "TwinCarb Intercooler-Manifold Tube", intercooler_part.part, "",
-                intercooler_manifold_twinCarb_tube_installLocation, new Vector3(5, 0, 0), 
+                "intercooler_manifold_twinCarb_tube", "TwinCarb Intercooler-Manifold Tube", manifold_twinCarb_part.part, "",
+                intercooler_manifold_twinCarb_tube_installLocation, new Vector3(0, 0, 0), 
                 assetsBundle, partsBuySave, "manifold_twinCarb_kit");
 
             exhaust_header_part = new AdvPart(this,
@@ -614,7 +464,7 @@ turboBig_part = new SimplePart(
 
             turboBig_hood_part = new AdvPart(this,
                 "turboBig_hood", "Racing Turbo Hood", satsuma, "",
-                turboBig_hood_installLocation, new Vector3(0, 180, 0),
+                turboBig_hood_installLocation, new Vector3(90, 180, 0),
                 assetsBundle, partsBuySave);
 
             turboSmall_part = new AdvPart(this,
@@ -671,7 +521,7 @@ turboBig_part = new SimplePart(
 
             otherPartsList = new List<AdvPart>
             {
-                manifold_weber_part,
+                //manifold_weber_part,
                 manifold_twinCarb_part,
                 boost_gauge_part,
                 //intercooler_part,
@@ -844,116 +694,120 @@ turboBig_part = new SimplePart(
             SetupInspectionPrevention();
             assetsBundle.Unload(false);
             screwableAssetsBundle.Unload(false);
-            ModConsole.Print(this.Name + $" [v{this.Version} | Screwable v{ScrewablePart.apiVersion}] finished loading");         
+            ModConsole.Print(this.Name + $" [v{this.Version} | Screwable v{ScrewablePartV2.version}] finished loading");         
         }
-
-        
 
         private void SetupScrewable()
         {
-            SortedList<String, Screws> screwListSave = ScrewablePart.LoadScrews(this, screwable_saveFile);
+            Dictionary<string, int[]> screwSave = Helper.LoadSaveOrReturnNew<Dictionary<string, int[]>>(this, screwableV2_saveFile);
+            ScrewableBaseInfo baseScrewInfo = new ScrewableBaseInfo(screwableAssetsBundle, screwSave);
+
             //Big turbo
-            turboBig_intercooler_tube_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, turboBig_intercooler_tube_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(0.153f, 0.324f, 0.1835f), new Vector3(90, 0, 0), 0.7f, 10),
-                    new Screw(new Vector3(0.0779f, 0.324f, 0.1835f), new Vector3(90, 0, 0), 0.7f, 10),
-                    new Screw(new Vector3(0.031f, -0.13f, -0.1632f), new Vector3(180, 0, 0), 0.4f, 10),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboBig_intercooler_tube_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(0.153f, 0.324f, 0.1835f), new Vector3(90, 0, 0), 0.7f, 10),
+                    new ScrewV2(new Vector3(0.0779f, 0.324f, 0.1835f), new Vector3(90, 0, 0), 0.7f, 10),
+                    new ScrewV2(new Vector3(0.031f, -0.13f, -0.1632f), new Vector3(180, 0, 0), 0.4f, 10),
                });
-            turboBig_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, turboBig_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(0.105f, -0.098f, -0.082f), new Vector3(-90, 0, 0), 0.7f, 10, ScrewablePart.ScrewType.Nut),
-                    new Screw(new Vector3(0.03f, -0.098f, -0.082f), new Vector3(-90, 0, 0), 0.7f, 10, ScrewablePart.ScrewType.Nut),
-                    new Screw(new Vector3(-0.0288f, -0.098f, 0.0817f), new Vector3(-90, 0, 0), 0.7f, 10, ScrewablePart.ScrewType.Nut),
-                    new Screw(new Vector3(-0.1085f, -0.098f, 0.0817f), new Vector3(-90, 0, 0), 0.7f, 10, ScrewablePart.ScrewType.Nut),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboBig_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(0.071f, -0.0905f, -0.088f), new Vector3(0, -90, 0), 0.5f, 8),
                 });
-            turboBig_exhaust_inlet_tube_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, turboBig_exhaust_inlet_tube_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(0.202f, -0.1f, -0.01f), new Vector3(-90, 0, 0), 0.7f, 10),
-                    new Screw(new Vector3(0.145f, -0.1f, -0.018f), new Vector3(-90, 0, 0), 0.7f, 10),
-                    new Screw(new Vector3(-0.12f, 0.19f, -0.005f), new Vector3(90, 0, 0), 0.7f, 10),
-                    new Screw(new Vector3(-0.2f, 0.19f, -0.005f), new Vector3(90, 0, 0), 0.7f, 10),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboBig_exhaust_inlet_tube_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(0.202f, -0.1f, -0.01f), new Vector3(-90, 0, 0), 0.7f, 10),
+                    new ScrewV2(new Vector3(0.145f, -0.1f, -0.018f), new Vector3(-90, 0, 0), 0.7f, 10),
+                    new ScrewV2(new Vector3(-0.12f, 0.19f, -0.005f), new Vector3(90, 0, 0), 0.7f, 10),
+                    new ScrewV2(new Vector3(-0.2f, 0.19f, -0.005f), new Vector3(90, 0, 0), 0.7f, 10),
                 });
-            turboBig_exhaust_outlet_tube_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, turboBig_exhaust_outlet_tube_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(-0.0655f, 0.372f, -0.0425f), new Vector3(0, -90, 0), 0.7f, 10),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboBig_exhaust_outlet_tube_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(0f, 0.206f, -0.055f), new Vector3(0, 0, 0), 0.6f, 6),
+                    new ScrewV2(new Vector3(-0.042f, 0.164f, -0.055f), new Vector3(0, 0, 0), 0.6f, 6),
+                    new ScrewV2(new Vector3(0f, 0.122f, -0.055f), new Vector3(0, 0, 0), 0.6f, 6),
+                    new ScrewV2(new Vector3(0.041f, 0.164f, -0.055f), new Vector3(0, 0, 0), 0.6f, 6),
+
                 });
 
-            turboBig_exhaust_outlet_straight_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, turboBig_exhaust_outlet_straight_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(0.0342f, 0.004f, -0.023f), new Vector3(0, -90, 0), 0.7f, 10),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboBig_exhaust_outlet_straight_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.6f, 6),
+                    new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.6f, 6),
+                    new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.6f, 6),
+                    new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.6f, 6),
                 });
 
-            turboBig_blowoff_valve_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, turboBig_blowoff_valve_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(0.0475f, -0.031f, 0.01f), new Vector3(0, 0, 0), 0.3f, 5),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboBig_blowoff_valve_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(0.0475f, -0.031f, 0.01f), new Vector3(0, 0, 0), 0.3f, 5),
                 });
 
             //Small turbo
-            turboSmall_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, turboSmall_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(0.0715f, -0.024f, 0.044f), new Vector3(180f, 0f, 0f), 0.4f, 10),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboSmall_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(0.0715f, -0.024f, 0.044f), new Vector3(180f, 0f, 0f), 0.4f, 10),
                 });
-            turboSmall_intercooler_tube_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, turboSmall_intercooler_tube_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(0.034f, -0.13f, -0.1638f), new Vector3(180f, 0f, 0f), 0.4f, 10),
-                    new Screw(new Vector3(0.014f, 0.24f, 0.332f), new Vector3(0f, -90f, 0f), 0.4f, 10),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboSmall_intercooler_tube_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(0.034f, -0.13f, -0.1638f), new Vector3(180f, 0f, 0f), 0.4f, 10),
+                    new ScrewV2(new Vector3(0.014f, 0.24f, 0.332f), new Vector3(0f, -90f, 0f), 0.4f, 10),
                 });
-            turboSmall_exhaust_inlet_tube_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, turboSmall_exhaust_inlet_tube_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(0.114f, -0.044f, -0.035f), new Vector3(-90f, 0f, 0f), 0.7f, 10),
-                    new Screw(new Vector3(0.06f, -0.044f, -0.044f), new Vector3(-90f, 0f, 0f), 0.7f, 10),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboSmall_exhaust_inlet_tube_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(0.114f, -0.044f, -0.035f), new Vector3(-90f, 0f, 0f), 0.7f, 10),
+                    new ScrewV2(new Vector3(0.06f, -0.044f, -0.044f), new Vector3(-90f, 0f, 0f), 0.7f, 10),
                 });
-            turboSmall_exhaust_outlet_tube_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, turboSmall_exhaust_outlet_tube_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(-0.078f, 0.1708f, -0.0235f), new Vector3(0, -90, 0), 0.5f, 10),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboSmall_exhaust_outlet_tube_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(-0.078f, 0.1708f, -0.0235f), new Vector3(0, -90, 0), 0.5f, 10),
                 });
-            turboSmall_manifold_twinCarb_tube_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, turboSmall_manifold_twinCarb_tube_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(-0.097f, -0.07f, -0.135f), new Vector3(0, 90, 0), 0.4f, 10),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboSmall_manifold_twinCarb_tube_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(-0.097f, -0.07f, -0.135f), new Vector3(0, 90, 0), 0.4f, 10),
                 });
 
-            turboSmall_airfilter_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, turboSmall_airfilter_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(0.0095f, 0.025f, 0.0488f), new Vector3(0, 90, 0), 0.4f, 10),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboSmall_airfilter_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(0.0095f, 0.025f, 0.0488f), new Vector3(0, 90, 0), 0.4f, 10),
                 });
 
             //Other parts
-            exhaust_header_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, exhaust_header_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(0.169f, 0.076f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewablePart.ScrewType.Nut),
-                    new Screw(new Vector3(0.13f, 0.0296f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewablePart.ScrewType.Nut),
-                    new Screw(new Vector3(-0.003f, 0.08f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewablePart.ScrewType.Nut),
-                    new Screw(new Vector3(-0.137f, 0.0296f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewablePart.ScrewType.Nut),
-                    new Screw(new Vector3(-0.174f, 0.076f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewablePart.ScrewType.Nut),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, exhaust_header_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(0.169f, 0.076f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
+                    new ScrewV2(new Vector3(0.13f, 0.0296f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
+                    new ScrewV2(new Vector3(-0.003f, 0.08f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
+                    new ScrewV2(new Vector3(-0.137f, 0.0296f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
+                    new ScrewV2(new Vector3(-0.174f, 0.076f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
                 });
-            intercooler_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, intercooler_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(-0.2215f, 0.081f, 0.039f), new Vector3(180, 0, 0), 0.6f, 10),
-                    new Screw(new Vector3(0.239f, 0.081f, 0.039f), new Vector3(180, 0, 0), 0.6f, 10),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, intercooler_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(-0.2215f, 0.081f, 0.039f), new Vector3(180, 0, 0), 0.6f, 10),
+                    new ScrewV2(new Vector3(0.239f, 0.081f, 0.039f), new Vector3(180, 0, 0), 0.6f, 10),
                 });
-            intercooler_manifold_weber_tube_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, intercooler_manifold_weber_tube_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(-0.0473f, -0.1205f, -0.241f), new Vector3(180, 0, 0), 0.4f, 10),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, intercooler_manifold_weber_tube_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(-0.0473f, -0.1205f, -0.241f), new Vector3(180, 0, 0), 0.4f, 10),
                 });
-            intercooler_manifold_twinCarb_tube_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, intercooler_manifold_twinCarb_tube_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(-0.0425f, -0.1205f, -0.241f), new Vector3(180, 0, 0), 0.4f, 10),
-                });
-            manifold_weber_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, manifold_weber_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(0.2f, 0.03f, -0.009f), new Vector3(180, 0, 0), 0.4f, 10),
-                });
-            manifold_twinCarb_part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, manifold_twinCarb_part.rigidPart,
-                new Screw[] {
-                    new Screw(new Vector3(-0.003f, 0.105f, 0.0305f), new Vector3(0, 90, 0), 0.5f, 10),
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, intercooler_manifold_twinCarb_tube_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(-0.0425f, -0.1205f, -0.241f), new Vector3(180, 0, 0), 0.4f, 10),
                 });
 
-
-
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, manifold_weber_part,
+                new ScrewV2[]{
+                    new ScrewV2(new Vector3(-0.09f, 0, 0), new Vector3(0, 0, 0), 0.5f, 5),
+                    new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.5f, 5),
+                    new ScrewV2(new Vector3(0.09f, 0, 0), new Vector3(0, 0, 0), 0.5f, 5),
+                });
+            Helper.ScrewablePartV2Simpe(baseScrewInfo, manifold_twinCarb_part,
+                new ScrewV2[] {
+                    new ScrewV2(new Vector3(-0.003f, 0.105f, 0.0305f), new Vector3(0, 90, 0), 0.5f, 10),
+                });
             //Clamps
+            turboBig_part.screwablePart.AddClampModel(new Vector3(0.079f, -0.09f, -0.057f), new Vector3(-90, 0, 0), new Vector3(0.79f, 0.79f, 0.79f));
+
             turboBig_blowoff_valve_part.screwablePart.AddClampModel(new Vector3(0.035f, -0.04f, 0.0005f), new Vector3(55, 90, 0), new Vector3(0.41f, 0.41f, 0.41f));
-            turboBig_exhaust_outlet_straight_part.screwablePart.AddClampModel(new Vector3(0.045f, -0.034f, -0.023f), new Vector3(0, 0, 0), new Vector3(1, 1, 1));
-            turboBig_exhaust_outlet_tube_part.screwablePart.AddClampModel(new Vector3(-0.055f, 0.334f, -0.0425f), new Vector3(0, 0, 0), new Vector3(1, 1, 1));
             turboBig_intercooler_tube_part.screwablePart.AddClampModel(new Vector3(0.031f, -0.154f, -0.1545f), new Vector3(0, 90, 0), new Vector3(0.62f, 0.62f, 0.62f));
 
             turboSmall_airfilter_part.screwablePart.AddClampModel(new Vector3(0f, 0f, 0.049f), new Vector3(0, 0, 0), new Vector3(0.65f, 0.65f, 0.65f));
@@ -967,6 +821,7 @@ turboBig_part = new SimplePart(
             intercooler_manifold_twinCarb_tube_part.screwablePart.AddClampModel(new Vector3(-0.042f, -0.1465f, -0.232f), new Vector3(0, 90, 0), new Vector3(0.68f, 0.68f, 0.68f));
             manifold_weber_part.screwablePart.AddClampModel(new Vector3(0.2f, -0.002f, 0.001f), new Vector3(0, 90, 0), new Vector3(0.82f, 0.82f, 0.82f));
             manifold_twinCarb_part.screwablePart.AddClampModel(new Vector3(-0.013f, 0.105f, 0f), new Vector3(90, 0, 0), new Vector3(0.8f, 0.8f, 0.8f));
+
         }
         private void SetupInspectionPrevention()
         {
@@ -1000,6 +855,7 @@ turboBig_part = new SimplePart(
         }
         public override void ModSettings()
         {
+            ScrewablePartV2.SetupModSettings(this);
             Settings.AddHeader(this, "DEBUG");
             Settings.AddCheckBox(this, debugGuiSetting);
             Settings.AddButton(this, resetPosSetting, "Reset uninstalled part location");
@@ -1065,14 +921,14 @@ turboBig_part = new SimplePart(
                 Logger.New("Error while trying to save save file", "", ex);
             }
 
-
+            
             try
             {
-                ScrewablePart.SaveScrews(this, Helper.GetScrewablePartsArrayFromPartsList(partsList), screwable_saveFile);
+                ScrewablePartV2.SaveScrews(this, Helper.GetScrewablePartsArrayFromPartsList(partsList), screwableV2_saveFile);
             }
             catch (Exception ex)
             {
-                Logger.New("Error while trying to save screws ", $"save file: {screwable_saveFile}", ex);
+                Logger.New("Error while trying to save screws ", $"save file: {screwableV2_saveFile}", ex);
             }
         }
 
@@ -1128,7 +984,7 @@ turboBig_part = new SimplePart(
                 SetBoostGaugeText("");
             }
             HandleExhaustSystem();
-            HandlePartsTrigger();
+            //HandlePartsTrigger();
         }
 
         private void HandlePartsTrigger()

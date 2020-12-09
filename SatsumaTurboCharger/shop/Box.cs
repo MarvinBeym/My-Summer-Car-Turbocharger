@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using ScrewablePartAPI.V2;
 
 namespace SatsumaTurboCharger.parts
 {
@@ -48,11 +49,11 @@ namespace SatsumaTurboCharger.parts
             }
         }
 
-        public void AddScrewable(SortedList<string, Screws> screwListSave, AssetBundle screwableAssetsBundle, Screw[] screws)
+        public void AddScrewable(ScrewableBaseInfo baseInfo, AssetBundle screwableAssetsBundle, ScrewV2[] screws)
         {
             foreach (AdvPart part in parts)
             {
-                part.screwablePart = new ScrewablePart(screwListSave, screwableAssetsBundle, part.rigidPart, screws);
+                part.screwablePart = new ScrewablePartV2(baseInfo, part.id, part.rigidPart, screws);
             }
         }
 

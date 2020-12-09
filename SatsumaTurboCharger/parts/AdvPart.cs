@@ -2,6 +2,7 @@
 using ModApi.Attachable;
 using MSCLoader;
 using ScrewablePartAPI;
+using ScrewablePartAPI.V2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace SatsumaTurboCharger.parts
         public string saveFile;
 
         private const float triggerSize = 0.08f;
-        public ScrewablePart screwablePart = null;
+        public ScrewablePartV2 screwablePart = null;
 
         public NewPart parentPart;
         public List<NewPart> childParts;
@@ -126,7 +127,10 @@ namespace SatsumaTurboCharger.parts
             DefineBasePartCalls(part);
         }
 
-
+        /// <summary>
+        /// Injects the install & uninstall methods for original parts (from the game itself)
+        /// </summary>
+        /// <param name="parentPart"></param>
         private void AttachParentUninstallFsm(GameObject parentPart)
         {
             try
@@ -136,44 +140,52 @@ namespace SatsumaTurboCharger.parts
                 {
                     if (fSM.FsmName == "Removal")
                     {
-                        int requiredStatesFound = 0;
+                        bool requiredStatesFound = false;
                         foreach (FsmState state in fSM.FsmStates)
                         {
-                            if (state.Name == "Remove part" || state.Name == "Mouse off")
+                            if (state.Name == "Remove part")
                             {
-                                requiredStatesFound++;
+                                requiredStatesFound = true;
                             }
                         }
-                        if (requiredStatesFound == 2)
+                        if (requiredStatesFound)
                         {
-                            FsmHook.FsmInject(parentPart, "Remove part", delegate(){ ParentUninstallActionFsm(parentPart); });
-                            FsmHook.FsmInject(parentPart, "Mouse off", delegate () { ParentInstallActionFsm(parentPart); });
+                            partTrigger.triggerGameObject.SetActive((parentPart.transform.parent != null && parentPart.transform.parent.name != ""));
+
+                            GameObject parentFsmGameObject = fSM.FsmVariables.FindFsmGameObject("db_ThisPart").Value;
+
+                            FsmHook.FsmInject(parentPart, "Remove part", OnParentUninstall);
+                            GameObject trigger = PlayMakerFSM.FindFsmOnGameObject(parentFsmGameObject, "Data").FsmVariables.FindFsmGameObject("Trigger").Value;
+
+                            if (Helper.CheckContainsState(Helper.FindFsmOnGameObject(trigger, "Assembly"), "Assemble"))
+                            {
+                                FsmHook.FsmInject(trigger, "Assemble", OnParentInstall);
+                            }
+                            else if(Helper.CheckContainsState(Helper.FindFsmOnGameObject(trigger, "Assembly"), "Assemble 2"))
+                            {
+                                FsmHook.FsmInject(trigger, "Assemble 2", OnParentInstall);
+                            }
                         }
                     }
                 }
 
             }
-            catch
+            catch(Exception ex)
             {
 
             }
         }
 
-        private void ParentInstallActionFsm(GameObject parent)
+        private void OnParentInstall()
         {
-            if(parent.transform.parent)
-            ModConsole.Warning("Parent Installed");
             partTrigger.triggerGameObject.SetActive(true);
         }
 
-        private void ParentUninstallActionFsm(GameObject parent)
+        private void OnParentUninstall()
         {
-            ModConsole.Warning("Parent uninstall");
+            if (installed) { removePart(); }
             partTrigger.triggerGameObject.SetActive(false);
-            if (installed)
-            {
-                removePart();
-            }
+            
         }
 
         private void FixRigidPartNaming(NewPart part)
@@ -231,16 +243,16 @@ namespace SatsumaTurboCharger.parts
 
         public void OnAssemble()
         {
-            if (this.screwablePart != null)
+            if (screwablePart != null)
             {
-                this.screwablePart.setScrewsOnAssemble();
+                screwablePart.OnPartAssemble();
             }
         }
         public void OnDisassemble()
         {
             if (screwablePart != null)
             {
-                screwablePart.resetScrewsOnDisassemble();
+                screwablePart.OnPartDisassemble();
             }
         }
 
@@ -255,14 +267,6 @@ namespace SatsumaTurboCharger.parts
             }
             return installed;
         }
-
-
-
-
-
-
-
-
 
         public void removePart()
         {
@@ -291,8 +295,9 @@ namespace SatsumaTurboCharger.parts
 
         public PartSaveInfo getSaveInfo()
         {
-            return part.defaultPartSaveInfo;
+            return part.getSaveInfo();
         }
+
         public PartSaveInfo defaultPartSaveInfo
         {
             get

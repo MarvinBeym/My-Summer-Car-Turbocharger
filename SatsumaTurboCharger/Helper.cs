@@ -9,14 +9,34 @@ using UnityEngine;
 using ScrewablePartAPI;
 using HutongGames.PlayMaker;
 using SatsumaTurboCharger.parts;
+using ScrewablePartAPI.V2;
+
 namespace SatsumaTurboCharger
 {
     public static class Helper
     {
-        public static bool GetPartInstalled(GameObject part)
+        public static void ScrewablePartV2Simpe(ScrewableBaseInfo baseInfo, AdvPart advPart, ScrewV2[] screws)
         {
+            advPart.screwablePart = new ScrewablePartV2(baseInfo, advPart.id, advPart.rigidPart, screws);
+        }
+        public static PlayMakerFSM FindFsmOnGameObject(GameObject gameObject, string fsmName)
+        {
+            foreach(PlayMakerFSM fSM in gameObject.GetComponents<PlayMakerFSM>())
+            {
+                if (fSM.FsmName == fsmName) { return fSM; }
+            }
+            return null;
+        }
+        public static bool CheckContainsState(PlayMakerFSM fSM, string stateName)
+        {
+            foreach(FsmState state in fSM.FsmStates)
+            {
+                if(state.Name == stateName)
+                {
+                    return true;
+                }
+            }
             return false;
-            //return (gameObject.transform.parent != null && gameObject.transform.parent.name == parentInstalledName);
         }
 
         public static GameObject GetGameObjectFromFsm(GameObject fsmGameObject, string fsmToUse = "Data")
@@ -68,9 +88,9 @@ namespace SatsumaTurboCharger
         {
             return FsmVariables.GlobalVariables.FindFsmString("PlayerCurrentVehicle").Value == "Satsuma";
         }
-        public static ScrewablePart[] GetScrewablePartsArrayFromPartsList(List<AdvPart> partsList)
+        public static ScrewablePartV2[] GetScrewablePartsArrayFromPartsList(List<AdvPart> partsList)
         {
-            List<ScrewablePart> screwableParts = new List<ScrewablePart>();
+            List<ScrewablePartV2> screwableParts = new List<ScrewablePartV2>();
 
             partsList.ForEach(delegate (AdvPart part)
             {
@@ -128,12 +148,12 @@ namespace SatsumaTurboCharger
 
         }
         public static void WorkAroundAction() { }
-        public static GameObject SetObjectNameTagLayer(GameObject gameObject, string name)
+        public static GameObject SetObjectNameTagLayer(GameObject gameObject, string name, string layer = "Parts", string tag = "PART")
         {
             gameObject.name = name;
-            gameObject.tag = "PART";
+            gameObject.tag = tag;
 
-            gameObject.layer = LayerMask.NameToLayer("Parts");
+            gameObject.layer = LayerMask.NameToLayer(layer);
             return gameObject;
         }
         public static string CombinePaths(params string[] paths)

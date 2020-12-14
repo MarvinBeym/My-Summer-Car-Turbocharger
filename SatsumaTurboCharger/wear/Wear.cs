@@ -31,6 +31,11 @@ namespace SatsumaTurboCharger.wear
         private ProductDetails repairProduct;
         public bool repairPurchaseMade = false;
 
+        public override string ToString()
+        {
+            return wear.ToString("000.00000");
+        }
+
         public Wear(SatsumaTurboCharger mod, string id, AdvPart part, List<WearCondition> wearConditions, float wearReductionMultiplier, float wearReductionIntervall, Dictionary<string, float> wearSave, float productPrice, string productImage, int randomFallOff = -1)
         {
             this.mod = mod;

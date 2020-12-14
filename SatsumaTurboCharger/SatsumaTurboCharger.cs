@@ -10,8 +10,6 @@ using SatsumaTurboCharger.parts;
 using SatsumaTurboCharger.shop;
 using SatsumaTurboCharger.turbo;
 using SatsumaTurboCharger.wear;
-using ScrewablePartAPI;
-using ScrewablePartAPI.New;
 using ScrewablePartAPI.V2;
 using System;
 using System.Collections.Generic;
@@ -19,7 +17,6 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using UnityEngine;
-using static ScrewablePartAPI.NewScrewablePart;
 using Random = System.Random;
 
 namespace SatsumaTurboCharger
@@ -60,6 +57,8 @@ namespace SatsumaTurboCharger
          * Added clear error message when mod can't load the AssetBundle
          * Added logger
          * Fixed some errors that could happen sometimes on launch
+         * Improved guiDebug/replaced with reworked one using GUILayout
+         * Added back/fixed six gear + ratio replacer
          * 
          */
 
@@ -117,8 +116,6 @@ namespace SatsumaTurboCharger
         private const string boost_saveFile = "turbocharger_mod_boost_SaveFile.txt";
         private const string wear_saveFile = "wear_saveFile.json";
 
-        [Obsolete("No longer used", true)]
-        private const string screwable_saveFile = "screwable_saveFile.json";
         private const string screwableV2_saveFile = "screwableV2_saveFile.json";
         private const string color_saveFile = "color_saveFile.json";
 
@@ -219,6 +216,7 @@ namespace SatsumaTurboCharger
         public Settings partsWearSetting = new Settings("partsWearSetting", "Use parts wear system", true);
         public Settings rotateTurbineSetting = new Settings("rotateTurbineSetting", "Allow turbo turbine rotation", false);
         public Settings backfireEffectSetting = new Settings("backfireEffectSetting", "Allow backfire effect for turbo", false);
+        private Settings useCustomGearRatios = new Settings("useCustomGearRatios", "Use custom gear ratios", false, Helper.WorkAroundAction);
 
         //
         //ModApi Parts
@@ -279,23 +277,26 @@ namespace SatsumaTurboCharger
         private bool ecuModInstalled = false;
 
         //Everything Else
-        private static float[] originalGearRatios;
-        private static float[] newGearRatio = new float[]
+        private float[] originalGearRatios = new float[]
+        {
+            -4.093f,
+            0f,
+            3.673f,
+            2.217f,
+            1.448f,
+            1f,
+        };
+        private float[] newGearRatios = new float[]
         {
             -4.093f, // reverse
             0f,      // neutral
             3.4f,  // 1st
             1.8f,  // 2nd
             1.4f,  // 3rd
-            0.8f   // 4th
+            1.0f,   // 4th
+            0.8f,   // 5th
+            0.65f    // 6th
         };
-        /* Gear: R = 0
-         * Gear: N = 1
-         * Gear: 1 = 2
-         * Gear: 2 = 3
-         * Gear: 3 = 4
-         * Gear: 4 = 5
-         */
         public AssetBundle assetsBundle;
         private AssetBundle screwableAssetsBundle;
         private TextMesh boostGaugeTextMesh;
@@ -318,19 +319,24 @@ namespace SatsumaTurboCharger
 
             ecuModInstalled = ModLoader.IsModPresent("DonnerTech_ECU_Mod");
             saveFileRenamer = new SaveFileRenamer(this, 900);
-            guiDebug = new GuiDebug(Screen.width - 260, 50, 250, "TURBO MOD DEBUG", new List<GuiButtonElement>()
-            {
-                new GuiButtonElement("DEBUG"),
-                new GuiButtonElement("Wear"),
+
+            guiDebug = new GuiDebug(Screen.width - 310, 50, 300, "ECU MOD DEBUG", new GuiDebugElement[] {
+                new GuiDebugElement("DEBUG"),
+                new GuiDebugElement("Wear"),
             });
 
-            if (!ModLoader.CheckSteam())
-            {
-                ModUI.ShowMessage("Cunt", "CUNT");
-                ModConsole.Print("Cunt detected");
-            }
             resetPosSetting.DoAction = PosReset;
-
+            useCustomGearRatios.DoAction = new Action(delegate ()
+            {
+                if ((bool)useCustomGearRatios.Value)
+                {
+                    satsumaDriveTrain.gearRatios = newGearRatios;
+                }
+                else
+                {
+                    satsumaDriveTrain.gearRatios = originalGearRatios;
+                }
+            });
             assetsBundle = Helper.LoadAssetBundle(this, "turbochargermod.unity3d");
             screwableAssetsBundle = Helper.LoadAssetBundle(this, "screwableapi.unity3d");
 
@@ -340,7 +346,6 @@ namespace SatsumaTurboCharger
                 power = PlayMakerFSM.FindFsmOnGameObject(elect, "Power");
                 satsuma = GameObject.Find("SATSUMA(557kg, 248)");
                 satsumaDriveTrain = satsuma.GetComponent<Drivetrain>();
-                originalGearRatios = satsumaDriveTrain.gearRatios;
                 satsumaDriveTrain.clutchTorqueMultiplier = 10f;
 
                 exhaustFromEngine = GameObject.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromEngine");
@@ -703,24 +708,24 @@ namespace SatsumaTurboCharger
             ScrewableBaseInfo baseScrewInfo = new ScrewableBaseInfo(screwableAssetsBundle, screwSave);
 
             //Big turbo
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboBig_intercooler_tube_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, turboBig_intercooler_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.153f, 0.324f, 0.1835f), new Vector3(90, 0, 0), 0.7f, 10),
                     new ScrewV2(new Vector3(0.0779f, 0.324f, 0.1835f), new Vector3(90, 0, 0), 0.7f, 10),
                     new ScrewV2(new Vector3(0.031f, -0.13f, -0.1632f), new Vector3(180, 0, 0), 0.4f, 10),
                });
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboBig_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, turboBig_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.071f, -0.0905f, -0.088f), new Vector3(0, -90, 0), 0.5f, 8),
                 });
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboBig_exhaust_inlet_tube_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, turboBig_exhaust_inlet_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.202f, -0.1f, -0.01f), new Vector3(-90, 0, 0), 0.7f, 10),
                     new ScrewV2(new Vector3(0.145f, -0.1f, -0.018f), new Vector3(-90, 0, 0), 0.7f, 10),
                     new ScrewV2(new Vector3(-0.12f, 0.19f, -0.005f), new Vector3(90, 0, 0), 0.7f, 10),
                     new ScrewV2(new Vector3(-0.2f, 0.19f, -0.005f), new Vector3(90, 0, 0), 0.7f, 10),
                 });
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboBig_exhaust_outlet_tube_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, turboBig_exhaust_outlet_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0f, 0.206f, -0.055f), new Vector3(0, 0, 0), 0.6f, 6),
                     new ScrewV2(new Vector3(-0.042f, 0.164f, -0.055f), new Vector3(0, 0, 0), 0.6f, 6),
@@ -729,7 +734,7 @@ namespace SatsumaTurboCharger
 
                 });
 
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboBig_exhaust_outlet_straight_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, turboBig_exhaust_outlet_straight_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.6f, 6),
                     new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.6f, 6),
@@ -737,42 +742,42 @@ namespace SatsumaTurboCharger
                     new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.6f, 6),
                 });
 
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboBig_blowoff_valve_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, turboBig_blowoff_valve_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.0475f, -0.031f, 0.01f), new Vector3(0, 0, 0), 0.3f, 5),
                 });
 
             //Small turbo
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboSmall_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, turboSmall_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.0715f, -0.024f, 0.044f), new Vector3(180f, 0f, 0f), 0.4f, 10),
                 });
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboSmall_intercooler_tube_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, turboSmall_intercooler_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.034f, -0.13f, -0.1638f), new Vector3(180f, 0f, 0f), 0.4f, 10),
                     new ScrewV2(new Vector3(0.014f, 0.24f, 0.332f), new Vector3(0f, -90f, 0f), 0.4f, 10),
                 });
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboSmall_exhaust_inlet_tube_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, turboSmall_exhaust_inlet_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.114f, -0.044f, -0.035f), new Vector3(-90f, 0f, 0f), 0.7f, 10),
                     new ScrewV2(new Vector3(0.06f, -0.044f, -0.044f), new Vector3(-90f, 0f, 0f), 0.7f, 10),
                 });
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboSmall_exhaust_outlet_tube_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, turboSmall_exhaust_outlet_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.078f, 0.1708f, -0.0235f), new Vector3(0, -90, 0), 0.5f, 10),
                 });
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboSmall_manifold_twinCarb_tube_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, turboSmall_manifold_twinCarb_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.097f, -0.07f, -0.135f), new Vector3(0, 90, 0), 0.4f, 10),
                 });
 
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, turboSmall_airfilter_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, turboSmall_airfilter_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.0095f, 0.025f, 0.0488f), new Vector3(0, 90, 0), 0.4f, 10),
                 });
 
             //Other parts
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, exhaust_header_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, exhaust_header_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.169f, 0.076f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
                     new ScrewV2(new Vector3(0.13f, 0.0296f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
@@ -780,27 +785,27 @@ namespace SatsumaTurboCharger
                     new ScrewV2(new Vector3(-0.137f, 0.0296f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
                     new ScrewV2(new Vector3(-0.174f, 0.076f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
                 });
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, intercooler_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, intercooler_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.2215f, 0.081f, 0.039f), new Vector3(180, 0, 0), 0.6f, 10),
                     new ScrewV2(new Vector3(0.239f, 0.081f, 0.039f), new Vector3(180, 0, 0), 0.6f, 10),
                 });
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, intercooler_manifold_weber_tube_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, intercooler_manifold_weber_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.0473f, -0.1205f, -0.241f), new Vector3(180, 0, 0), 0.4f, 10),
                 });
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, intercooler_manifold_twinCarb_tube_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, intercooler_manifold_twinCarb_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.0425f, -0.1205f, -0.241f), new Vector3(180, 0, 0), 0.4f, 10),
                 });
 
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, manifold_weber_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, manifold_weber_part,
                 new ScrewV2[]{
                     new ScrewV2(new Vector3(-0.09f, 0, 0), new Vector3(0, 0, 0), 0.5f, 5),
                     new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.5f, 5),
                     new ScrewV2(new Vector3(0.09f, 0, 0), new Vector3(0, 0, 0), 0.5f, 5),
                 });
-            Helper.ScrewablePartV2Simpe(baseScrewInfo, manifold_twinCarb_part,
+            Helper.ScrewablePartV2Simple(baseScrewInfo, manifold_twinCarb_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.003f, 0.105f, 0.0305f), new Vector3(0, 90, 0), 0.5f, 10),
                 });
@@ -863,12 +868,15 @@ namespace SatsumaTurboCharger
             Settings.AddCheckBox(this, rotateTurbineSetting);
             Settings.AddCheckBox(this, backfireEffectSetting);
             Settings.AddCheckBox(this, partsWearSetting);
+            Settings.AddCheckBox(this, useCustomGearRatios);
             Settings.AddHeader(this, "", Color.clear);
             Settings.AddText(this, "New Gear ratios\n" +
-                "1.Gear: " + newGearRatio[2] + "\n" +
-                "2.Gear: " + newGearRatio[3] + "\n" +
-                "3.Gear: " + newGearRatio[4] + "\n" +
-                "4.Gear: " + newGearRatio[5]
+                "1.Gear: " + newGearRatios[2] + "\n" +
+                "2.Gear: " + newGearRatios[3] + "\n" +
+                "3.Gear: " + newGearRatios[4] + "\n" +
+                "4.Gear: " + newGearRatios[5] + "\n" +
+                "5.Gear: " + newGearRatios[6] + "\n" +
+                "6.Gear: " + newGearRatios[7]
                 );
         }
         public override void OnSave()
@@ -931,23 +939,23 @@ namespace SatsumaTurboCharger
                 Logger.New("Error while trying to save screws ", $"save file: {screwableV2_saveFile}", ex);
             }
         }
-
         public override void OnGUI()
         {
             saveFileRenamer.GuiHandler();
             if((bool)debugGuiSetting.Value)
             {
-                guiDebug.Handle(new List<GuiInfo> {
-                new GuiInfo("Wear", "Racing Turbo", racingTurboWear.wear.ToString("000.00000")),
-                new GuiInfo("Wear", "Intercooler", intercoolerWear.wear.ToString("000.00000")),
-                new GuiInfo("DEBUG", "Engine RPM", ((int)satsumaDriveTrain.rpm).ToString()),
-                new GuiInfo("DEBUG", "Racing Turbo bar", racingTurbo.boost.ToString()),
-                new GuiInfo("DEBUG", "GT Turbo bar", gtTurbo.boost.ToString()),
-                new GuiInfo("DEBUG", "Power multiplier", racingTurbo.powerMultiplier.ToString()),
-                new GuiInfo("DEBUG", "KM/H", ((int)satsumaDriveTrain.differentialSpeed).ToString()),
-                new GuiInfo("DEBUG", "Torque", satsumaDriveTrain.torque.ToString()),
-                new GuiInfo("DEBUG", "Clutch Max Torque", satsumaDriveTrain.clutchMaxTorque.ToString()),
-                new GuiInfo("DEBUG", "Clutch Torque Multiplier", satsumaDriveTrain.clutchTorqueMultiplier.ToString()),
+                guiDebug.Handle(new GuiDebugInfo[] {
+                new GuiDebugInfo("Wear", "Racing Turbo", racingTurboWear.ToStringOrEmpty()),
+                new GuiDebugInfo("Wear", "GT Turbo", gtTurboWear.ToStringOrEmpty()),
+                new GuiDebugInfo("Wear", "Intercooler", intercoolerWear.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Engine RPM", ((int) satsumaDriveTrain.rpm).ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Racing Turbo bar", racingTurbo.boost.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "GT Turbo bar", gtTurbo.boost.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Power multiplier", racingTurbo.powerMultiplier.Value.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "KM/H", ((int) satsumaDriveTrain.differentialSpeed).ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Torque", satsumaDriveTrain.torque.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Clutch Max Torque", satsumaDriveTrain.clutchMaxTorque.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Clutch Torque Multiplier", satsumaDriveTrain.clutchTorqueMultiplier.ToStringOrEmpty()),
             });
             }
 

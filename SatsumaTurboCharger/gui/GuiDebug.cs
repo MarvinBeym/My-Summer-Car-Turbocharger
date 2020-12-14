@@ -8,51 +8,27 @@ namespace SatsumaTurboCharger.gui
 {
     public class GuiDebug
     {
-        public string text = "";
-        public bool baseEnabled = false;
-        public int baseLeft = 0;
-        public int baseTop = 0;
-        public int baseWidth = 0;
-        public string currentElement = "";
-        public const int buttonHeight = 20;
-        public const int space = 10;
-        public List<GuiButtonElement> guiButtonElements;
-
-        public GuiDebug(int left, int top, int width, string text, List<GuiButtonElement> guiButtonElements)
+        private Rect rect;
+        private GuiDebugElement[] debugWindows;
+        private string debugLabel;
+        private bool windowEnabled = false;
+        public GuiDebug(int left, int top, int width, string debugLabel, GuiDebugElement[] debugWindows)
         {
-            this.text = text;
-            this.guiButtonElements = guiButtonElements;
-            baseLeft = left;
-            baseTop = top;
-            baseWidth = width;
-
-            foreach(GuiButtonElement guiButtonElement in guiButtonElements)
-            {
-                guiButtonElement.SetGuiInfo(this);
-            }
+            rect = new Rect(left, top, width, Screen.height - top);
+            this.debugWindows = debugWindows;
+            this.debugLabel = debugLabel;
         }
 
-
-        public void Handle(List<GuiInfo> guiInfos)
+        internal void Handle(GuiDebugInfo[] guiDebugInfos)
         {
-            if (GUI.Button(new Rect(baseLeft, baseTop, baseWidth, buttonHeight), text))
+            GUILayout.BeginArea(rect);
+            GUILayout.BeginVertical(debugLabel, "window", GUILayout.ExpandHeight(false));
+            foreach (GuiDebugElement debugWindow in debugWindows)
             {
-                baseEnabled = !baseEnabled;
+                debugWindow.Handle(guiDebugInfos);
             }
-
-            if (baseEnabled)
-            {
-                int topPosition = baseTop + buttonHeight + space;
-                int boxHeight = (guiButtonElements.Count * (buttonHeight + 5)) + 35;
-                GUI.Box(new Rect(baseLeft, topPosition, baseWidth, boxHeight), text);
-                for(int i = 0; i < guiButtonElements.Count; i++)
-                {
-                    GuiButtonElement guiButtonElement = guiButtonElements[i];
-                    int nextBoxPosition = boxHeight + topPosition + space;
-                    guiButtonElement.Handle(i * (space + 15) + (topPosition + 30), nextBoxPosition, guiInfos);
-                }
-            }
-
+            GUILayout.EndVertical();
+            GUILayout.EndArea();
         }
     }
 }

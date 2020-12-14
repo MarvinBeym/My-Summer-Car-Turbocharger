@@ -90,12 +90,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extension.cs" />
     <Compile Include="parts\AdvPart.cs" />
     <Compile Include="parts\NewPart.cs" />
     <Compile Include="shop\BoxLogic.cs" />
     <Compile Include="GT_Turbocharger_Logic.cs" />
-    <Compile Include="gui\GuiInfo.cs" />
-    <Compile Include="gui\GuiButtonElement.cs" />
+    <Compile Include="gui\GuiDebugInfo.cs" />
+    <Compile Include="gui\GuiDebugElement.cs" />
     <Compile Include="gui\GuiDebug.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="shop\Kit.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="old_file_checker\SaveFileRenamer.cs" />
     <Compile Include="shop\Shop.cs" />
+    <Compile Include="ScrewablePartTestMod.cs" />
     <Compile Include="turbo\Backfire_Logic.cs" />
     <Compile Include="turbo\Condition.cs" />
     <Compile Include="turbo\Configuration.cs" />

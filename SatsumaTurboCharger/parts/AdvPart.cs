@@ -176,6 +176,11 @@ namespace SatsumaTurboCharger.parts
             }
         }
 
+        public void AddChildPart(AdvPart part)
+        {
+            this.part.AddChildPart(part.part);
+        }
+
         private void OnParentInstall()
         {
             partTrigger.triggerGameObject.SetActive(true);

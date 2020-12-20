@@ -71,8 +71,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="ScrewablePartAPI">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\Mods\References\ScrewablePartAPI.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\Mods\ScrewablePartAPI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -116,7 +115,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="old_file_checker\SaveFileRenamer.cs" />
     <Compile Include="shop\Shop.cs" />
-    <Compile Include="ScrewablePartTestMod.cs" />
     <Compile Include="turbo\Backfire_Logic.cs" />
     <Compile Include="turbo\Condition.cs" />
     <Compile Include="turbo\Configuration.cs" />

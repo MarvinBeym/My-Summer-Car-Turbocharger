@@ -15,7 +15,7 @@ namespace SatsumaTurboCharger
 {
     public static class Helper
     {
-        public static void ScrewablePartV2Simple(ScrewableBaseInfo baseInfo, AdvPart advPart, ScrewV2[] screws)
+        public static void ScrewablePartV2Simple(ScrewablePartV2BaseInfo baseInfo, AdvPart advPart, ScrewV2[] screws)
         {
             advPart.screwablePart = new ScrewablePartV2(baseInfo, advPart.id, advPart.rigidPart, screws);
         }

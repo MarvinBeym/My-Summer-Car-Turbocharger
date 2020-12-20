@@ -125,8 +125,8 @@ namespace SatsumaTurboCharger
 
         //Big Turbo
         private Vector3 turboBig_installLocation = new Vector3(-0.066f, 0.288f, -0.079f);                                       //Done
-        private Vector3 turboBig_intercooler_tube_installLocation = new Vector3(0.344f, 0.04f, 1.4355f);                        //Done
-
+        private Vector3 turboBig_intercooler_tube_installLocation = new Vector3(-0.3695f, 0.178f, 0.267f);                        //Done
+        
         private Vector3 turboBig_exhaust_inlet_tube_installLocation = new Vector3(-0.234f, -0.02f, 0.099f);                     //Done
         private Vector3 turboBig_exhaust_outlet_tube_installLocation = new Vector3(-0.3075f, 1.044f, 0.458f);                   //Done
         private Vector3 turboBig_blowoff_valve_installLocation = new Vector3(0.027f, 0.1385f, 0.1635f);                         //Done
@@ -458,8 +458,8 @@ namespace SatsumaTurboCharger
                 assetsBundle, partsBuySave);
 
             turboBig_intercooler_tube_part = new AdvPart(this,
-                "turboBig_intercooler_tube", "Racing Turbo Intercooler Tube", satsuma, "",
-                turboBig_intercooler_tube_installLocation, new Vector3(0, 180, 0),
+                "turboBig_intercooler_tube", "Racing Turbo Intercooler Tube", intercooler_part.part, "",
+                turboBig_intercooler_tube_installLocation, new Vector3(5, 0, 0),
                 assetsBundle, partsBuySave, "turboBig_kit");
 
             turboBig_blowoff_valve_part = new AdvPart(this,
@@ -526,11 +526,11 @@ namespace SatsumaTurboCharger
 
             otherPartsList = new List<AdvPart>
             {
-                //manifold_weber_part,
+                manifold_weber_part,
                 manifold_twinCarb_part,
                 boost_gauge_part,
-                //intercooler_part,
-                //intercooler_manifold_weber_tube_part,
+                intercooler_part,
+                intercooler_manifold_weber_tube_part,
                 intercooler_manifold_twinCarb_tube_part,
                 turboBig_hood_part,
                 exhaust_header_part,
@@ -701,31 +701,26 @@ namespace SatsumaTurboCharger
             screwableAssetsBundle.Unload(false);
             ModConsole.Print(this.Name + $" [v{this.Version} | Screwable v{ScrewablePartV2.version}] finished loading");         
         }
-
+        
         private void SetupScrewable()
         {
-            Dictionary<string, int[]> screwSave = Helper.LoadSaveOrReturnNew<Dictionary<string, int[]>>(this, screwableV2_saveFile);
-            ScrewableBaseInfo baseScrewInfo = new ScrewableBaseInfo(screwableAssetsBundle, screwSave);
-
+            string screwSavePath = Path.Combine(ModLoader.GetModConfigFolder(this), screwableV2_saveFile);
+            ScrewablePartV2BaseInfo baseInfo = new ScrewablePartV2BaseInfo(screwSavePath, true);
             //Big turbo
-            Helper.ScrewablePartV2Simple(baseScrewInfo, turboBig_intercooler_tube_part,
+            Helper.ScrewablePartV2Simple(baseInfo, turboBig_intercooler_tube_part,
                 new ScrewV2[] {
-                    new ScrewV2(new Vector3(0.153f, 0.324f, 0.1835f), new Vector3(90, 0, 0), 0.7f, 10),
-                    new ScrewV2(new Vector3(0.0779f, 0.324f, 0.1835f), new Vector3(90, 0, 0), 0.7f, 10),
-                    new ScrewV2(new Vector3(0.031f, -0.13f, -0.1632f), new Vector3(180, 0, 0), 0.4f, 10),
+                    new ScrewV2(new Vector3(0.0655f, -0.225f, -0.275f), new Vector3(-90, 0, 0), 0.4f, 5),
                });
-            Helper.ScrewablePartV2Simple(baseScrewInfo, turboBig_part,
+            Helper.ScrewablePartV2Simple(baseInfo, turboBig_part,
                 new ScrewV2[] {
-                    new ScrewV2(new Vector3(0.071f, -0.0905f, -0.088f), new Vector3(0, -90, 0), 0.5f, 8),
+                    new ScrewV2(new Vector3(0.069f, -0.091f, -0.09f), new Vector3(0, -90, 0), 0.5f, 8),
                 });
-            Helper.ScrewablePartV2Simple(baseScrewInfo, turboBig_exhaust_inlet_tube_part,
+            Helper.ScrewablePartV2Simple(baseInfo, turboBig_exhaust_inlet_tube_part,
                 new ScrewV2[] {
-                    new ScrewV2(new Vector3(0.202f, -0.1f, -0.01f), new Vector3(-90, 0, 0), 0.7f, 10),
-                    new ScrewV2(new Vector3(0.145f, -0.1f, -0.018f), new Vector3(-90, 0, 0), 0.7f, 10),
-                    new ScrewV2(new Vector3(-0.12f, 0.19f, -0.005f), new Vector3(90, 0, 0), 0.7f, 10),
-                    new ScrewV2(new Vector3(-0.2f, 0.19f, -0.005f), new Vector3(90, 0, 0), 0.7f, 10),
+                    new ScrewV2(new Vector3(0.205f, -0.055f, -0.05f), new Vector3(-90, 0, 0), 0.6f, 7),
+                    new ScrewV2(new Vector3(0.262f, -0.055f, -0.05f), new Vector3(-90, 0, 0), 0.6f, 7),
                 });
-            Helper.ScrewablePartV2Simple(baseScrewInfo, turboBig_exhaust_outlet_tube_part,
+            Helper.ScrewablePartV2Simple(baseInfo, turboBig_exhaust_outlet_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0f, 0.206f, -0.055f), new Vector3(0, 0, 0), 0.6f, 6),
                     new ScrewV2(new Vector3(-0.042f, 0.164f, -0.055f), new Vector3(0, 0, 0), 0.6f, 6),
@@ -734,7 +729,7 @@ namespace SatsumaTurboCharger
 
                 });
 
-            Helper.ScrewablePartV2Simple(baseScrewInfo, turboBig_exhaust_outlet_straight_part,
+            Helper.ScrewablePartV2Simple(baseInfo, turboBig_exhaust_outlet_straight_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.6f, 6),
                     new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.6f, 6),
@@ -742,42 +737,42 @@ namespace SatsumaTurboCharger
                     new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.6f, 6),
                 });
 
-            Helper.ScrewablePartV2Simple(baseScrewInfo, turboBig_blowoff_valve_part,
+            Helper.ScrewablePartV2Simple(baseInfo, turboBig_blowoff_valve_part,
                 new ScrewV2[] {
-                    new ScrewV2(new Vector3(0.0475f, -0.031f, 0.01f), new Vector3(0, 0, 0), 0.3f, 5),
+                    new ScrewV2(new Vector3(0.016f, -0.04f, 0.008f), new Vector3(0, 0, 0), 0.3f, 5),
                 });
 
             //Small turbo
-            Helper.ScrewablePartV2Simple(baseScrewInfo, turboSmall_part,
+            Helper.ScrewablePartV2Simple(baseInfo, turboSmall_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.0715f, -0.024f, 0.044f), new Vector3(180f, 0f, 0f), 0.4f, 10),
                 });
-            Helper.ScrewablePartV2Simple(baseScrewInfo, turboSmall_intercooler_tube_part,
+            Helper.ScrewablePartV2Simple(baseInfo, turboSmall_intercooler_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.034f, -0.13f, -0.1638f), new Vector3(180f, 0f, 0f), 0.4f, 10),
                     new ScrewV2(new Vector3(0.014f, 0.24f, 0.332f), new Vector3(0f, -90f, 0f), 0.4f, 10),
                 });
-            Helper.ScrewablePartV2Simple(baseScrewInfo, turboSmall_exhaust_inlet_tube_part,
+            Helper.ScrewablePartV2Simple(baseInfo, turboSmall_exhaust_inlet_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.114f, -0.044f, -0.035f), new Vector3(-90f, 0f, 0f), 0.7f, 10),
                     new ScrewV2(new Vector3(0.06f, -0.044f, -0.044f), new Vector3(-90f, 0f, 0f), 0.7f, 10),
                 });
-            Helper.ScrewablePartV2Simple(baseScrewInfo, turboSmall_exhaust_outlet_tube_part,
+            Helper.ScrewablePartV2Simple(baseInfo, turboSmall_exhaust_outlet_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.078f, 0.1708f, -0.0235f), new Vector3(0, -90, 0), 0.5f, 10),
                 });
-            Helper.ScrewablePartV2Simple(baseScrewInfo, turboSmall_manifold_twinCarb_tube_part,
+            Helper.ScrewablePartV2Simple(baseInfo, turboSmall_manifold_twinCarb_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.097f, -0.07f, -0.135f), new Vector3(0, 90, 0), 0.4f, 10),
                 });
 
-            Helper.ScrewablePartV2Simple(baseScrewInfo, turboSmall_airfilter_part,
+            Helper.ScrewablePartV2Simple(baseInfo, turboSmall_airfilter_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.0095f, 0.025f, 0.0488f), new Vector3(0, 90, 0), 0.4f, 10),
                 });
 
             //Other parts
-            Helper.ScrewablePartV2Simple(baseScrewInfo, exhaust_header_part,
+            Helper.ScrewablePartV2Simple(baseInfo, exhaust_header_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.169f, 0.076f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
                     new ScrewV2(new Vector3(0.13f, 0.0296f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
@@ -785,35 +780,37 @@ namespace SatsumaTurboCharger
                     new ScrewV2(new Vector3(-0.137f, 0.0296f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
                     new ScrewV2(new Vector3(-0.174f, 0.076f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
                 });
-            Helper.ScrewablePartV2Simple(baseScrewInfo, intercooler_part,
+            Helper.ScrewablePartV2Simple(baseInfo, intercooler_part,
                 new ScrewV2[] {
-                    new ScrewV2(new Vector3(-0.2215f, 0.081f, 0.039f), new Vector3(180, 0, 0), 0.6f, 10),
-                    new ScrewV2(new Vector3(0.239f, 0.081f, 0.039f), new Vector3(180, 0, 0), 0.6f, 10),
+                    new ScrewV2(new Vector3(-0.245f, 0.081f, 0.039f), new Vector3(180, 0, 0), 0.6f, 10),
+                    new ScrewV2(new Vector3(0.265f, 0.081f, 0.039f), new Vector3(180, 0, 0), 0.6f, 10),
                 });
-            Helper.ScrewablePartV2Simple(baseScrewInfo, intercooler_manifold_weber_tube_part,
+            Helper.ScrewablePartV2Simple(baseInfo, intercooler_manifold_weber_tube_part,
                 new ScrewV2[] {
-                    new ScrewV2(new Vector3(-0.0473f, -0.1205f, -0.241f), new Vector3(180, 0, 0), 0.4f, 10),
+                    new ScrewV2(new Vector3(-0.0675f, -0.243f, -0.479f), new Vector3(-90, 0, 0), 0.4f, 5),
+                    new ScrewV2(new Vector3(0-0.152f, 0.254f, 0.213f), new Vector3(0, 0, 0), 0.4f, 5),
                 });
-            Helper.ScrewablePartV2Simple(baseScrewInfo, intercooler_manifold_twinCarb_tube_part,
+            Helper.ScrewablePartV2Simple(baseInfo, intercooler_manifold_twinCarb_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.0425f, -0.1205f, -0.241f), new Vector3(180, 0, 0), 0.4f, 10),
                 });
 
-            Helper.ScrewablePartV2Simple(baseScrewInfo, manifold_weber_part,
+            Helper.ScrewablePartV2Simple(baseInfo, manifold_weber_part,
                 new ScrewV2[]{
                     new ScrewV2(new Vector3(-0.09f, 0, 0), new Vector3(0, 0, 0), 0.5f, 5),
                     new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.5f, 5),
                     new ScrewV2(new Vector3(0.09f, 0, 0), new Vector3(0, 0, 0), 0.5f, 5),
                 });
-            Helper.ScrewablePartV2Simple(baseScrewInfo, manifold_twinCarb_part,
+            Helper.ScrewablePartV2Simple(baseInfo, manifold_twinCarb_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.003f, 0.105f, 0.0305f), new Vector3(0, 90, 0), 0.5f, 10),
                 });
             //Clamps
-            turboBig_part.screwablePart.AddClampModel(new Vector3(0.079f, -0.09f, -0.057f), new Vector3(-90, 0, 0), new Vector3(0.79f, 0.79f, 0.79f));
+            turboBig_part.screwablePart.AddClampModel(new Vector3(0.079f, -0.09f, -0.0585f), new Vector3(-90, 0, 0), new Vector3(0.83f, 0.83f, 0.83f));
 
-            turboBig_blowoff_valve_part.screwablePart.AddClampModel(new Vector3(0.035f, -0.04f, 0.0005f), new Vector3(55, 90, 0), new Vector3(0.41f, 0.41f, 0.41f));
-            turboBig_intercooler_tube_part.screwablePart.AddClampModel(new Vector3(0.031f, -0.154f, -0.1545f), new Vector3(0, 90, 0), new Vector3(0.62f, 0.62f, 0.62f));
+            turboBig_blowoff_valve_part.screwablePart.AddClampModel(new Vector3(0f, -0.04f, 0f), new Vector3(90, 90, 0), new Vector3(0.43f, 0.43f, 0.43f));
+
+            turboBig_intercooler_tube_part.screwablePart.AddClampModel(new Vector3(0.066f, -0.235f, -0.2475f), new Vector3(0, 90, -90), new Vector3(0.7f, 0.7f, 0.7f));
 
             turboSmall_airfilter_part.screwablePart.AddClampModel(new Vector3(0f, 0f, 0.049f), new Vector3(0, 0, 0), new Vector3(0.65f, 0.65f, 0.65f));
             turboSmall_intercooler_tube_part.screwablePart.AddClampModel(new Vector3(0.034f, -0.154f, -0.1548f), new Vector3(0, 90, 0), new Vector3(0.62f, 0.62f, 0.62f));
@@ -822,7 +819,9 @@ namespace SatsumaTurboCharger
             turboSmall_exhaust_outlet_tube_part.screwablePart.AddClampModel(new Vector3(-0.068f, 0.1445f, -0.0235f), new Vector3(0, 0, 0), new Vector3(0.67f, 0.67f, 0.67f));
             turboSmall_manifold_twinCarb_tube_part.screwablePart.AddClampModel(new Vector3(-0.106f, -0.07f, -0.116f), new Vector3(-90, 0, 0), new Vector3(0.5f, 0.5f, 0.5f));
 
-            intercooler_manifold_weber_tube_part.screwablePart.AddClampModel(new Vector3(-0.047f, -0.1465f, -0.232f), new Vector3(0, 90, 0), new Vector3(0.68f, 0.68f, 0.68f));
+            intercooler_manifold_weber_tube_part.screwablePart.AddClampModel(new Vector3(-0.151f, 0.228f, 0.2035f), new Vector3(0, 90, 0), new Vector3(0.68f, 0.68f, 0.68f));
+            intercooler_manifold_weber_tube_part.screwablePart.AddClampModel(new Vector3(-0.067f, -0.2525f, -0.454f), new Vector3(0, 90, -90), new Vector3(0.65f, 0.65f, 0.65f));
+
             intercooler_manifold_twinCarb_tube_part.screwablePart.AddClampModel(new Vector3(-0.042f, -0.1465f, -0.232f), new Vector3(0, 90, 0), new Vector3(0.68f, 0.68f, 0.68f));
             manifold_weber_part.screwablePart.AddClampModel(new Vector3(0.2f, -0.002f, 0.001f), new Vector3(0, 90, 0), new Vector3(0.82f, 0.82f, 0.82f));
             manifold_twinCarb_part.screwablePart.AddClampModel(new Vector3(-0.013f, 0.105f, 0f), new Vector3(90, 0, 0), new Vector3(0.8f, 0.8f, 0.8f));
@@ -860,7 +859,6 @@ namespace SatsumaTurboCharger
         }
         public override void ModSettings()
         {
-            ScrewablePartV2.SetupModSettings(this);
             Settings.AddHeader(this, "DEBUG");
             Settings.AddCheckBox(this, debugGuiSetting);
             Settings.AddButton(this, resetPosSetting, "Reset uninstalled part location");

@@ -49,7 +49,7 @@ namespace SatsumaTurboCharger.parts
             }
         }
 
-        public void AddScrewable(ScrewableBaseInfo baseInfo, AssetBundle screwableAssetsBundle, ScrewV2[] screws)
+        public void AddScrewable(ScrewablePartV2BaseInfo baseInfo, AssetBundle screwableAssetsBundle, ScrewV2[] screws)
         {
             foreach (AdvPart part in parts)
             {

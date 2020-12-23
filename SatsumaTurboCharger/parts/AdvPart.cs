@@ -13,6 +13,12 @@ namespace SatsumaTurboCharger.parts
 {
     public class AdvPart
     {
+        public class AdvPartBaseInfo
+        {
+            public Mod mod { get; set; }
+            public AssetBundle assetBundle { get; set; }
+            public Dictionary<string, bool> partsBuySave { get; set; }
+        }
         private Mod mod;
         public NewPart part;
         private GameObject partGameObject;
@@ -27,9 +33,11 @@ namespace SatsumaTurboCharger.parts
         public List<NewPart> childParts;
         public bool bought;
 
-        public void DefineBaseInfo(Mod mod, string id, Dictionary<string, bool> partsBuySave, string boughtId)
+        internal List<Action> onAssembleActions = new List<Action>();
+        internal List<Action> onDisassembleActions = new List<Action>();
+
+        public void DefineBaseInfo(string id, Dictionary<string, bool> partsBuySave, string boughtId)
         {
-            this.mod = mod;
             this.id = id;
             this.saveFile = id + "_saveFile.json";
 
@@ -58,9 +66,10 @@ namespace SatsumaTurboCharger.parts
             return prefabName;
         }
 
-        public AdvPart(Mod mod, string id, string name, NewPart parentPart, GameObject objectToInstantiate, Vector3 installPosition, Vector3 installRotation, Dictionary<string, bool> partsBuySave = null, string boughtId = null)
+        public AdvPart(AdvPartBaseInfo baseInfo, string id, string name, NewPart parentPart, GameObject objectToInstantiate, Vector3 installPosition, Vector3 installRotation, bool dontCollideOnRigid = true, string boughtId = null)
         {
-            DefineBaseInfo(mod, id, partsBuySave, boughtId);
+            this.mod = baseInfo.mod;
+            DefineBaseInfo(id, baseInfo.partsBuySave, boughtId);
 
             this.parentPart = parentPart;
 
@@ -68,7 +77,7 @@ namespace SatsumaTurboCharger.parts
 
             Helper.SetObjectNameTagLayer(partGameObject, name + "(Clone)");
 
-            bought = CheckBought(partsBuySave, boughtId);
+            bought = CheckBought(baseInfo.partsBuySave, boughtId);
             PartSaveInfo partSaveInfo = GetPartSaveInfo(bought, mod, saveFile);
 
             part = new NewPart(
@@ -78,14 +87,19 @@ namespace SatsumaTurboCharger.parts
                 new Trigger(id + "_trigger", parentPart.rigidPart, installPosition, new Quaternion(0, 0, 0, 0), new Vector3(triggerSize, triggerSize, triggerSize), false),
                 installPosition,
                 installRotation);
+            HandleDontCollideOnRigid(part, dontCollideOnRigid);
+
             parentPart.AddChildPart(part);
 
             DefineBasePartCalls(part);
         }
 
-        public AdvPart(Mod mod, string id, string name, NewPart parentPart, string prefabName, Vector3 installPosition, Vector3 installRotation, AssetBundle assetBundle, Dictionary<string, bool> partsBuySave = null, string boughtId = null)
+        public AdvPart(AdvPartBaseInfo baseInfo, string id, string name, NewPart parentPart, string prefabName, Vector3 installPosition, Vector3 installRotation, bool dontCollideOnRigid = true, string boughtId = null)
         {
-            DefineBaseInfo(mod, id, partsBuySave, boughtId);
+            this.mod = baseInfo.mod;
+            AssetBundle assetBundle = baseInfo.assetBundle;
+
+            DefineBaseInfo(id, baseInfo.partsBuySave, boughtId);
             prefabName = DefinePrefabName(prefabName);
 
             this.parentPart = parentPart;
@@ -101,13 +115,18 @@ namespace SatsumaTurboCharger.parts
                 new Trigger(id + "_trigger", parentPart.rigidPart, installPosition, new Quaternion(0, 0, 0, 0), new Vector3(triggerSize, triggerSize, triggerSize), false),
                 installPosition,
                 installRotation);
-            parentPart.AddChildPart(part);
+            HandleDontCollideOnRigid(part, dontCollideOnRigid);
 
+            parentPart.AddChildPart(part);
+            
             DefineBasePartCalls(part);
         }
-        public AdvPart(Mod mod, string id, string name, GameObject parentPart, string prefabName, Vector3 installPosition, Vector3 installRotation, AssetBundle assetBundle, Dictionary<string, bool> partsBuySave = null, string boughtId = null)
+        public AdvPart(AdvPartBaseInfo baseInfo, string id, string name, GameObject parentPart, string prefabName, Vector3 installPosition, Vector3 installRotation, bool dontCollideOnRigid = true, string boughtId = null)
         {
-            DefineBaseInfo(mod, id, partsBuySave, boughtId);
+            this.mod = baseInfo.mod;
+            AssetBundle assetBundle = baseInfo.assetBundle;
+
+            DefineBaseInfo(id, baseInfo.partsBuySave, boughtId);
             prefabName = DefinePrefabName(prefabName);
 
             partGameObject = Helper.LoadPartAndSetName(assetBundle, prefabName, name);
@@ -121,10 +140,28 @@ namespace SatsumaTurboCharger.parts
                 new Trigger(id + "_trigger", parentPart, installPosition, new Quaternion(0, 0, 0, 0), new Vector3(triggerSize, triggerSize, triggerSize), false),
                 installPosition,
                 installRotation);
-
+            HandleDontCollideOnRigid(part, dontCollideOnRigid);
+            
             AttachParentUninstallFsm(parentPart);
 
             DefineBasePartCalls(part);
+        }
+
+        public void AddOnAssembleAction(Action action)
+        {
+            onAssembleActions.Add(action);
+        }
+        public void AddOnDisassembleAction(Action action)
+        {
+            onDisassembleActions.Add(action);
+        }
+
+        private void HandleDontCollideOnRigid(NewPart part, bool dontCollideOnRigid)
+        {
+            if (dontCollideOnRigid)
+            {
+                part.rigidPart.GetComponent<Collider>().isTrigger = true;
+            }
         }
 
         /// <summary>
@@ -133,6 +170,8 @@ namespace SatsumaTurboCharger.parts
         /// <param name="parentPart"></param>
         private void AttachParentUninstallFsm(GameObject parentPart)
         {
+
+            //Fix this will throw exception somewhere
             try
             {
                 PlayMakerFSM[] fSMs = parentPart.GetComponents<PlayMakerFSM>();
@@ -252,12 +291,20 @@ namespace SatsumaTurboCharger.parts
             {
                 screwablePart.OnPartAssemble();
             }
+            foreach(Action action in onAssembleActions)
+            {
+                action.Invoke();
+            }
         }
         public void OnDisassemble()
         {
             if (screwablePart != null)
             {
                 screwablePart.OnPartDisassemble();
+            }
+            foreach (Action action in onDisassembleActions)
+            {
+                action.Invoke();
             }
         }
 

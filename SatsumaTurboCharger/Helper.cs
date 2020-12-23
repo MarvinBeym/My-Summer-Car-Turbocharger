@@ -114,6 +114,11 @@ namespace SatsumaTurboCharger
         {
             get { return Input.GetMouseButtonDown(0); }
         }
+        public static bool LeftMouseDownContinuous
+        {
+            get { return Input.GetMouseButton(0); }
+        }
+
         public static bool RightMouseDown
         {
             get { return Input.GetMouseButtonDown(1); }

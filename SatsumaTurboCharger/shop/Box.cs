@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using ScrewablePartAPI.V2;
+using static SatsumaTurboCharger.parts.AdvPart;
 
 namespace SatsumaTurboCharger.parts
 {
@@ -18,8 +19,14 @@ namespace SatsumaTurboCharger.parts
         public int spawnedCounter = 0;
         public AdvPart[] parts;
         public BoxLogic logic;
-        public Box(SatsumaTurboCharger mod, GameObject box, GameObject part_gameObject, string partName, int numberOfParts, AdvPart parent, Dictionary<string, bool> partsBuySave, Vector3[] installLocations, Vector3[] installRotations)
+        public Box(SatsumaTurboCharger mod, GameObject box, GameObject part_gameObject, string partName, int numberOfParts, AdvPart parent, Dictionary<string, bool> partsBuySave, Vector3[] installLocations, Vector3[] installRotations, bool dontCollideOnRigid = true)
         {
+            AdvPartBaseInfo advPartBaseInfo = new AdvPartBaseInfo
+            {
+                mod = mod,
+                partsBuySave = partsBuySave,
+            };
+
             this.box = box;
             id = partName.ToLower().Replace(" ", "_");
             string boughtId = id + "_box";
@@ -30,10 +37,10 @@ namespace SatsumaTurboCharger.parts
             {
                 int iOffset = i + 1;
 
-                parts[i] = new AdvPart(mod, 
+                parts[i] = new AdvPart(advPartBaseInfo, 
                     id + iOffset, partName + " " + iOffset, 
-                    parent.part, part_gameObject, installLocations[i], installRotations[i], 
-                    partsBuySave, boughtId);
+                    parent.part, part_gameObject, installLocations[i], installRotations[i],
+                    dontCollideOnRigid, boughtId);
 
                 if (!parts[i].bought)
                 {

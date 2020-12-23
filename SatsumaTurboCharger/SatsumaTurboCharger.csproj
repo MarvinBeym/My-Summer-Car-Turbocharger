@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extension.cs" />
+    <Compile Include="Hood_Logic.cs" />
     <Compile Include="parts\AdvPart.cs" />
     <Compile Include="parts\NewPart.cs" />
     <Compile Include="shop\BoxLogic.cs" />

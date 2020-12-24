@@ -158,10 +158,18 @@ namespace SatsumaTurboCharger.parts
 
         private void HandleDontCollideOnRigid(NewPart part, bool dontCollideOnRigid)
         {
-            if (dontCollideOnRigid)
+            try
             {
-                part.rigidPart.GetComponent<Collider>().isTrigger = true;
+                if (dontCollideOnRigid)
+                {
+                    part.rigidPart.GetComponent<Collider>().isTrigger = true;
+                }
             }
+            catch(Exception ex)
+            {
+
+            }
+
         }
 
         /// <summary>

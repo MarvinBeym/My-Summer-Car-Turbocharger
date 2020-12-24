@@ -105,7 +105,8 @@ namespace SatsumaTurboCharger
         private Kit manifoldWeber_kit;
         private Kit manifoldTwinCarb_kit;
 
-
+        //Logics
+        public BoostGauge_Logic boostGaugeLogic;
 
         //Saves
         public Dictionary<string, SaveableColor> partsColorSave;
@@ -260,7 +261,7 @@ namespace SatsumaTurboCharger
 
         //Wear
         private Wear racingTurboWear;
-        private Wear intercoolerWear;
+        //private Wear intercoolerWear;
         private Wear gtTurboWear;
         private Wear gtTurboAirfilterWear;
 
@@ -419,8 +420,9 @@ namespace SatsumaTurboCharger
                 "boost_gauge", "Boost Gauge", GameObject.Find("dashboard(Clone)"), "",
                 boost_gauge_installLocation, new Vector3(90, 0, 0),
                 true);
+            boostGaugeLogic = boost_gauge_part.rigidPart.AddComponent<BoostGauge_Logic>();
+            boostGaugeLogic.Init(boost_gauge_part);
 
-            boostGaugeTextMesh = boost_gauge_part.rigidPart.GetComponentInChildren<TextMesh>();
 
             intercooler_part = new AdvPart(advPartBaseInfo,
                 "intercooler", "Intercooler", satsuma, "",
@@ -693,7 +695,7 @@ namespace SatsumaTurboCharger
             racingTurbo.wears = new Wear[]
             {
                 racingTurboWear,
-                intercoolerWear,
+                //intercoolerWear,
             };
 
             Dictionary<string, Condition> racingTurbo_conditions = new Dictionary<string, Condition>();
@@ -711,6 +713,27 @@ namespace SatsumaTurboCharger
 
             SetupInspectionPrevention();
             assetsBundle.Unload(false);
+            //boost_gauge_part;
+
+
+            foreach (ScrewablePartV2 screwablePart in new ScrewablePartV2[]{
+                turboBig_part.screwablePart,
+                turboBig_intercooler_tube_part.screwablePart,
+                turboBig_exhaust_inlet_tube_part.screwablePart,
+                turboBig_exhaust_outlet_tube_part.screwablePart,
+                turboBig_blowoff_valve_part.screwablePart,
+                exhaust_header_part.screwablePart,
+                manifold_weber_part.screwablePart,
+                intercooler_part.screwablePart,
+                intercooler_manifold_weber_tube_part.screwablePart,
+            })
+            {
+                foreach (ScrewV2 screw in screwablePart.screws)
+                {
+                    screwablePart.SetScrewPositions(screw, 8);
+                }
+            }
+
             ModConsole.Print(this.Name + $" [v{this.Version} | Screwable v{ScrewablePartV2.version}] finished loading");         
         }
         
@@ -942,7 +965,7 @@ namespace SatsumaTurboCharger
                 SaveLoad.SerializeSaveFile<Dictionary<string, float>>(this, boostSave, boost_saveFile);
 
                 partsWearSave = racingTurboWear.GetWear(partsWearSave);
-                partsWearSave = intercoolerWear.GetWear(partsWearSave);
+                //partsWearSave = intercoolerWear.GetWear(partsWearSave);
 
                 SaveLoad.SerializeSaveFile<Dictionary<string, float>>(this, partsWearSave, wear_saveFile);
             }
@@ -969,7 +992,7 @@ namespace SatsumaTurboCharger
                 guiDebug.Handle(new GuiDebugInfo[] {
                 new GuiDebugInfo("Wear", "Racing Turbo", racingTurboWear.ToStringOrEmpty()),
                 new GuiDebugInfo("Wear", "GT Turbo", gtTurboWear.ToStringOrEmpty()),
-                new GuiDebugInfo("Wear", "Intercooler", intercoolerWear.ToStringOrEmpty()),
+                //new GuiDebugInfo("Wear", "Intercooler", intercoolerWear.ToStringOrEmpty()),
                 new GuiDebugInfo("DEBUG", "Engine RPM", ((int) satsumaDriveTrain.rpm).ToStringOrEmpty()),
                 new GuiDebugInfo("DEBUG", "Racing Turbo bar", racingTurbo.boost.ToStringOrEmpty()),
                 new GuiDebugInfo("DEBUG", "GT Turbo bar", gtTurbo.boost.ToStringOrEmpty()),
@@ -1247,6 +1270,7 @@ namespace SatsumaTurboCharger
 
         public void SetBoostGaugeText(string valueToDisplay)
         {
+            /*
             if (!boost_gauge_part.InstalledScrewed() )
             {
                 return;
@@ -1258,6 +1282,7 @@ namespace SatsumaTurboCharger
             }
 
             boostGaugeTextMesh.text = valueToDisplay;
+            */
         }
 
         private void PosReset()

@@ -33,13 +33,19 @@ namespace SatsumaTurboCharger
             turboHoodHingeJoint.anchor = new Vector3(0, 0, 0);
             turboHoodHingeJoint.axis = new Vector3(0, 0, 0);
             turboHoodHingeJoint.useSpring = true;
+            JointSpring spring = turboHoodHingeJoint.spring;
+            spring.spring = 0;
+            spring.damper = 0;
+            spring.targetPosition = closedAngle;
+            turboHoodHingeJoint.spring = spring;
+            /*
             turboHoodHingeJoint.useLimits = true;
             turboHoodHingeJoint.limits = new JointLimits
             {
                 min = -openedAngle,
                 max = closedAngle,
             };
-
+            */
             this.turboHoodTrigger = hoodPart.partTrigger;
             turboHoodLatchCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
             turboHoodLatchCollider.name = hoodPart.activePart.name.Replace("(Clone)", "_LATCHCOLLIDER");
@@ -84,7 +90,7 @@ namespace SatsumaTurboCharger
             JointSpring spring = turboHoodHingeJoint.spring;
             spring.spring = springSpeed;
             spring.damper = springDamping;
-            spring.targetPosition = closedAngle;
+            spring.targetPosition = -closedAngle;
             turboHoodHingeJoint.spring = spring;
             open = false;
             originalHoodTrigger.SetActive(true);

@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3991947650
+CRC: 1108670852
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: aff8cdfc4e76c683d2f22043b2b174a8
+    Hash: 5c69ebe013a3759aa37e4ec89a184dac
   TypeTreeHash:
     serializedVersion: 2
     Hash: 86a98480e8aea1e11fcc3b15858e08a8
@@ -58,7 +58,7 @@ Assets:
 - Assets/turboSmall_airfilter.prefab
 - Assets/ProductImages/turbocharger_big_exhaust_outlet_straight_ProductImage.png
 - Assets/ProductImages/turbocharger_manifold_weber_kit_ProductImage.png
-- Assets/boost_gauge.prefab
+- Assets/other/boost_gauge.prefab
 - Assets/turboBig/turboBig_blowoff_valve.prefab
 - Assets/other/intercooler_manifold_twinCarb_tube.prefab
 - Assets/turboBig/turboBig_exhaust_inlet_tube.prefab

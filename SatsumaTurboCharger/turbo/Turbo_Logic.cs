@@ -56,22 +56,27 @@ namespace SatsumaTurboCharger.turbo
 
             if (blowoffTimer >= config.blowoffDelay)
             {
-                
-                
-                turbo.boost = CalculateBoost(engineRpm, config.boostStartingRpm, config.boostMin, turbo.boostMaxConfigured, config.boostIncreasement);
-                turbo.boost = CalculateBoostDelay(turbo.boost, 0.1f, 0.4f);
-                if (turbo.boost > 0)
+
+                try
                 {
-                    if((bool) mod.partsWearSetting.Value && (turbo.wears.Length > 0 || turbo.wears == null)) { turbo.boost = HandleWear(turbo.boost); }
-                    if((bool) mod.backfireEffectSetting.Value) HandleBackfire(engineRpm);
+                    turbo.boost = CalculateBoost(engineRpm, config.boostStartingRpm, config.boostMin, turbo.boostMaxConfigured, config.boostIncreasement);
+                    turbo.boost = CalculateBoostDelay(turbo.boost, 0.1f, 0.4f);
+                    if (turbo.boost > 0)
+                    {
+                        if ((bool)mod.partsWearSetting.Value && (turbo.wears.Length > 0 || turbo.wears == null)) { turbo.boost = HandleWear(turbo.boost); }
+                        if ((bool)mod.backfireEffectSetting.Value) HandleBackfire(engineRpm);
+                    }
+                    else
+                    {
+                        turbo.boost = config.boostMin;
+                    }
                 }
-                else
+                catch(Exception ex)
                 {
-                    turbo.boost = config.boostMin;
-                }                
+                    Logger.New("Exception was thrown while trying to calculate turbo boost", ex);
+                }
             }
             turbo.rpm = turbo.CalculateRpm(engineRpm, config.rpmMultiplier);
-
             if (blowoffTimer < config.blowoffDelay || turbo.boostDelay <= 0)
             {
                 turbo.boost = config.boostMin;
@@ -90,7 +95,7 @@ namespace SatsumaTurboCharger.turbo
                 blowoffTimer = 0;
                 turbo.BlowoffSound();
             }
-
+            mod.boostGaugeLogic.SetBoost(turbo.boost, config.boostMin, turbo.boostMaxConfigured, 45, 315);
             mod.SetBoostGaugeText(turbo.boost.ToString("0.00"));
             float finalMultiplicator = turbo.boost * config.extraPowerMultiplicator;
             turbo.powerMultiplier.Value = 1f + Mathf.Clamp(finalMultiplicator, config.boostMin, turbo.boostMaxConfigured);

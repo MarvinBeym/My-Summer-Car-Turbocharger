@@ -15,7 +15,6 @@ namespace SatsumaTurboCharger.turbo
         Turbo turbo;
 
         private float blowoffTimer = 0;
-        private float delayTimer = 0;
         private float backfireTimer = 0;
         private RaycastHit hit;
         // Use this for initialization
@@ -25,7 +24,7 @@ namespace SatsumaTurboCharger.turbo
         }
 
         // Update is called once per frame
-        void Update()
+        void LateUpdate()
         {
             if(!turbo.CheckAllRequiredInstalled() || !mod.engineRunning)
             {
@@ -54,13 +53,13 @@ namespace SatsumaTurboCharger.turbo
                 return;
             }
 
-            if (blowoffTimer >= config.blowoffDelay)
+            if (blowoffTimer >= config.blowoffDelay && Helper.ThrottleButtonDown)
             {
 
                 try
                 {
                     turbo.boost = CalculateBoost(engineRpm, config.boostStartingRpm, config.boostMin, turbo.boostMaxConfigured, config.boostIncreasement);
-                    turbo.boost = CalculateBoostDelay(turbo.boost, 0.1f, 0.4f);
+                    
                     if (turbo.boost > 0)
                     {
                         if ((bool)mod.partsWearSetting.Value && (turbo.wears.Length > 0 || turbo.wears == null)) { turbo.boost = HandleWear(turbo.boost); }
@@ -76,11 +75,12 @@ namespace SatsumaTurboCharger.turbo
                     Logger.New("Exception was thrown while trying to calculate turbo boost", ex);
                 }
             }
-            turbo.rpm = turbo.CalculateRpm(engineRpm, config.rpmMultiplier);
-            if (blowoffTimer < config.blowoffDelay || turbo.boostDelay <= 0)
+            else
             {
                 turbo.boost = config.boostMin;
             }
+
+            turbo.rpm = turbo.CalculateRpm(engineRpm, config.rpmMultiplier);
 
 
             if (Helper.ThrottleButtonDown && engineRpm >= config.backfireThreshold && blowoffTimer > config.blowoffDelay)
@@ -98,7 +98,7 @@ namespace SatsumaTurboCharger.turbo
             mod.boostGaugeLogic.SetBoost(turbo.boost, config.boostMin, turbo.boostMaxConfigured, 45, 315);
             mod.SetBoostGaugeText(turbo.boost.ToString("0.00"));
             float finalMultiplicator = turbo.boost * config.extraPowerMultiplicator;
-            turbo.powerMultiplier.Value = 1f + Mathf.Clamp(finalMultiplicator, config.boostMin, turbo.boostMaxConfigured);
+            turbo.carDriveTrain.powerMultiplier = 1f + Mathf.Clamp(finalMultiplicator, config.boostMin, turbo.boostMaxConfigured);
 
         }
 
@@ -226,32 +226,6 @@ namespace SatsumaTurboCharger.turbo
             return GetBoostCalculationFunction(rpm, startingRpm, boostMin, newBoostMax, increasement * increasementPercentageReduction);
         }
 
-        public float CalculateBoostDelay(float boost, float delay_comparer, float delayAdder)
-        {
-            delayTimer += Time.deltaTime;
-            if (Helper.ThrottleButtonDown || turbo.boostDelayThrottleUsed)
-            {
-                if (delayTimer >= delay_comparer)
-                {
-                    delayTimer = 0;
-                    turbo.boostDelay += delayAdder;
-                    if (turbo.boostDelay >= 1)
-                        turbo.boostDelay = 1;
-                }
-            }
-            else if (!Helper.ThrottleButtonDown && !turbo.boostDelayThrottleUsed)
-            {
-                if (delayTimer >= delay_comparer)
-                {
-                    delayTimer = 0;
-                    turbo.boostDelay -= (0.1f / 4);
-                    if (turbo.boostDelay <= 0)
-                        turbo.boostDelay = 0;
-                }
-            }
-
-            return boost * turbo.boostDelay;
-        }
 
 
         public void Init(SatsumaTurboCharger mod, Turbo turbo)

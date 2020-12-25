@@ -46,8 +46,6 @@ namespace SatsumaTurboCharger.turbo
         public float boost = 0;
         public float rpm = 0;
         public float boostMaxConfigured { get; set; } = 0; //will be calculated based on configuration (installed parts)
-        public float boostDelay = 0;
-        public bool boostDelayThrottleUsed = false;
         public bool blowoffAllowed = false;
 
         //Wear

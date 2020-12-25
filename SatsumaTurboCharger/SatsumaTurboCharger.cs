@@ -996,7 +996,7 @@ namespace SatsumaTurboCharger
                 new GuiDebugInfo("DEBUG", "Engine RPM", ((int) satsumaDriveTrain.rpm).ToStringOrEmpty()),
                 new GuiDebugInfo("DEBUG", "Racing Turbo bar", racingTurbo.boost.ToStringOrEmpty()),
                 new GuiDebugInfo("DEBUG", "GT Turbo bar", gtTurbo.boost.ToStringOrEmpty()),
-                new GuiDebugInfo("DEBUG", "Power multiplier", racingTurbo.powerMultiplier.Value.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Power multiplier", racingTurbo.carDriveTrain.powerMultiplier.ToStringOrEmpty()),
                 new GuiDebugInfo("DEBUG", "KM/H", ((int) satsumaDriveTrain.differentialSpeed).ToStringOrEmpty()),
                 new GuiDebugInfo("DEBUG", "Torque", satsumaDriveTrain.torque.ToStringOrEmpty()),
                 new GuiDebugInfo("DEBUG", "Clutch Max Torque", satsumaDriveTrain.clutchMaxTorque.ToStringOrEmpty()),

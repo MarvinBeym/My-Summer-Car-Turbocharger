@@ -11,6 +11,9 @@ namespace SatsumaTurboCharger
         private GameObject digitalText2;
         private GameObject digitalText3;
 
+        private float alteredBoost = 0;
+        public float boostReduction = 0.15f;
+
         public void Init(AdvPart boostGaugePart)
         {
             analogNeedle = boostGaugePart.rigidPart.transform.FindChild("boost_gauge_needle").gameObject;
@@ -22,8 +25,27 @@ namespace SatsumaTurboCharger
 
         public void SetBoost(float boost, float minBoost, float maxBoost, float minAngle, float maxAngle)
         {
-            //boost = boost <= 0 ? 0 : boost;
-            float angle = minAngle + (maxAngle - minAngle) * boost.Map(minBoost, 3, 0, 1);
+
+
+            if (boost >= 0 && Helper.ThrottleButtonDown && alteredBoost == 0)
+            {
+                alteredBoost = boost;
+                
+            }
+
+            if(alteredBoost > 0 && !Helper.ThrottleButtonDown)
+            {
+                alteredBoost -= boostReduction;
+            }
+            else if(alteredBoost <= boost && Helper.ThrottleButtonDown)
+            {
+                alteredBoost += boostReduction;
+            }
+            
+            alteredBoost = alteredBoost >= maxBoost ? maxBoost : alteredBoost;
+            alteredBoost = alteredBoost <= minBoost ? minBoost : alteredBoost;
+            ModConsole.Print(alteredBoost);
+            float angle = minAngle + (maxAngle - minAngle) * alteredBoost.Map(minBoost, 3, 0, 1);
 
             analogNeedle.transform.localEulerAngles = new Vector3(0, 0, angle);
 

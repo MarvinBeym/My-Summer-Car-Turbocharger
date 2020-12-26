@@ -146,7 +146,7 @@ namespace SatsumaTurboCharger
         //Other Parts        
         private Vector3 manifold_weber_installLocation = new Vector3(-0.009812f, -0.11697f, 0.030088f);                     //DONE
         private Vector3 manifold_twinCarb_installLocation = new Vector3(-0.007944f, -0.13087f, -0.0316f);                   //DONE   
-        private Vector3 boost_gauge_installLocation = new Vector3(0.5f, -0.04f, 0.125f);                                        
+        private Vector3 boost_gauge_installLocation = new Vector3(0.4f, -0.019f, 0.152f);                                   //DONE 
         private Vector3 intercooler_installLocation = new Vector3(0.0f, -0.162f, 1.6775f);                                  //DONE
         private Vector3 intercooler_manifold_weber_tube_installLocation = new Vector3(0.362165f, -0.139072f, -0.23436f);    //DONE             
         private Vector3 intercooler_manifold_twinCarb_tube_installLocation = new Vector3(0.325294f, -0.180286f, -0.29813f); //DONE              
@@ -415,7 +415,6 @@ namespace SatsumaTurboCharger
                 "manifold_twinCarb", "TwinCarb Manifold", twinCarb, "",
                 manifold_twinCarb_installLocation, new Vector3(90, 0, 0),
                 true);
-
             boost_gauge_part = new AdvPart(advPartBaseInfo,
                 "boost_gauge", "Boost Gauge", GameObject.Find("dashboard(Clone)"), "",
                 boost_gauge_installLocation, new Vector3(90, 0, 0),
@@ -721,6 +720,7 @@ namespace SatsumaTurboCharger
 
 
             foreach (ScrewablePartV2 screwablePart in new ScrewablePartV2[]{
+                boost_gauge_part.screwablePart,
                 turboBig_part.screwablePart,
                 turboBig_intercooler_tube_part.screwablePart,
                 turboBig_exhaust_inlet_tube_part.screwablePart,
@@ -740,7 +740,7 @@ namespace SatsumaTurboCharger
 
             ModConsole.Print(this.Name + $" [v{this.Version} | Screwable v{ScrewablePartV2.version}] finished loading");         
         }
-        
+
         private void SetupScrewable()
         {
             string screwSavePath = Path.Combine(ModLoader.GetModConfigFolder(this), screwableV2_saveFile);
@@ -822,6 +822,11 @@ namespace SatsumaTurboCharger
                 });
 
             //Other parts
+            Helper.ScrewablePartV2Simple(baseInfo, boost_gauge_part,
+                new ScrewV2[]{
+                    new ScrewV2(new Vector3(0f, -0.0405f, 0.003f), new Vector3(-90, 0, 0), 0.4f, 5),
+                });
+
             Helper.ScrewablePartV2Simple(baseInfo, exhaust_header_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.169f, 0.076f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),

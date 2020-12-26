@@ -15,6 +15,21 @@ namespace SatsumaTurboCharger
 {
     public static class Helper
     {
+        private static AudioSource dashButtonAudioSource;
+        public static void playTouchSound(GameObject gameObjectToPlayOn)
+        {
+            if(dashButtonAudioSource == null)
+            {
+                dashButtonAudioSource = GameObject.Find("dash_button").GetComponent<AudioSource>();
+            }
+            else
+            {
+                AudioSource audio = dashButtonAudioSource;
+                audio.transform.position = gameObjectToPlayOn.transform.position;
+                audio.Play();
+            }
+        }
+
         public static void ScrewablePartV2Simple(ScrewablePartV2BaseInfo baseInfo, AdvPart advPart, ScrewV2[] screws)
         {
             advPart.screwablePart = new ScrewablePartV2(baseInfo, advPart.id, advPart.rigidPart, screws);

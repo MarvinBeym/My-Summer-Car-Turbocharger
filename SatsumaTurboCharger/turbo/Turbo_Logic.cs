@@ -10,7 +10,7 @@ namespace SatsumaTurboCharger.turbo
 {
     public class Turbo_Logic : MonoBehaviour
     {
-        private Configuration config;
+        private TurboConfiguration config;
         SatsumaTurboCharger mod;
         Turbo turbo;
 
@@ -53,22 +53,36 @@ namespace SatsumaTurboCharger.turbo
                 return;
             }
 
-            if (blowoffTimer >= config.blowoffDelay && Helper.ThrottleButtonDown)
-            {
 
+            float boostBeforeRelease = 0;
+
+            if (Helper.ThrottleButtonDown && engineRpm >= config.backfireThreshold && blowoffTimer > config.blowoffDelay)
+            {
+                turbo.blowoffAllowed = true;
+            }
+
+            bool shifting = Helper.ThrottleButtonDown && (turbo.carDriveTrain.changingGear);
+            bool lettingGoOfThrottle = !Helper.ThrottleButtonDown;
+            if (turbo.boost >= config.blowoffTriggerBoost && turbo.blowoffAllowed == true && (shifting || lettingGoOfThrottle))
+            {
+                turbo.boost = config.boostMin;
+                turbo.blowoffAllowed = false;
+                blowoffTimer = 0;
+                turbo.BlowoffSound();
+            }
+
+            if (blowoffTimer >= config.blowoffDelay)
+            {
                 try
                 {
-                    turbo.boost = CalculateBoost(engineRpm, config.boostStartingRpm, config.boostMin, turbo.boostMaxConfigured, config.boostIncreasement);
-                    
+                    turbo.boost = CalculateBoost(engineRpm, config.boostStartingRpm, config.boostStartingRpmOffset, config.boostMin, turbo.boostMaxConfigured, config.boostSteepness);
+
                     if (turbo.boost > 0)
                     {
                         if ((bool)mod.partsWearSetting.Value && (turbo.wears.Length > 0 || turbo.wears == null)) { turbo.boost = HandleWear(turbo.boost); }
                         if ((bool)mod.backfireEffectSetting.Value) HandleBackfire(engineRpm);
                     }
-                    else
-                    {
-                        turbo.boost = config.boostMin;
-                    }
+                    boostBeforeRelease = turbo.boost;
                 }
                 catch(Exception ex)
                 {
@@ -80,22 +94,17 @@ namespace SatsumaTurboCharger.turbo
                 turbo.boost = config.boostMin;
             }
 
-            turbo.rpm = turbo.CalculateRpm(engineRpm, config.rpmMultiplier);
-
-
-            if (Helper.ThrottleButtonDown && engineRpm >= config.backfireThreshold && blowoffTimer > config.blowoffDelay)
-            {
-                turbo.blowoffAllowed = true;
-            }
-
-            if ((!Helper.ThrottleButtonDown && turbo.blowoffAllowed == true) && turbo.boost >= config.blowoffTriggerBoost)
+            if (turbo.boost <= 0 || !Helper.ThrottleButtonDown)
             {
                 turbo.boost = config.boostMin;
-                turbo.blowoffAllowed = false;
-                blowoffTimer = 0;
-                turbo.BlowoffSound();
             }
-            mod.boostGaugeLogic.SetBoost(turbo.boost, config.boostMin, turbo.boostMaxConfigured, 45, 315);
+
+            float boostGaugeTarget = Helper.ThrottleButtonDown ? boostBeforeRelease : config.boostMin;
+
+            mod.boostGaugeLogic.SetBoost(boostGaugeTarget, boostBeforeRelease, config, 45, 315);
+
+            turbo.rpm = turbo.CalculateRpm(engineRpm, config.rpmMultiplier);
+            
             mod.SetBoostGaugeText(turbo.boost.ToString("0.00"));
             float finalMultiplicator = turbo.boost * config.extraPowerMultiplicator;
             turbo.carDriveTrain.powerMultiplier = 1f + Mathf.Clamp(finalMultiplicator, config.boostMin, turbo.boostMaxConfigured);
@@ -208,22 +217,22 @@ namespace SatsumaTurboCharger.turbo
         }
 
 
-        public float CalculateSoundBoost(float rpm, float boostMax, float increasement)
+        public float CalculateSoundBoost(float rpm, float boostMax, float steepness)
         {
-            return GetBoostCalculationFunction(rpm, 0, 0, boostMax, increasement);
+            return GetBoostCalculationFunction(rpm, 0, 0, 0, boostMax, steepness);
         }
 
-        public float GetBoostCalculationFunction(float rpm, float startingRpm, float boostMin, float boostMax, float increasement)
+        public float GetBoostCalculationFunction(float rpm, float startingRpm, float startingRpmOffset, float boostMin, float boostMax, float steepness)
         {
-            float function = boostMax * (float)Math.Tanh((rpm - startingRpm) / (increasement));
+            float function = boostMax / (1 + (float)Math.Exp(-(steepness / 1000) * (rpm - startingRpm - startingRpmOffset)));
+            //float function = boostMax * (float)Math.Tanh((rpm - startingRpm) / (steepness));
             return Mathf.Clamp(function, boostMin, boostMax);
         }
 
-        public float CalculateBoost(float rpm, float startingRpm, float boostMin, float boostMax, float increasement)
+        public float CalculateBoost(float rpm, float startingRpm, float startingRpmOffset, float boostMin, float boostMax, float steepness)
         {
-            float increasementPercentageReduction = turbo.userSetBoost / boostMax;
             float newBoostMax = Mathf.Clamp(turbo.userSetBoost, config.minSettableBoost, boostMax);
-            return GetBoostCalculationFunction(rpm, startingRpm, boostMin, newBoostMax, increasement * increasementPercentageReduction);
+            return GetBoostCalculationFunction(rpm, startingRpm, startingRpmOffset, boostMin, newBoostMax, steepness);
         }
 
 

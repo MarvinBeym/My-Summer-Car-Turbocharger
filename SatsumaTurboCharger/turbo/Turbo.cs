@@ -38,7 +38,7 @@ namespace SatsumaTurboCharger.turbo
         public FsmFloat powerMultiplier;
 
         //Configurable by calls to turbo class
-        public Configuration config;
+        public TurboConfiguration config;
         public float userSetBoost;
 
 
@@ -64,7 +64,7 @@ namespace SatsumaTurboCharger.turbo
         private ModAudio grinding_audio = new ModAudio();
         private ModAudio blowoff_audio = new ModAudio();
 
-        public Turbo(SatsumaTurboCharger mod, AdvPart part, Dictionary<string, float> boostSave,string loopSoundFile, string grindingSoundFIle, string blowoffSoundFile, bool[] requiredInstalled, Configuration config, GameObject boostChangingGameObject)
+        public Turbo(SatsumaTurboCharger mod, AdvPart part, Dictionary<string, float> boostSave,string loopSoundFile, string grindingSoundFIle, string blowoffSoundFile, bool[] requiredInstalled, TurboConfiguration config, GameObject boostChangingGameObject)
         {
             this.mod = mod;
             this.part = part;

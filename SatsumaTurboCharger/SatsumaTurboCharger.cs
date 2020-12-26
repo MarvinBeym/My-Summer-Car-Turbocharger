@@ -596,13 +596,35 @@ namespace SatsumaTurboCharger
 
             SetModsShop();
 
-            Configuration racingTurboConfig = new Configuration
+            TurboConfiguration racingTurboConfig = new TurboConfiguration
             {
                 boostBase = 2f,
-                boostStartingRpm = 4000,
+                boostStartingRpm = 3500,
+                boostStartingRpmOffset = 1600,
                 boostMin = -0.10f,
                 minSettableBoost = 1.65f,
-                boostIncreasement = 800,
+                boostSteepness = 2.6f,
+                blowoffDelay = 0.8f,
+                blowoffTriggerBoost = 0.6f,
+                backfireThreshold = 4000,
+                backfireRandomRange = 20,
+                rpmMultiplier = 14,
+                extraPowerMultiplicator = 1.5f,
+                soundBoostMaxVolume = 0.3f,
+                soundBoostIncreasement = 0.1f,
+                soundBoostPitchMultiplicator = 4,
+                boostSettingSteps = 0.05f,
+            };
+
+            //Temporary
+            TurboConfiguration gtTurboConfig = new TurboConfiguration
+            {
+                boostBase = 2f,
+                boostStartingRpm = 3500,
+                boostStartingRpmOffset = 2200,
+                boostMin = -0.10f,
+                minSettableBoost = 1.65f,
+                boostSteepness = 2.2f,
                 blowoffDelay = 0.8f,
                 blowoffTriggerBoost = 0.6f,
                 backfireThreshold = 4000,
@@ -613,24 +635,6 @@ namespace SatsumaTurboCharger
                 soundBoostIncreasement = 4000,
                 soundBoostPitchMultiplicator = 4,
                 boostSettingSteps = 0.05f,
-            };
-
-            //Temporary
-            Configuration gtTurboConfig = new Configuration
-            {
-                boostBase = 2f,
-                boostStartingRpm = 4000,
-                boostMin = -0.10f,
-                minSettableBoost = 1.65f,
-                boostIncreasement = 1000,
-                blowoffDelay = 0.8f,
-                blowoffTriggerBoost = 0.6f,
-                rpmMultiplier = 14,
-                extraPowerMultiplicator = 1.5f,
-                soundBoostMaxVolume = 0.3f,
-                soundBoostIncreasement = 4000,
-                soundBoostPitchMultiplicator = 4,
-                boostSettingSteps = 0.01f,
             };
 
             racingTurbo = new Turbo(this, turboBig_part, boostSave, "turbocharger_loop.wav", "grinding sound.wav", "turbocharger_blowoff.wav",

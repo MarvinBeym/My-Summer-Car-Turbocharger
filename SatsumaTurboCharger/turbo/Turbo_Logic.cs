@@ -26,7 +26,7 @@ namespace SatsumaTurboCharger.turbo
         // Update is called once per frame
         void LateUpdate()
         {
-            if(!turbo.CheckAllRequiredInstalled() || !mod.engineRunning)
+            if(!turbo.CheckAllRequiredInstalled() || !Car.running)
             {
                 //Not all required installed RESET
                 turbo.LoopSound(false);
@@ -35,7 +35,7 @@ namespace SatsumaTurboCharger.turbo
                 return;
             }
             blowoffTimer += Time.deltaTime;
-            float engineRpm = turbo.carDriveTrain.rpm;
+            float engineRpm = Car.drivetrain.rpm;
             
             turbo.LoopSound(true);
 
@@ -61,7 +61,7 @@ namespace SatsumaTurboCharger.turbo
                 turbo.blowoffAllowed = true;
             }
 
-            bool shifting = Helper.ThrottleButtonDown && (turbo.carDriveTrain.changingGear);
+            bool shifting = Helper.ThrottleButtonDown && (Car.drivetrain.changingGear);
             bool lettingGoOfThrottle = !Helper.ThrottleButtonDown;
             if (turbo.boost >= config.blowoffTriggerBoost && turbo.blowoffAllowed == true && (shifting || lettingGoOfThrottle))
             {
@@ -107,7 +107,7 @@ namespace SatsumaTurboCharger.turbo
             
             mod.SetBoostGaugeText(turbo.boost.ToString("0.00"));
             float finalMultiplicator = turbo.boost * config.extraPowerMultiplicator;
-            turbo.carDriveTrain.powerMultiplier = 1f + Mathf.Clamp(finalMultiplicator, config.boostMin, turbo.boostMaxConfigured);
+            Car.drivetrain.powerMultiplier = 1f + Mathf.Clamp(finalMultiplicator, config.boostMin, turbo.boostMaxConfigured);
 
         }
 
@@ -160,7 +160,7 @@ namespace SatsumaTurboCharger.turbo
 
             backfireTimer += Time.deltaTime;
 
-            if (turbo.carDriveTrain.revLimiterTriggered)
+            if (Car.drivetrain.revLimiterTriggered)
             {
                 turbo.backfire_Logic.TriggerBackfire();
             }
@@ -192,7 +192,7 @@ namespace SatsumaTurboCharger.turbo
         {
             if(turbine != null && (bool) mod.rotateTurbineSetting.Value)
             {
-                turbine.transform.Rotate(0, 0, (turbo.carDriveTrain.rpm / 500));
+                turbine.transform.Rotate(0, 0, (Car.drivetrain.rpm / 500));
             }
         }
 

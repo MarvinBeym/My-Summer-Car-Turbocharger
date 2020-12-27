@@ -24,13 +24,7 @@ namespace SatsumaTurboCharger
         private FsmBool smart_engine_module_alsModuleEnabled;
         private FsmBool smart_engine_module_step2RevLimiterModuleEnabled;
 
-        //Car
-        private GameObject satsuma;
-        private Drivetrain satsumaDriveTrain;
-        private CarController satsumaCarController;
-        private Axles satsumaAxles;
         private FsmString playerCurrentVehicle;
-        private PlayMakerFSM carElectricsPower;
 
         //Audio
         private ModAudio turbocharger_loop_small = new ModAudio();
@@ -73,11 +67,7 @@ namespace SatsumaTurboCharger
             CreateTurboGrindingLoop();
             CreateTurboLoopSmall();
 
-            satsuma = GameObject.Find("SATSUMA(557kg, 248)");
-            satsumaDriveTrain = satsuma.GetComponent<Drivetrain>();
-            satsumaCarController = satsuma.GetComponent<CarController>();
-            satsumaAxles = satsuma.GetComponent<Axles>();
-            satsumaDriveTrain.clutchTorqueMultiplier = 10f;
+            Car.drivetrain.clutchTorqueMultiplier = 10f;
 
             weberCarb_inst = GameObject.Find("Racing Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
             twinCarb_inst = GameObject.Find("Twin Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
@@ -95,9 +85,6 @@ namespace SatsumaTurboCharger
             }
 
             playerCurrentVehicle = FsmVariables.GlobalVariables.FindFsmString("PlayerCurrentVehicle");
-
-            GameObject electrics = GameObject.Find("CarSimulation/Car/Electrics");
-            PlayMakerFSM electricsFSM = electrics.GetComponent<PlayMakerFSM>();
 
 
             turboSmallFSM = this.gameObject.AddComponent<PlayMakerFSM>();
@@ -530,21 +517,6 @@ namespace SatsumaTurboCharger
             turboLoopSmall.loop = true;
         }
 
-        private bool hasPower{ 
-            get
-            {
-                if (carElectricsPower == null)
-                {
-                    GameObject carElectrics = GameObject.Find("SATSUMA(557kg, 248)/Electricity");
-                    carElectricsPower = PlayMakerFSM.FindFsmOnGameObject(carElectrics, "Power");
-                    return carElectricsPower.FsmVariables.FindFsmBool("ElectricsOK").Value;
-                }
-                else
-                {
-                    return carElectricsPower.FsmVariables.FindFsmBool("ElectricsOK").Value;
-                }
-            }
-        }
         internal static bool useButtonDown{ 
             get { return cInput.GetKeyDown("Use"); }
             
@@ -556,7 +528,7 @@ namespace SatsumaTurboCharger
         internal bool throttleUsed{ 
             get
             {
-                return (satsumaDriveTrain.idlethrottle > 0f);
+                return (Car.drivetrain.idlethrottle > 0f);
             }
         }
 

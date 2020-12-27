@@ -90,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoostGauge_Logic.cs" />
+    <Compile Include="CarHelper.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="Hood_Logic.cs" />
     <Compile Include="parts\AdvPart.cs" />

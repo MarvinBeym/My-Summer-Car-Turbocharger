@@ -159,7 +159,6 @@ namespace SatsumaTurboCharger
         //Game Objects
         //
         //Parts
-        private GameObject satsuma;
         private GameObject weberCarb;
         private GameObject twinCarb;
         private GameObject racingExhaustPipe;
@@ -177,11 +176,6 @@ namespace SatsumaTurboCharger
         private Vector3 originalExhaustPipeRacePosition;
         private Quaternion originalExhaustPipeRaceRotation;
         private Transform originalExhaustPipeRaceParent;
-        private static Drivetrain satsumaDriveTrain;
-        private PlayMakerFSM carElectricsPower;
-        //Power/Electricity
-        private GameObject elect;
-        private PlayMakerFSM power;
 
         //Inspection
         private PlayMakerFSM inspectionPlayMakerFsm;
@@ -331,22 +325,18 @@ namespace SatsumaTurboCharger
             {
                 if ((bool)useCustomGearRatios.Value)
                 {
-                    satsumaDriveTrain.gearRatios = newGearRatios;
+                    Car.drivetrain.gearRatios = newGearRatios;
                 }
                 else
                 {
-                    satsumaDriveTrain.gearRatios = originalGearRatios;
+                    Car.drivetrain.gearRatios = originalGearRatios;
                 }
             });
             assetsBundle = Helper.LoadAssetBundle(this, "turbochargermod.unity3d");
 
             try
             {
-                elect = GameObject.Find("SATSUMA(557kg, 248)/Electricity");
-                power = PlayMakerFSM.FindFsmOnGameObject(elect, "Power");
-                satsuma = GameObject.Find("SATSUMA(557kg, 248)");
-                satsumaDriveTrain = satsuma.GetComponent<Drivetrain>();
-                satsumaDriveTrain.clutchTorqueMultiplier = 10f;
+                Car.drivetrain.clutchTorqueMultiplier = 10f;
 
                 exhaustFromEngine = GameObject.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromEngine");
                 exhaustFromPipe = GameObject.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromPipe");
@@ -424,7 +414,7 @@ namespace SatsumaTurboCharger
 
 
             intercooler_part = new AdvPart(advPartBaseInfo,
-                "intercooler", "Intercooler", satsuma, "",
+                "intercooler", "Intercooler", Car.satsuma, "",
                 intercooler_installLocation, new Vector3(0, 180, 0),
                 true);
 
@@ -475,7 +465,7 @@ namespace SatsumaTurboCharger
                 true);
 
             turboBig_hood_part = new AdvPart(advPartBaseInfo,
-                "turboBig_hood", "Racing Turbo Hood", satsuma, "",
+                "turboBig_hood", "Racing Turbo Hood", Car.satsuma, "",
                 turboBig_hood_installLocation, new Vector3(0, 180, 0),
                 true);
 
@@ -494,7 +484,7 @@ namespace SatsumaTurboCharger
             turboSmall_logic.Init(this);
 
             turboSmall_intercooler_tube_part = new AdvPart(advPartBaseInfo,
-                "turboSmall_intercooler_tube", "GT Turbo Intercooler Tube", satsuma, "",
+                "turboSmall_intercooler_tube", "GT Turbo Intercooler Tube", Car.satsuma, "",
                 turboSmall_intercooler_tube_installLocation, new Vector3(0, 180, 0),
                 true, "turboSmall_kit");
 
@@ -1002,14 +992,14 @@ namespace SatsumaTurboCharger
                 new GuiDebugInfo("Wear", "Racing Turbo", racingTurboWear.ToStringOrEmpty()),
                 new GuiDebugInfo("Wear", "GT Turbo", gtTurboWear.ToStringOrEmpty()),
                 //new GuiDebugInfo("Wear", "Intercooler", intercoolerWear.ToStringOrEmpty()),
-                new GuiDebugInfo("DEBUG", "Engine RPM", ((int) satsumaDriveTrain.rpm).ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Engine RPM", ((int) Car.drivetrain.rpm).ToStringOrEmpty()),
                 new GuiDebugInfo("DEBUG", "Racing Turbo bar", racingTurbo.boost.ToStringOrEmpty()),
                 new GuiDebugInfo("DEBUG", "GT Turbo bar", gtTurbo.boost.ToStringOrEmpty()),
-                new GuiDebugInfo("DEBUG", "Power multiplier", racingTurbo.carDriveTrain.powerMultiplier.ToStringOrEmpty()),
-                new GuiDebugInfo("DEBUG", "KM/H", ((int) satsumaDriveTrain.differentialSpeed).ToStringOrEmpty()),
-                new GuiDebugInfo("DEBUG", "Torque", satsumaDriveTrain.torque.ToStringOrEmpty()),
-                new GuiDebugInfo("DEBUG", "Clutch Max Torque", satsumaDriveTrain.clutchMaxTorque.ToStringOrEmpty()),
-                new GuiDebugInfo("DEBUG", "Clutch Torque Multiplier", satsumaDriveTrain.clutchTorqueMultiplier.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Power multiplier", Car.drivetrain.powerMultiplier.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "KM/H", ((int) Car.drivetrain.differentialSpeed).ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Torque", Car.drivetrain.torque.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Clutch Max Torque", Car.drivetrain.clutchMaxTorque.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Clutch Torque Multiplier", Car.drivetrain.clutchTorqueMultiplier.ToStringOrEmpty()),
             });
             }
 
@@ -1029,7 +1019,7 @@ namespace SatsumaTurboCharger
             //Todo
             if (!racingTurbo.CheckAllRequiredInstalled() && !gtTurbo.CheckAllRequiredInstalled())
             {
-                if (hasPower)
+                if (Car.hasPower)
                 {
                     turboErr = true;
                     SetBoostGaugeText("ERR");
@@ -1173,7 +1163,7 @@ namespace SatsumaTurboCharger
                 }
             }
 
-            if (engineRunning)
+            if (Car.running)
             {
                 if (turboBig_exhaust_outlet_straight_part.installed && allBig && allOther)
                 {
@@ -1356,31 +1346,6 @@ namespace SatsumaTurboCharger
                 turboSmall_exhaust_outlet_tube_part.InstalledScrewed(ignoreScrewable) ||
                 turboSmall_airfilter_part.InstalledScrewed(ignoreScrewable) ||
                 turboSmall_manifold_twinCarb_tube_part.InstalledScrewed(ignoreScrewable);
-        }
-
-        public bool hasPower
-        {
-            get
-            {
-                if (carElectricsPower == null)
-                {
-                    GameObject carElectrics = GameObject.Find("SATSUMA(557kg, 248)/Electricity");
-                    carElectricsPower = PlayMakerFSM.FindFsmOnGameObject(carElectrics, "Power");
-                    return carElectricsPower.FsmVariables.FindFsmBool("ElectricsOK").Value;
-                }
-                else
-                {
-                    return carElectricsPower.FsmVariables.FindFsmBool("ElectricsOK").Value;
-                }
-            }
-        }
-
-        public bool engineRunning
-        {
-            get
-            {
-                return satsumaDriveTrain.rpm > 0;
-            }
         }
     }
 }

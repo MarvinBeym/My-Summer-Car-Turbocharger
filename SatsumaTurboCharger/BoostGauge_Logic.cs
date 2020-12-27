@@ -19,8 +19,7 @@ namespace SatsumaTurboCharger
         private GameObject analogDigitalSwitch;
         private GameObject analogNeedle;
         private TextMesh digitalText;
-
-        private Drivetrain drivetrain;
+        private Animation analogNeedleAnimation;
 
         private GaugeMode gaugeMode = GaugeMode.Analog;
 
@@ -32,16 +31,19 @@ namespace SatsumaTurboCharger
         public float timeComparer = 0.01f;
         public float reducer = 0.15f;
 
+        private bool lastElectricityState = false;
+
         public void Init(AdvPart boostGauge)
         {
             this.boostGauge = boostGauge;
-            drivetrain = GameObject.Find("SATSUMA(557kg, 248)").GetComponent<Drivetrain>();
 
             boostGauge.activePart.transform.FindChild("boost_gauge_digital_text").gameObject.SetActive(false);
 
             analogDigitalSwitch = boostGauge.rigidPart.transform.FindChild("boost_gauge_button").gameObject;
             
             analogNeedle = boostGauge.rigidPart.transform.FindChild("boost_gauge_needle").gameObject;
+            analogNeedleAnimation = analogNeedle.GetComponent<Animation>();
+
             GameObject digitalTextObject = boostGauge.rigidPart.transform.FindChild("boost_gauge_digital_text").gameObject;
 
 
@@ -52,6 +54,14 @@ namespace SatsumaTurboCharger
                 MeshRenderer meshRenderer = digitalTextObject.GetComponent<MeshRenderer>();
                 digitalText = digitalTextObject.GetComponent<TextMesh>();
 
+                FsmHook.FsmInject(Car.electricity, "ON", delegate() 
+                {
+                    if (lastElectricityState == false) { lastElectricityState = true; SwitchedElectricityOn(); };
+                });
+                FsmHook.FsmInject(Car.electricity, "OFF", delegate()
+                {
+                    if (lastElectricityState == true) { lastElectricityState = false; SwitchedElectricityOff(); };
+                });
 
                 GameObject airFuel = GameObject.Find("AirFuel");
                 GameObject lcd = airFuel.transform.FindChild("LCD").gameObject;
@@ -76,28 +86,49 @@ namespace SatsumaTurboCharger
 
         void Start()
         {
-
+            analogNeedle.transform.localEulerAngles = new Vector3(0, 0, minAngle);
+            digitalText.text = "";
         }
 
         void Update()
         {
-            if(Helper.DetectRaycastHitObject(analogDigitalSwitch, "Dashboard"))
+            if(!Car.hasPower || !Helper.DetectRaycastHitObject(analogDigitalSwitch, "Dashboard")) { return; }
+            GaugeMode nextGaugeMode = gaugeMode == GaugeMode.Analog ? GaugeMode.Digital : GaugeMode.Analog;
+            ModClient.guiInteract(
+                $"[Left mouse] or [{cInput.GetText("Use")}]\n" +
+                $"to switch to {nextGaugeMode}"
+            );
+            if (Helper.UseButtonDown || Helper.LeftMouseDown)
             {
-                GaugeMode nextGaugeMode = gaugeMode == GaugeMode.Analog ? GaugeMode.Digital : GaugeMode.Analog;
-                ModClient.guiInteract(
-                    $"[Left mouse] or [{cInput.GetText("Use")}]\n" +
-                    $"to switch to {nextGaugeMode}"
-                );
-                if(Helper.UseButtonDown || Helper.LeftMouseDown)
-                {
-                    SwitchGaugeMode(nextGaugeMode);
-                }
+                SwitchGaugeMode(nextGaugeMode);
             }
+        }
+
+        private void SwitchedElectricityOn()
+        {
+            if(gaugeMode == GaugeMode.Analog)
+            {
+                analogNeedleAnimation.Play();
+            }
+            else
+            {
+                digitalText.text = "0.00";
+            }
+            
+        }
+        private void SwitchedElectricityOff()
+        {
+            if (analogNeedleAnimation.isPlaying)
+            {
+                analogNeedleAnimation.Stop();
+            }
+            analogNeedle.transform.localEulerAngles = new Vector3(0, 0, minAngle);
+            digitalText.text = "";
         }
 
         private void SwitchGaugeMode(GaugeMode newGaugeMode)
         {
-            Helper.playTouchSound(boostGauge.rigidPart);
+            Helper.PlayTouchSound(boostGauge.rigidPart);
             gaugeMode = newGaugeMode;
             switch (gaugeMode)
             {
@@ -105,6 +136,7 @@ namespace SatsumaTurboCharger
                     digitalText.text = "";
                     break;
                 case GaugeMode.Digital:
+                    digitalText.text = "0.00";
                     analogNeedle.transform.localEulerAngles = new Vector3(0, 0, minAngle);
                     break;
             }
@@ -112,6 +144,7 @@ namespace SatsumaTurboCharger
 
         public void SetBoost(float target, float boost, TurboConfiguration turboConfig)
         {
+            if (!Car.hasPower || analogNeedleAnimation.isPlaying) { return; }
             float boostMin = 0;
 
 

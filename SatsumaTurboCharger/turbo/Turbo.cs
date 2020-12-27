@@ -19,9 +19,6 @@ namespace SatsumaTurboCharger.turbo
         protected PlayMakerFSM ecu_installedFSM;
         protected PlayMakerFSM ecu_modulesFSM;
 
-        public GameObject car;
-        public Drivetrain carDriveTrain;
-
         public GameObject turbine;
         public GameObject boostChangingGameObject;
         protected bool bigRequired = false;
@@ -88,9 +85,7 @@ namespace SatsumaTurboCharger.turbo
             smallRequired = requiredInstalled[1];
             otherRequired = requiredInstalled[2];
 
-            car = GameObject.Find("SATSUMA(557kg, 248)");
-            carDriveTrain = car.GetComponent<Drivetrain>();
-            carDriveTrain.clutchTorqueMultiplier = 10f;
+            Car.drivetrain.clutchTorqueMultiplier = 10f;
             CreateSound(ref loop_source, ref loop_audio, loopSoundFile, true);
             CreateSound(ref grinding_source, ref grinding_audio, grindingSoundFIle, true);
             CreateSound(ref blowoff_source, ref blowoff_audio, blowoffSoundFile, true);

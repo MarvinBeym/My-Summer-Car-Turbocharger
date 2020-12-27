@@ -29,7 +29,7 @@ namespace SatsumaTurboCharger
             this.turboHood = hoodPart.rigidPart;
             turboHoodRigidBody = turboHood.GetComponent<Rigidbody>();
             turboHoodHingeJoint = turboHood.AddComponent<HingeJoint>();
-            turboHoodHingeJoint.connectedBody = GameObject.Find("SATSUMA(557kg, 248)").GetComponent<Rigidbody>();
+            turboHoodHingeJoint.connectedBody = Car.satsuma.GetComponent<Rigidbody>();
             turboHoodHingeJoint.anchor = new Vector3(0, 0, 0);
             turboHoodHingeJoint.axis = new Vector3(0, 0, 0);
             turboHoodHingeJoint.useSpring = true;

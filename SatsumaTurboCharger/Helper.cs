@@ -16,13 +16,14 @@ namespace SatsumaTurboCharger
     public static class Helper
     {
         private static AudioSource dashButtonAudioSource;
-        public static void playTouchSound(GameObject gameObjectToPlayOn)
+        
+        public static void PlayTouchSound(GameObject gameObjectToPlayOn)
         {
             if(dashButtonAudioSource == null)
             {
                 dashButtonAudioSource = GameObject.Find("dash_button").GetComponent<AudioSource>();
             }
-            else
+            if(dashButtonAudioSource != null)
             {
                 AudioSource audio = dashButtonAudioSource;
                 audio.transform.position = gameObjectToPlayOn.transform.position;

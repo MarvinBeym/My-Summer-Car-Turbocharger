@@ -724,10 +724,10 @@ namespace SatsumaTurboCharger
             {
                 foreach (ScrewV2 screw in screwablePart.screws)
                 {
-                    screwablePart.SetScrewPositions(screw, 8);
+                    screwablePart.SetScrewPosition(screw, 8);
                 }
             }
-
+            
             ModConsole.Print(this.Name + $" [v{this.Version} | Screwable v{ScrewablePartV2.version}] finished loading");         
         }
 
@@ -772,6 +772,7 @@ namespace SatsumaTurboCharger
                     new ScrewV2(new Vector3(0.016f, -0.04f, 0.008f), new Vector3(0, 0, 0), 0.3f, 5),
                 });
 
+            
             Helper.ScrewablePartV2Simple(baseInfo, turboBig_hood_part,
                 new ScrewV2[]
                 {

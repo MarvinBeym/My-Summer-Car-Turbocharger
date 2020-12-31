@@ -39,11 +39,15 @@ namespace SatsumaTurboCharger.turbo
             
             turbo.LoopSound(true);
 
-            float soundBoost = CalculateSoundBoost(engineRpm, config.soundBoostMaxVolume, config.soundBoostIncreasement);
-            turbo.loop_source.volume = soundBoost;
-            turbo.loop_source.pitch = soundBoost * config.soundBoostPitchMultiplicator;
-
+            
             turbo.boostMaxConfigured = CalculateConfigurationBoost(turbo.boostMaxConfigured, config.boostBase, turbo.conditions);
+            float soundboost = CalculateBoost(engineRpm, config.boostStartingRpm, config.boostStartingRpmOffset, config.boostMin, turbo.boostMaxConfigured, config.boostSteepness);
+
+            soundboost = soundboost.Map(config.boostMin, turbo.boostMaxConfigured, config.soundboostMinVolume, config.soundboostMaxVolume);
+
+            turbo.loop_source.volume = soundboost;
+            turbo.loop_source.pitch = soundboost * config.soundboostPitchMultiplicator;
+
             HandleBoostChanging();
 
             RotateTurbine(turbo.turbine);
@@ -105,7 +109,6 @@ namespace SatsumaTurboCharger.turbo
 
             turbo.rpm = turbo.CalculateRpm(engineRpm, config.rpmMultiplier);
             
-            mod.SetBoostGaugeText(turbo.boost.ToString("0.00"));
             float finalMultiplicator = turbo.boost * config.extraPowerMultiplicator;
             Car.drivetrain.powerMultiplier = 1f + Mathf.Clamp(finalMultiplicator, config.boostMin, turbo.boostMaxConfigured);
 
@@ -119,13 +122,12 @@ namespace SatsumaTurboCharger.turbo
             }
 
             float setBoost = turbo.userSetBoost;
-            float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
-            switch (scrollWheel)
+            switch (Helper.ScrollingUpDown())
             {
-                case float _ when scrollWheel > 0f:
+                case 1:
                     setBoost += turbo.config.boostSettingSteps;
                     break;
-                case float _ when scrollWheel < 0f:
+                case -1:
                     setBoost -= turbo.config.boostSettingSteps;
                     break;
             }

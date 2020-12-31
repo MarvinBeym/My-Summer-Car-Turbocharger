@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using UnityEngine;
+using static SatsumaTurboCharger.BoostGauge_Logic;
 using static SatsumaTurboCharger.parts.AdvPart;
 using Random = System.Random;
 
@@ -599,10 +600,10 @@ namespace SatsumaTurboCharger
                 backfireRandomRange = 20,
                 rpmMultiplier = 14,
                 extraPowerMultiplicator = 1.5f,
-                soundBoostMaxVolume = 0.3f,
-                soundBoostIncreasement = 0.1f,
-                soundBoostPitchMultiplicator = 4,
                 boostSettingSteps = 0.05f,
+                soundboostMinVolume = 0.1f,
+                soundboostMaxVolume = 0.35f,
+                soundboostPitchMultiplicator = 4,
             };
 
             //Temporary
@@ -620,10 +621,10 @@ namespace SatsumaTurboCharger
                 backfireRandomRange = 20,
                 rpmMultiplier = 14,
                 extraPowerMultiplicator = 1.5f,
-                soundBoostMaxVolume = 0.3f,
-                soundBoostIncreasement = 4000,
-                soundBoostPitchMultiplicator = 4,
                 boostSettingSteps = 0.05f,
+                soundboostMinVolume = 0.05f,
+                soundboostMaxVolume = 0.3f,
+                soundboostPitchMultiplicator = 4,
             };
 
             racingTurbo = new Turbo(this, turboBig_part, boostSave, "turbocharger_loop.wav", "grinding sound.wav", "turbocharger_blowoff.wav",
@@ -1005,8 +1006,6 @@ namespace SatsumaTurboCharger
             }
 
         }
-
-        public bool turboErr = false;
         public override void Update()
         {
             bool allBig = AllBigInstalled();
@@ -1018,23 +1017,13 @@ namespace SatsumaTurboCharger
             racingTurbo.UpdateCondition("twinCarb", twinCarb_inst.Value);
 
             //Todo
-            if (!racingTurbo.CheckAllRequiredInstalled() && !gtTurbo.CheckAllRequiredInstalled())
+            if (!racingTurbo.CheckAllRequiredInstalled() && !gtTurbo.CheckAllRequiredInstalled() && Car.hasPower)
             {
-                if (Car.hasPower)
-                {
-                    turboErr = true;
-                    SetBoostGaugeText("ERR");
-                }
-                else
-                {
-                    turboErr = false;
-                    SetBoostGaugeText("");
-                }
+                boostGaugeLogic.SetDigitalText("ERR");
             }
-            else if (turboErr)
+            else if (Car.hasPower && boostGaugeLogic.gaugeMode != GaugeMode.Digital)
             {
-                turboErr = false;
-                SetBoostGaugeText("");
+                boostGaugeLogic.SetDigitalText("");
             }
             HandleExhaustSystem();
             //HandlePartsTrigger();
@@ -1266,23 +1255,6 @@ namespace SatsumaTurboCharger
                "There should have been a ModsShop.dll and unity3d file (inside Assets) inside the archive of this mod",
                "Installation of ModsShop (by piotrulos) needed");
             }
-        }
-
-        public void SetBoostGaugeText(string valueToDisplay)
-        {
-            /*
-            if (!boost_gauge_part.InstalledScrewed() )
-            {
-                return;
-            }
-            if (!hasPower)
-            {
-                boostGaugeTextMesh.text = "";
-                return;
-            }
-
-            boostGaugeTextMesh.text = valueToDisplay;
-            */
         }
 
         private void PosReset()

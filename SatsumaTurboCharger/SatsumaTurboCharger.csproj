@@ -120,7 +120,7 @@
     <Compile Include="shop\Shop.cs" />
     <Compile Include="turbo\Backfire_Logic.cs" />
     <Compile Include="turbo\Condition.cs" />
-    <Compile Include="turbo\Configuration.cs" />
+    <Compile Include="turbo\TurboConfiguration.cs" />
     <Compile Include="turbo\Turbo_Logic.cs" />
     <Compile Include="turbo\Turbo.cs" />
     <Compile Include="wear\Wear.cs" />

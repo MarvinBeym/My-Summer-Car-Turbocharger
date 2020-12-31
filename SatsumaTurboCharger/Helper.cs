@@ -31,6 +31,25 @@ namespace SatsumaTurboCharger
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>1 when scrolling up, -1 when scrolling down, otherwise 0</returns>
+        public static int ScrollingUpDown()
+        {
+            float scrollWheel = Input.GetAxis("Mouse ScrollWheel");
+            switch (scrollWheel)
+            {
+                case float _ when scrollWheel > 0f:
+                    return 1;
+                    break;
+                case float _ when scrollWheel < 0f:
+                    return -1;
+                default:
+                    return 0;
+            }
+        }
+
         public static void ScrewablePartV2Simple(ScrewablePartV2BaseInfo baseInfo, AdvPart advPart, ScrewV2[] screws)
         {
             advPart.screwablePart = new ScrewablePartV2(baseInfo, advPart.id, advPart.rigidPart, screws);

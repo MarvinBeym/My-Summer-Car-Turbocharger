@@ -9,7 +9,7 @@ namespace SatsumaTurboCharger
 {
     public class BoostGauge_Logic : MonoBehaviour
     {
-        private enum GaugeMode
+        public enum GaugeMode
         {
             Analog,
             Digital,
@@ -20,8 +20,21 @@ namespace SatsumaTurboCharger
         private GameObject analogNeedle;
         private TextMesh digitalText;
         private Animation analogNeedleAnimation;
+        private int selectedColor = 0;
+        private Color[] availableColors = new Color[]
+        {
+            Color.white,
+            Color.blue,
+            Color.red,
+            Color.green,
+            Color.yellow,
+            Color.magenta,
+        };
 
-        private GaugeMode gaugeMode = GaugeMode.Analog;
+
+        private Material foregroundMaterial;
+
+        public GaugeMode gaugeMode = GaugeMode.Analog;
 
         private const float minAngle = 45;
         private const float maxAngle = 315;
@@ -39,16 +52,19 @@ namespace SatsumaTurboCharger
 
             boostGauge.activePart.transform.FindChild("boost_gauge_digital_text").gameObject.SetActive(false);
 
-            analogDigitalSwitch = boostGauge.rigidPart.transform.FindChild("boost_gauge_button").gameObject;
+            analogDigitalSwitch = this.transform.FindChild("boost_gauge_button").gameObject;
             
-            analogNeedle = boostGauge.rigidPart.transform.FindChild("boost_gauge_needle").gameObject;
+            analogNeedle = this.transform.FindChild("boost_gauge_needle").gameObject;
             analogNeedleAnimation = analogNeedle.GetComponent<Animation>();
 
-            GameObject digitalTextObject = boostGauge.rigidPart.transform.FindChild("boost_gauge_digital_text").gameObject;
+            GameObject digitalTextObject = this.transform.FindChild("boost_gauge_digital_text").gameObject;
+            foreach(Material material in this.transform.FindChild("boost_gauge__").GetComponent<Renderer>().materials)
+            {
+                if(!material.name.Contains("boost_gauge_foreground")) { continue; }
+                foregroundMaterial = material;
+            }
+            foregroundMaterial.SetColor("_Color", availableColors[selectedColor]);
 
-
-
-            //Setting up boost gauge digital display
             try
             {
                 MeshRenderer meshRenderer = digitalTextObject.GetComponent<MeshRenderer>();
@@ -76,6 +92,10 @@ namespace SatsumaTurboCharger
                 digitalText.fontSize = 0;
                 digitalText.characterSize = 1.55f;
                 digitalText.transform.localScale = lcdTextMesh.transform.localScale;
+
+                Color color = Color.white;
+                color.a = 0.2f;
+                foregroundMaterial.SetColor("_Color", color);
             }
             catch(Exception ex)
             {
@@ -95,13 +115,37 @@ namespace SatsumaTurboCharger
             if(!Car.hasPower || !Helper.DetectRaycastHitObject(analogDigitalSwitch, "Dashboard")) { return; }
             GaugeMode nextGaugeMode = gaugeMode == GaugeMode.Analog ? GaugeMode.Digital : GaugeMode.Analog;
             ModClient.guiInteract(
-                $"[Left mouse] or [{cInput.GetText("Use")}]\n" +
-                $"to switch to {nextGaugeMode}"
+                $"[Left mouse] or [{cInput.GetText("Use")}] to switch to {nextGaugeMode}\n" +
+                $"[SCROLL UP/Down] to change color"
             );
+            switch (Helper.ScrollingUpDown())
+            {
+                case 1:
+                    selectedColor += 1;
+                    ChangeTextColor(selectedColor);
+                    break;
+                case -1:
+                    selectedColor -= 1;
+                    ChangeTextColor(selectedColor);
+                    break;
+            }
+
             if (Helper.UseButtonDown || Helper.LeftMouseDown)
             {
                 SwitchGaugeMode(nextGaugeMode);
             }
+        }
+
+        private void ChangeTextColor(int newColorIndex)
+        {
+            newColorIndex = newColorIndex > availableColors.Length - 1 ? 0 : newColorIndex;
+            newColorIndex = newColorIndex < 0 ? availableColors.Length - 1 : newColorIndex;
+            selectedColor = newColorIndex;
+            Color color = availableColors[newColorIndex];
+            color.a = 0.6f;
+
+
+            foregroundMaterial.SetColor("_Color", color);
         }
 
         private void SwitchedElectricityOn()
@@ -114,7 +158,7 @@ namespace SatsumaTurboCharger
             {
                 digitalText.text = "0.00";
             }
-            
+            ChangeTextColor(selectedColor);
         }
         private void SwitchedElectricityOff()
         {
@@ -124,6 +168,10 @@ namespace SatsumaTurboCharger
             }
             analogNeedle.transform.localEulerAngles = new Vector3(0, 0, minAngle);
             digitalText.text = "";
+
+            Color color = Color.white;
+            color.a = 0.2f;
+            foregroundMaterial.SetColor("_Color", color);
         }
 
         private void SwitchGaugeMode(GaugeMode newGaugeMode)
@@ -187,9 +235,14 @@ namespace SatsumaTurboCharger
                     analogNeedle.transform.localEulerAngles = new Vector3(0, 0, GetNeedleAngle(manipulatedBoostValue));
                     break;
                 case GaugeMode.Digital:
-                    digitalText.text = manipulatedBoostValue.ToString("0.00");
+                    SetDigitalText(manipulatedBoostValue.ToString("0.00"));
                     break;
             }
+        }
+
+        internal void SetDigitalText(string text)
+        {
+            digitalText.text = text;
         }
 
         private float GetNeedleAngle(float valueMap, float minMap = 0f, float maxMap = 3)

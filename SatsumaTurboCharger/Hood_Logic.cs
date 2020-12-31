@@ -39,6 +39,8 @@ namespace SatsumaTurboCharger
                 min = -openedAngle,
                 max = closedAngle,
             };
+            SetHoodAngle(0);
+
             this.turboHoodTrigger = hoodPart.partTrigger;
             turboHoodLatchCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
             turboHoodLatchCollider.name = hoodPart.activePart.name.Replace("(Clone)", "_LATCHCOLLIDER");
@@ -102,11 +104,7 @@ namespace SatsumaTurboCharger
         {
             FsmHook.FsmInject(GameObject.Find("HoodLocking").transform.FindChild("Trigger").gameObject, "Open", delegate () 
             {
-                JointSpring spring = turboHoodHingeJoint.spring;
-                spring.spring = springSpeed;
-                spring.damper = springDamping;
-                spring.targetPosition = openedAngle;
-                turboHoodHingeJoint.spring = spring;
+                SetHoodAngle(openedAngle);
                 open = true; 
             });
         }
@@ -117,15 +115,20 @@ namespace SatsumaTurboCharger
             {
                 if (Helper.LeftMouseDown)
                 {
-                    JointSpring spring = turboHoodHingeJoint.spring;
-                    spring.spring = springSpeed;
-                    spring.damper = springDamping;
-                    spring.targetPosition = closedAngle;
-                    turboHoodHingeJoint.spring = spring;
+                    SetHoodAngle(closedAngle);
                     open = false;
                 }
             }
 
+        }
+
+        private void SetHoodAngle(float angle)
+        {
+            JointSpring spring = turboHoodHingeJoint.spring;
+            spring.spring = springSpeed;
+            spring.damper = springDamping;
+            spring.targetPosition = angle;
+            turboHoodHingeJoint.spring = spring;
         }
     }
 }

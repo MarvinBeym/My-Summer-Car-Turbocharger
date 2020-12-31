@@ -678,9 +678,10 @@ namespace SatsumaTurboCharger
 
 
 
-            turboBigPaintSystem = new PaintSystem(partsColorSave, turboBig_part, new Color(0.8f, 0.8f, 0.8f), new string[] { "TurboCharger_Big_Compressor_Turbine", "TurboCharger_Big_Exhaust_Turbine" });
-            turboBigHoodPaintSystem = new PaintSystem(partsColorSave, turboBig_hood_part, new Color(0.8f, 0.8f, 0.8f));
-            //intercoolerPaintSystem = new PaintSystem(partsColorSave, intercooler_part, new Color(0.8f, 0.8f, 0.8f));
+            turboBigPaintSystem = new PaintSystem(partsColorSave, turboBig_part, new Color(0.8f, 0.8f, 0.8f));
+            turboBigHoodPaintSystem = new PaintSystem(partsColorSave, turboBig_hood_part, new Color(0.8f, 0.8f, 0.8f), true);
+            intercoolerPaintSystem = new PaintSystem(partsColorSave, intercooler_part, new Color(0.8f, 0.8f, 0.8f), false, "intercooler__");
+            intercoolerPaintSystem.SetMetal(0.8f, 0.5f);
             //turboSmallAirfilterPaintSystem = new PaintSystem(partsColorSave, turboSmall_airfilter_part, new Color(0.8f, 0.8f, 0.8f));
             //-> Issue with component. Paintable components have to be gameobjects on their own
             //-> Another way would be that paintability is defined by a material name on the object (like "paintable_material")
@@ -943,11 +944,15 @@ namespace SatsumaTurboCharger
             {
                 Logger.New("Error while trying to save part", "", ex);
             }
+            partsColorSave = PaintSystem.CollectSave(new PaintSystem[]
+            {
+                turboBigPaintSystem,
+                turboBigHoodPaintSystem,
+                intercoolerPaintSystem,
+                //turboSmallAirfilterPaintSystem,
+            });
 
-            partsColorSave = turboBigPaintSystem.GetColor(partsColorSave);
-            partsColorSave = turboBigHoodPaintSystem.GetColor(partsColorSave);
-            //partsColorSave = intercoolerPaintSystem.GetColor(partsColorSave);
-            //partsColorSave = turboSmallAirfilterPaintSystem.GetColor(partsColorSave);
+
             SaveLoad.SerializeSaveFile<Dictionary<string, SaveableColor>>(this, partsColorSave, color_saveFile);
 
 

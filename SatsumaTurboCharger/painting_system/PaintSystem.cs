@@ -30,15 +30,19 @@ namespace SatsumaTurboCharger.painting_system
         public GameObject sprayCanGameObject;
         public PlayMakerFSM sprayCanFsm;
         public FsmColor sprayCanColorFsm;
+        public Material carPaintRegular;
+
 
         public Color color;
         public Color defaultColor;
         public bool setupDone = false;
+        public bool useCarPaintMaterial = false;
 
-        public PaintSystem(Dictionary<string, SaveableColor> partsColorSave, AdvPart part, Color defaultColor, string[] paintablePartsName = null)
+        public PaintSystem(Dictionary<string, SaveableColor> partsColorSave, AdvPart part, Color defaultColor, bool useCarPaintMaterial = false, string nameOfMaterial = "Paintable")
         {
             this.part = part;
             this.defaultColor = defaultColor;
+            this.useCarPaintMaterial = useCarPaintMaterial;
 
             activeLogic = part.activePart.AddComponent<PaintSystem_Logic>();
             rigidLogic =  part.rigidPart.AddComponent<PaintSystem_Logic>();
@@ -52,13 +56,19 @@ namespace SatsumaTurboCharger.painting_system
                 color = defaultColor;
             }
 
-            if(paintablePartsName == null || paintablePartsName.Length == 0)
+            Material[] materialCollecion = Resources.FindObjectsOfTypeAll<Material>();
+            foreach (Material material in materialCollecion)
             {
-                paintablePartsName = new string[] { "default" };
+                if (material.name == "CAR_PAINT_REGULAR")
+                {
+                    carPaintRegular = material;
+                    break;
+                }
+
             }
 
-            activeLogic.Init(this, paintablePartsName, color, part.activePart);
-            rigidLogic.Init(this, paintablePartsName, color, part.partTrigger.triggerGameObject);
+            activeLogic.Init(this, nameOfMaterial, color, part.activePart);
+            rigidLogic.Init(this, nameOfMaterial, color, part.rigidPart);
 
             sprayCanGameObject = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/SprayCan");
             sprayCanFsm = sprayCanGameObject.GetComponent<PlayMakerFSM>();
@@ -80,37 +90,24 @@ namespace SatsumaTurboCharger.painting_system
             modSprayColors[11] = new Color(0f / 255, 0f / 255, 220f / 255, 1f);        // turquoise
             modSprayColors[12] = new Color(40f / 255, 40f / 255, 40f / 255, 1f);       // mattblack
             */
-            /*
-            //PaintSystem //CAR_PAINT_REGULAR (Instance) // MAYBE STILL NEEDED/USEFULL
-            Material[] materialCollecion = Resources.FindObjectsOfTypeAll<Material>();
-            foreach (Material material in materialCollecion)
-            {
-                if (material.name == "CAR_PAINT_REGULAR")
-                {
-                    regularCarPaintMaterial = material;
-                    break;
-                }
 
-            }
-            */
+            //PaintSystem //CAR_PAINT_REGULAR (Instance) // MAYBE STILL NEEDED/USEFULL
         }
 
-        public void SetAllChildColors(GameObject[] childs, Color color)
+        private void SetColor(Material[] materials, Color color)
         {
-            foreach (GameObject child in childs)
+            this.color = color;
+            foreach (Material material in materials)
             {
-                foreach (Material material in child.GetComponent<MeshRenderer>().materials)
-                {
-                    material.SetColor("_Color", color);
-                }
+                material.SetColor("_Color", color);
             }
         }
 
         public void SetSprayCanColor(Color color)
         {
             this.color = color;
-            SetAllChildColors(activeLogic.paintableChilds, color);
-            SetAllChildColors(rigidLogic.paintableChilds, color);
+            SetColor(activeLogic.paintableMaterials, color);
+            SetColor(rigidLogic.paintableMaterials, color);
         }
 
         public void SetupPaintSystem()
@@ -125,11 +122,28 @@ namespace SatsumaTurboCharger.painting_system
             this.state = state;
         }
 
-        public Dictionary<string, SaveableColor> GetColor(Dictionary<string, SaveableColor> partsColorSave)
+        public static Dictionary<string, SaveableColor> CollectSave(PaintSystem[] paintSystems)
         {
+            Dictionary<string, SaveableColor> save = new Dictionary<string, SaveableColor>();
+            foreach (PaintSystem paintSystem in paintSystems)
+            {
+                save[paintSystem.part.id] = SaveableColor.ConvertToSaveable(paintSystem.color);
+            }
+            return save;
+        }
 
-            partsColorSave[part.id] = SaveableColor.ConvertToSaveable(color);
-            return partsColorSave;
+        internal void SetMetal(float metal = 0f, float gloss = 0.5f)
+        {
+            foreach(Material material in activeLogic.paintableMaterials)
+            {
+                material.SetFloat("_Metallic", metal);
+                material.SetFloat("_Glossiness", gloss);
+            }
+            foreach (Material material in rigidLogic.paintableMaterials)
+            {
+                material.SetFloat("_Metallic", metal);
+                material.SetFloat("_Glossiness", gloss);
+            }
         }
     }
 }

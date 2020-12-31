@@ -10,6 +10,9 @@ namespace SatsumaTurboCharger
     {
         private PaintSystem paintSystem;
         public GameObject[] paintableChilds;
+
+        public Material[] paintableMaterials;
+
         private GameObject sprayCanTrigger;
 
         // Use this for initialization
@@ -35,29 +38,33 @@ namespace SatsumaTurboCharger
             }
         }
 
-        public void Init(PaintSystem paintSystem, string[] childs, Color initalColor, GameObject sprayCanTrigger)
+        public void Init(PaintSystem paintSystem, string nameOfMaterial, Color initalColor, GameObject sprayCanTrigger)
         {
             this.paintSystem = paintSystem;
             this.sprayCanTrigger = sprayCanTrigger;
-            paintableChilds = GetChilds(this.gameObject, childs);
-            paintSystem.SetAllChildColors(paintableChilds, initalColor);
-        }
 
-        private GameObject[] GetChilds(GameObject gameobject, string[] childNames)
-        {
-            List<GameObject> childs = new List<GameObject>();
-            foreach (string name in childNames)
+            List<Material> materials = new List<Material>();
+            foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>(true))
             {
-                try
+                foreach(Material material in renderer.materials)
                 {
-                    childs.Add(gameobject.transform.FindChild(name).gameObject);
-                }
-                catch
-                {
+                    if (material.name.Contains(nameOfMaterial)) 
+                    {
+                        if (paintSystem.useCarPaintMaterial)
+                        {
+                            material.shader = paintSystem.carPaintRegular.shader;
+                            //material.SetTexture("_MainTex", paintSystem.carPaintRegular.mainTexture);
+                            material.SetFloat("_Glossiness", paintSystem.carPaintRegular.GetFloat("_Glossiness"));
+                            material.SetTexture("_SpecGlossMap", paintSystem.carPaintRegular.GetTexture("_SpecGlossMap"));
+                        }
+                        material.SetColor("_Color", initalColor);
 
+                        materials.Add(material);
+                        
+                    }
                 }
             }
-            return childs.ToArray();
+            paintableMaterials = materials.ToArray();
         }
     }
 }

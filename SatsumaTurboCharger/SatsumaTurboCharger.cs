@@ -3,6 +3,7 @@ using ModApi;
 using ModApi.Attachable;
 using ModsShop;
 using MSCLoader;
+using Parts;
 using SatsumaTurboCharger.gui;
 using SatsumaTurboCharger.old_file_checker;
 using SatsumaTurboCharger.painting_system;
@@ -16,10 +17,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
+using Tools;
+using Tools.gui;
 using UnityEngine;
 using static SatsumaTurboCharger.BoostGauge_Logic;
-using static SatsumaTurboCharger.parts.AdvPart;
+using Parts;
 using Random = System.Random;
+using static Parts.AdvPart;
 
 namespace SatsumaTurboCharger
 {
@@ -62,6 +66,11 @@ namespace SatsumaTurboCharger
          * Improved guiDebug/replaced with reworked one using GUILayout
          * Added back/fixed six gear + ratio replacer
          * Hood can now be opened/closed
+         * Massive code refactoring
+         * Code improvement
+         * Code improvement
+         * Loading time improvement
+         * Performance improvement
          * 
          */
 
@@ -256,7 +265,7 @@ namespace SatsumaTurboCharger
 
         //Wear
         private Wear racingTurboWear;
-        //private Wear intercoolerWear;
+        private Wear intercoolerWear;
         private Wear gtTurboWear;
         private Wear gtTurboAirfilterWear;
 
@@ -326,50 +335,50 @@ namespace SatsumaTurboCharger
             {
                 if ((bool)useCustomGearRatios.Value)
                 {
-                    Car.drivetrain.gearRatios = newGearRatios;
+                    CarH.drivetrain.gearRatios = newGearRatios;
                 }
                 else
                 {
-                    Car.drivetrain.gearRatios = originalGearRatios;
+                    CarH.drivetrain.gearRatios = originalGearRatios;
                 }
             });
             assetsBundle = Helper.LoadAssetBundle(this, "turbochargermod.unity3d");
 
             try
             {
-                Car.drivetrain.clutchTorqueMultiplier = 10f;
+                CarH.drivetrain.clutchTorqueMultiplier = 10f;
 
-                exhaustFromEngine = GameObject.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromEngine");
-                exhaustFromPipe = GameObject.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromPipe");
-                exhaustFromMuffler = GameObject.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromMuffler");
+                exhaustFromEngine = Game.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromEngine");
+                exhaustFromPipe = Game.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromPipe");
+                exhaustFromMuffler = Game.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromMuffler");
 
                 originalExhaustPipeRaceParent = exhaustFromPipe.transform.parent;
                 originalExhaustPipeRacePosition = new Vector3(exhaustFromPipe.transform.localPosition.x, exhaustFromPipe.transform.localPosition.y, exhaustFromPipe.transform.localPosition.z);
                 originalExhaustPipeRaceRotation = new Quaternion(exhaustFromPipe.transform.localRotation.x, exhaustFromPipe.transform.localRotation.y, exhaustFromPipe.transform.localRotation.z, exhaustFromPipe.transform.localRotation.w);
 
-                weberCarb = Helper.GetGameObjectFromFsm(GameObject.Find("Racing Carburators"));
-                twinCarb = Helper.GetGameObjectFromFsm(GameObject.Find("Twin Carburators"));
+                weberCarb = Helper.GetGameObjectFromFsm(Game.Find("Racing Carburators"));
+                twinCarb = Helper.GetGameObjectFromFsm(Game.Find("Twin Carburators"));
 
-                weberCarb_inst = GameObject.Find("Racing Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
-                twinCarb_inst = GameObject.Find("Twin Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
-                steelHeaders_inst = GameObject.Find("Steel Headers").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
-                racingExhaustPipe_inst = GameObject.Find("Racing Exhaust").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
-                racingExhaustMuffler_inst = GameObject.Find("Racing Muffler").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
+                weberCarb_inst = Game.Find("Racing Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
+                twinCarb_inst = Game.Find("Twin Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
+                steelHeaders_inst = Game.Find("Steel Headers").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
+                racingExhaustPipe_inst = Game.Find("Racing Exhaust").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
+                racingExhaustMuffler_inst = Game.Find("Racing Muffler").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
 
-                headers_inst = GameObject.Find("Headers").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
-                exhaustPipe_inst = GameObject.Find("ExhaustPipe").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
-                exhaustMuffler_inst = GameObject.Find("ExhaustMuffler").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
-                exhaustMufflerDualTip_inst = GameObject.Find("ExhaustDualTip").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
+                headers_inst = Game.Find("Headers").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
+                exhaustPipe_inst = Game.Find("ExhaustPipe").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
+                exhaustMuffler_inst = Game.Find("ExhaustMuffler").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
+                exhaustMufflerDualTip_inst = Game.Find("ExhaustDualTip").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
 
-                steelHeaders = GameObject.Find("headers(Clone)");
-                racingExhaustPipe = GameObject.Find("racing exhaust(Clone)");
-                racingExhaustMuffler = GameObject.Find("racing muffler(Clone)");
+                steelHeaders = Game.Find("headers(Clone)");
+                racingExhaustPipe = Game.Find("racing exhaust(Clone)");
+                racingExhaustMuffler = Game.Find("racing muffler(Clone)");
 
-                headers = GameObject.Find("steel headers(Clone)");
-                exhaustPipe = GameObject.Find("exhaust pipe(Clone)");
-                exhaustMuffler = GameObject.Find("exhaust muffler(Clone)");
+                headers = Game.Find("steel headers(Clone)");
+                exhaustPipe = Game.Find("exhaust pipe(Clone)");
+                exhaustMuffler = Game.Find("exhaust muffler(Clone)");
 
-                originalCylinerHead = GameObject.Find("cylinder head(Clone)");
+                originalCylinerHead = Game.Find("cylinder head(Clone)");
             } 
             catch(Exception ex)
             {
@@ -407,7 +416,7 @@ namespace SatsumaTurboCharger
                 manifold_twinCarb_installLocation, new Vector3(90, 0, 0),
                 true);
             boost_gauge_part = new AdvPart(advPartBaseInfo,
-                "boost_gauge", "Boost Gauge", GameObject.Find("dashboard(Clone)"), "",
+                "boost_gauge", "Boost Gauge", Game.Find("dashboard(Clone)"), "",
                 boost_gauge_installLocation, new Vector3(90, 0, 0),
                 true);
             boostGaugeLogic = boost_gauge_part.rigidPart.AddComponent<BoostGauge_Logic>();
@@ -415,7 +424,7 @@ namespace SatsumaTurboCharger
 
 
             intercooler_part = new AdvPart(advPartBaseInfo,
-                "intercooler", "Intercooler", Car.satsuma, "",
+                "intercooler", "Intercooler", CarH.satsuma, "",
                 intercooler_installLocation, new Vector3(0, 180, 0),
                 true);
 
@@ -440,7 +449,7 @@ namespace SatsumaTurboCharger
                 true, "turboBig_kit");
 
             turboBig_exhaust_outlet_tube_part = new AdvPart(advPartBaseInfo,
-                "turboBig_exhaust_outlet_tube", "Racing Turbo Exhaust Outlet Tube", GameObject.Find("racing exhaust(Clone)"), "",
+                "turboBig_exhaust_outlet_tube", "Racing Turbo Exhaust Outlet Tube", Game.Find("racing exhaust(Clone)"), "",
                 turboBig_exhaust_outlet_tube_installLocation, new Vector3(90, 0, 0),
                 true, "turboBig_kit");
 
@@ -466,7 +475,7 @@ namespace SatsumaTurboCharger
                 true);
 
             turboBig_hood_part = new AdvPart(advPartBaseInfo,
-                "turboBig_hood", "Racing Turbo Hood", Car.satsuma, "",
+                "turboBig_hood", "Racing Turbo Hood", CarH.satsuma, "",
                 turboBig_hood_installLocation, new Vector3(0, 180, 0),
                 true);
 
@@ -485,7 +494,7 @@ namespace SatsumaTurboCharger
             turboSmall_logic.Init(this);
 
             turboSmall_intercooler_tube_part = new AdvPart(advPartBaseInfo,
-                "turboSmall_intercooler_tube", "GT Turbo Intercooler Tube", Car.satsuma, "",
+                "turboSmall_intercooler_tube", "GT Turbo Intercooler Tube", CarH.satsuma, "",
                 turboSmall_intercooler_tube_installLocation, new Vector3(0, 180, 0),
                 true, "turboSmall_kit");
 
@@ -638,43 +647,42 @@ namespace SatsumaTurboCharger
             racingTurbo.turbine = turboBig_part.rigidPart.transform.FindChild("compressor_turbine").gameObject;
             racingTurbo.backfire_Logic = turboBig_exhaust_outlet_straight_part.rigidPart.AddComponent<Backfire_Logic>();
 
-            racingTurboWear = new Wear(this, "racingTurbo", turboBig_part, new List<WearCondition>
-                {
-                    new WearCondition(75, WearCondition.Check.MoreThan, 1, "Looks brand new..."),
-                    new WearCondition(50, WearCondition.Check.MoreThan, 1.1f, "Some scratches and a bit of damage. Should be fine I guess..."),
-                    new WearCondition(25, WearCondition.Check.MoreThan, 1.3f, "I can hear air escaping more than before"),
-                    new WearCondition(15, WearCondition.Check.MoreThan, 1.5f, "It sounds like a leaf blower"),
-                    new WearCondition(15, WearCondition.Check.LessThan, 0, "Well... I think it's fucked"),
-                }, 0.003f, 0.5f, partsWearSave, 4000, "repair_turbocharger_big_ProductImage.png", 100);
-            /*intercoolerWear = new Wear(this, "intercooler", intercooler_part, new List<WearCondition>
-                {
-                    new WearCondition(75, WearCondition.Check.MoreThan, 1, "Looks brand new..."),
-                    new WearCondition(50, WearCondition.Check.MoreThan, 1.1f, "Some scratches and a bit of damage. Should be fine I guess..."),
-                    new WearCondition(25, WearCondition.Check.MoreThan, 1.3f, "I can hear air escaping more than before"),
-                    new WearCondition(15, WearCondition.Check.MoreThan, 1.5f, "It sounds like a leaf blower"),
-                    new WearCondition(15, WearCondition.Check.LessThan, 0, "Well... I think it's fucked"),
-                }, 0.005f, 0.5f, partsWearSave, 1500, "repair_intercooler_ProductImage.png", 100);*/
+            List<WearCondition> wearConditions = new List<WearCondition>
+            {
+                new WearCondition(75, WearCondition.Check.MoreThan, 1, "Looks brand new..."),
+                new WearCondition(50, WearCondition.Check.MoreThan, 1.1f, "Some scratches and a bit of damage. Should be fine I guess..."),
+                new WearCondition(25, WearCondition.Check.MoreThan, 1.3f, "I can hear air escaping more than before"),
+                new WearCondition(15, WearCondition.Check.MoreThan, 1.5f, "It sounds like a leaf blower"),
+                new WearCondition(15, WearCondition.Check.LessThan, 0, "Well... I think it's fucked"),
+            };
 
-            gtTurboWear = new Wear(this, "gtTurbo", turboSmall_part, new List<WearCondition>
-                {
-                    new WearCondition(75, WearCondition.Check.MoreThan, 1, "Looks brand new..."),
-                    new WearCondition(50, WearCondition.Check.MoreThan, 1.1f, "Some scratches and a bit of damage. Should be fine I guess..."),
-                    new WearCondition(25, WearCondition.Check.MoreThan, 1.3f, "I can hear air escaping more than before"),
-                    new WearCondition(15, WearCondition.Check.MoreThan, 1.5f, "It sounds like a leaf blower"),
-                    new WearCondition(15, WearCondition.Check.LessThan, 0, "Well... I think it's fucked"),
-                }, 0.003f, 0.5f, partsWearSave, 2500, "repair_turbocharger_small_ProductImage.png", 100);
+            racingTurboWear = new Wear(this, "racingTurbo", turboBig_part, wearConditions, 
+                0.003f, 0.5f, partsWearSave, 4000, "repair_turbocharger_big_ProductImage.png", 100);
 
-            //Will currently not work as it should only be a wearReductionMultiplier reducer new Wear class?
-            /*
-            gtTurboAirfilterWear = new Wear(this, "gtTurboAirfilter", turboSmall_airfilter_part, new List<WearCondition>
-                {
-                    new WearCondition(75, WearCondition.Check.MoreThan, 1, "Looks brand new..."),
-                    new WearCondition(50, WearCondition.Check.MoreThan, 1.1f, "Some scratches and a bit of damage. Should be fine I guess..."),
-                    new WearCondition(25, WearCondition.Check.MoreThan, 1.3f, "I can hear air escaping more than before"),
-                    new WearCondition(15, WearCondition.Check.MoreThan, 1.5f, "It sounds like a leaf blower"),
-                    new WearCondition(15, WearCondition.Check.LessThan, 0, "Well... I think it's fucked"),
-                }, 0.0045f, 0.5f, partsWear, 400, "repair_turbocharger_small_airfilter_ProductImage.png", 100);
+            intercoolerWear = new Wear(this, "intercooler", intercooler_part, wearConditions, 
+                0.005f, 0.5f, partsWearSave, 1500, "repair_intercooler_ProductImage.png", 100);
+
+            gtTurboWear = new Wear(this, "gtTurbo", turboSmall_part, wearConditions, 
+                0.003f, 0.5f, partsWearSave, 2500, "repair_turbocharger_small_ProductImage.png", 100);
+
+            //Todo:
+            /* manipulator should reduce the value substracted from the turbo boost
+             * but without making the last value which should make the boos 0 be also multiplied by 0 making it the base boost of 2
+             * 
+             * 
             */
+
+            float[] multiplicatorManipulator = new float[]
+            {
+                0.5f,
+                0.4f,
+                0.2f,
+                0.1f,
+                0,
+            };
+
+            gtTurboAirfilterWear = new Wear(this, "gtTurboAirfilter", turboSmall_airfilter_part, wearConditions, 
+                0.0045f, 0.5f, partsWearSave, 400, "repair_turbocharger_small_airfilter_ProductImage.png", 100, multiplicatorManipulator);
 
 
 
@@ -682,15 +690,13 @@ namespace SatsumaTurboCharger
             turboBigHoodPaintSystem = new PaintSystem(partsColorSave, turboBig_hood_part, new Color(0.8f, 0.8f, 0.8f), true);
             intercoolerPaintSystem = new PaintSystem(partsColorSave, intercooler_part, new Color(0.8f, 0.8f, 0.8f), false, "intercooler__");
             intercoolerPaintSystem.SetMetal(0.8f, 0.5f);
-            //turboSmallAirfilterPaintSystem = new PaintSystem(partsColorSave, turboSmall_airfilter_part, new Color(0.8f, 0.8f, 0.8f));
-            //-> Issue with component. Paintable components have to be gameobjects on their own
-            //-> Another way would be that paintability is defined by a material name on the object (like "paintable_material")
+
 
 
             racingTurbo.wears = new Wear[]
             {
                 racingTurboWear,
-                //intercoolerWear,
+                intercoolerWear,
             };
 
             Dictionary<string, Condition> racingTurbo_conditions = new Dictionary<string, Condition>();
@@ -739,20 +745,20 @@ namespace SatsumaTurboCharger
             ScrewablePartV2BaseInfo baseInfo = new ScrewablePartV2BaseInfo(screwSavePath, true);
             //Big turbo
 
-            Helper.ScrewablePartV2Simple(baseInfo, turboBig_intercooler_tube_part,
+            ScrewablePartCreator(baseInfo, turboBig_intercooler_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.0655f, -0.225f, -0.274f), new Vector3(-90, 0, 0), 0.4f, 5),
                });
-            Helper.ScrewablePartV2Simple(baseInfo, turboBig_part,
+            ScrewablePartCreator(baseInfo, turboBig_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.069f, -0.09f, -0.093f), new Vector3(0, -90, 0), 0.5f, 8),
                 });
-            Helper.ScrewablePartV2Simple(baseInfo, turboBig_exhaust_inlet_tube_part,
+            ScrewablePartCreator(baseInfo, turboBig_exhaust_inlet_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.205f, -0.055f, -0.05f), new Vector3(-90, 0, 0), 0.6f, 7),
                     new ScrewV2(new Vector3(0.262f, -0.055f, -0.05f), new Vector3(-90, 0, 0), 0.6f, 7),
                 });
-            Helper.ScrewablePartV2Simple(baseInfo, turboBig_exhaust_outlet_tube_part,
+            ScrewablePartCreator(baseInfo, turboBig_exhaust_outlet_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0f, 0.206f, -0.055f), new Vector3(0, 0, 0), 0.6f, 6),
                     new ScrewV2(new Vector3(-0.042f, 0.164f, -0.055f), new Vector3(0, 0, 0), 0.6f, 6),
@@ -761,7 +767,7 @@ namespace SatsumaTurboCharger
 
                 });
 
-            Helper.ScrewablePartV2Simple(baseInfo, turboBig_exhaust_outlet_straight_part,
+            ScrewablePartCreator(baseInfo, turboBig_exhaust_outlet_straight_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.6f, 6),
                     new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.6f, 6),
@@ -769,13 +775,13 @@ namespace SatsumaTurboCharger
                     new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.6f, 6),
                 });
 
-            Helper.ScrewablePartV2Simple(baseInfo, turboBig_blowoff_valve_part,
+            ScrewablePartCreator(baseInfo, turboBig_blowoff_valve_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.016f, -0.04f, 0.008f), new Vector3(0, 0, 0), 0.3f, 5),
                 });
 
             
-            Helper.ScrewablePartV2Simple(baseInfo, turboBig_hood_part,
+            ScrewablePartCreator(baseInfo, turboBig_hood_part,
                 new ScrewV2[]
                 {
                     new ScrewV2(new Vector3(0.4075f, 0.01f, 0.02f), new Vector3(90, 0, 0), 0.6f, 6),
@@ -786,41 +792,41 @@ namespace SatsumaTurboCharger
 
 
             //Small turbo
-            Helper.ScrewablePartV2Simple(baseInfo, turboSmall_part,
+            ScrewablePartCreator(baseInfo, turboSmall_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.0715f, -0.024f, 0.044f), new Vector3(180f, 0f, 0f), 0.4f, 10),
                 });
-            Helper.ScrewablePartV2Simple(baseInfo, turboSmall_intercooler_tube_part,
+            ScrewablePartCreator(baseInfo, turboSmall_intercooler_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.034f, -0.13f, -0.1638f), new Vector3(180f, 0f, 0f), 0.4f, 10),
                     new ScrewV2(new Vector3(0.014f, 0.24f, 0.332f), new Vector3(0f, -90f, 0f), 0.4f, 10),
                 });
-            Helper.ScrewablePartV2Simple(baseInfo, turboSmall_exhaust_inlet_tube_part,
+            ScrewablePartCreator(baseInfo, turboSmall_exhaust_inlet_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.114f, -0.044f, -0.035f), new Vector3(-90f, 0f, 0f), 0.7f, 10),
                     new ScrewV2(new Vector3(0.06f, -0.044f, -0.044f), new Vector3(-90f, 0f, 0f), 0.7f, 10),
                 });
-            Helper.ScrewablePartV2Simple(baseInfo, turboSmall_exhaust_outlet_tube_part,
+            ScrewablePartCreator(baseInfo, turboSmall_exhaust_outlet_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.078f, 0.1708f, -0.0235f), new Vector3(0, -90, 0), 0.5f, 10),
                 });
-            Helper.ScrewablePartV2Simple(baseInfo, turboSmall_manifold_twinCarb_tube_part,
+            ScrewablePartCreator(baseInfo, turboSmall_manifold_twinCarb_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.097f, -0.07f, -0.135f), new Vector3(0, 90, 0), 0.4f, 10),
                 });
 
-            Helper.ScrewablePartV2Simple(baseInfo, turboSmall_airfilter_part,
+            ScrewablePartCreator(baseInfo, turboSmall_airfilter_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.0095f, 0.025f, 0.0488f), new Vector3(0, 90, 0), 0.4f, 10),
                 });
 
             //Other parts
-            Helper.ScrewablePartV2Simple(baseInfo, boost_gauge_part,
+            ScrewablePartCreator(baseInfo, boost_gauge_part,
                 new ScrewV2[]{
                     new ScrewV2(new Vector3(0f, -0.0405f, 0.003f), new Vector3(-90, 0, 0), 0.4f, 5),
                 });
 
-            Helper.ScrewablePartV2Simple(baseInfo, exhaust_header_part,
+            ScrewablePartCreator(baseInfo, exhaust_header_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(0.169f, 0.076f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
                     new ScrewV2(new Vector3(0.13f, 0.0296f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
@@ -828,28 +834,28 @@ namespace SatsumaTurboCharger
                     new ScrewV2(new Vector3(-0.137f, 0.0296f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
                     new ScrewV2(new Vector3(-0.174f, 0.076f, -0.022f), new Vector3(0, 0, 0), 0.7f, 8, ScrewV2.Type.Nut),
                 });
-            Helper.ScrewablePartV2Simple(baseInfo, intercooler_part,
+            ScrewablePartCreator(baseInfo, intercooler_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.245f, 0.081f, 0.039f), new Vector3(180, 0, 0), 0.6f, 10),
                     new ScrewV2(new Vector3(0.265f, 0.081f, 0.039f), new Vector3(180, 0, 0), 0.6f, 10),
                 });
-            Helper.ScrewablePartV2Simple(baseInfo, intercooler_manifold_weber_tube_part,
+            ScrewablePartCreator(baseInfo, intercooler_manifold_weber_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.0675f, -0.243f, -0.479f), new Vector3(-90, 0, 0), 0.4f, 5),
                     new ScrewV2(new Vector3(0-0.152f, 0.254f, 0.213f), new Vector3(0, 0, 0), 0.4f, 5),
                 });
-            Helper.ScrewablePartV2Simple(baseInfo, intercooler_manifold_twinCarb_tube_part,
+            ScrewablePartCreator(baseInfo, intercooler_manifold_twinCarb_tube_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.0425f, -0.1205f, -0.241f), new Vector3(180, 0, 0), 0.4f, 10),
                 });
 
-            Helper.ScrewablePartV2Simple(baseInfo, manifold_weber_part,
+            ScrewablePartCreator(baseInfo, manifold_weber_part,
                 new ScrewV2[]{
                     new ScrewV2(new Vector3(-0.09f, 0, 0), new Vector3(0, 0, 0), 0.5f, 5),
                     new ScrewV2(new Vector3(0, 0, 0), new Vector3(0, 0, 0), 0.5f, 5),
                     new ScrewV2(new Vector3(0.09f, 0, 0), new Vector3(0, 0, 0), 0.5f, 5),
                 });
-            Helper.ScrewablePartV2Simple(baseInfo, manifold_twinCarb_part,
+            ScrewablePartCreator(baseInfo, manifold_twinCarb_part,
                 new ScrewV2[] {
                     new ScrewV2(new Vector3(-0.003f, 0.105f, 0.0305f), new Vector3(0, 90, 0), 0.5f, 10),
                 });
@@ -878,7 +884,7 @@ namespace SatsumaTurboCharger
         }
         private void SetupInspectionPrevention()
         {
-            GameObject inspectionProcess = GameObject.Find("InspectionProcess");
+            GameObject inspectionProcess = Game.Find("InspectionProcess");
             inspectionPlayMakerFsm = inspectionProcess.GetComponents<PlayMakerFSM>()[0];
             foreach (PlayMakerFSM playMakerFSM in inspectionProcess.GetComponents<PlayMakerFSM>())
             {
@@ -933,18 +939,7 @@ namespace SatsumaTurboCharger
             manifoldWeber_kit.CheckUnpackedOnSave();
             manifoldTwinCarb_kit.CheckUnpackedOnSave();
 
-            try
-            {
-                partsList.ForEach(delegate (AdvPart part)
-                {
-                    SaveLoad.SerializeSaveFile<PartSaveInfo>(this, part.getSaveInfo(), part.saveFile);
-                });
-            }
-            catch (Exception ex)
-            {
-                Logger.New("Error while trying to save part", "", ex);
-            }
-            partsColorSave = PaintSystem.CollectSave(new PaintSystem[]
+            PaintSystem.Save(this, color_saveFile, new PaintSystem[]
             {
                 turboBigPaintSystem,
                 turboBigHoodPaintSystem,
@@ -952,35 +947,23 @@ namespace SatsumaTurboCharger
                 //turboSmallAirfilterPaintSystem,
             });
 
+            Shop.Save(this, modsShop_saveFile, partsList.ToArray());
 
-            SaveLoad.SerializeSaveFile<Dictionary<string, SaveableColor>>(this, partsColorSave, color_saveFile);
+            AdvPart.Save(this, modsShop_saveFile, partsList.ToArray());
 
-
-            try
+            Turbo.Save(this, boost_saveFile, new Turbo[]
             {
-                foreach(AdvPart part in partsList)
-                {
-                    partsBuySave = part.GetBought(partsBuySave);
-                }
+                    racingTurbo,
+                    gtTurbo,
+            });
 
-                SaveLoad.SerializeSaveFile<Dictionary<string, bool>>(this, partsBuySave, modsShop_saveFile);
-
-                boostSave = racingTurbo.GetBoost(boostSave);
-                boostSave = gtTurbo.GetBoost(boostSave);
-
-                SaveLoad.SerializeSaveFile<Dictionary<string, float>>(this, boostSave, boost_saveFile);
-
-                partsWearSave = racingTurboWear.GetWear(partsWearSave);
-                //partsWearSave = intercoolerWear.GetWear(partsWearSave);
-
-                SaveLoad.SerializeSaveFile<Dictionary<string, float>>(this, partsWearSave, wear_saveFile);
-            }
-            catch (Exception ex)
+            Wear.Save(this, wear_saveFile, new Wear[]
             {
-                Logger.New("Error while trying to save save file", "", ex);
-            }
+                racingTurboWear,
+                intercoolerWear,
+                //gtTurboWear,
+            });
 
-            
             try
             {
                 ScrewablePartV2.SaveScrews(this, Helper.GetScrewablePartsArrayFromPartsList(partsList), screwableV2_saveFile);
@@ -998,15 +981,15 @@ namespace SatsumaTurboCharger
                 guiDebug.Handle(new GuiDebugInfo[] {
                 new GuiDebugInfo("Wear", "Racing Turbo", racingTurboWear.ToStringOrEmpty()),
                 new GuiDebugInfo("Wear", "GT Turbo", gtTurboWear.ToStringOrEmpty()),
-                //new GuiDebugInfo("Wear", "Intercooler", intercoolerWear.ToStringOrEmpty()),
-                new GuiDebugInfo("DEBUG", "Engine RPM", ((int) Car.drivetrain.rpm).ToStringOrEmpty()),
+                new GuiDebugInfo("Wear", "Intercooler", intercoolerWear.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Engine RPM", ((int) CarH.drivetrain.rpm).ToStringOrEmpty()),
                 new GuiDebugInfo("DEBUG", "Racing Turbo bar", racingTurbo.boost.ToStringOrEmpty()),
                 new GuiDebugInfo("DEBUG", "GT Turbo bar", gtTurbo.boost.ToStringOrEmpty()),
-                new GuiDebugInfo("DEBUG", "Power multiplier", Car.drivetrain.powerMultiplier.ToStringOrEmpty()),
-                new GuiDebugInfo("DEBUG", "KM/H", ((int) Car.drivetrain.differentialSpeed).ToStringOrEmpty()),
-                new GuiDebugInfo("DEBUG", "Torque", Car.drivetrain.torque.ToStringOrEmpty()),
-                new GuiDebugInfo("DEBUG", "Clutch Max Torque", Car.drivetrain.clutchMaxTorque.ToStringOrEmpty()),
-                new GuiDebugInfo("DEBUG", "Clutch Torque Multiplier", Car.drivetrain.clutchTorqueMultiplier.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Power multiplier", CarH.drivetrain.powerMultiplier.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "KM/H", ((int) CarH.drivetrain.differentialSpeed).ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Torque", CarH.drivetrain.torque.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Clutch Max Torque", CarH.drivetrain.clutchMaxTorque.ToStringOrEmpty()),
+                new GuiDebugInfo("DEBUG", "Clutch Torque Multiplier", CarH.drivetrain.clutchTorqueMultiplier.ToStringOrEmpty()),
             });
             }
 
@@ -1022,11 +1005,11 @@ namespace SatsumaTurboCharger
             racingTurbo.UpdateCondition("twinCarb", twinCarb_inst.Value);
 
             //Todo
-            if (!racingTurbo.CheckAllRequiredInstalled() && !gtTurbo.CheckAllRequiredInstalled() && Car.hasPower)
+            if (!racingTurbo.CheckAllRequiredInstalled() && !gtTurbo.CheckAllRequiredInstalled() && CarH.hasPower)
             {
                 boostGaugeLogic.SetDigitalText("ERR");
             }
-            else if (Car.hasPower && boostGaugeLogic.gaugeMode != GaugeMode.Digital)
+            else if (CarH.hasPower && boostGaugeLogic.gaugeMode != GaugeMode.Digital)
             {
                 boostGaugeLogic.SetDigitalText("");
             }
@@ -1158,7 +1141,7 @@ namespace SatsumaTurboCharger
                 }
             }
 
-            if (Car.running)
+            if (CarH.running)
             {
                 if (turboBig_exhaust_outlet_straight_part.installed && allBig && allOther)
                 {
@@ -1231,9 +1214,9 @@ namespace SatsumaTurboCharger
 
         private void SetModsShop()
         {
-            if (GameObject.Find("Shop for mods") != null)
+            if (Game.Find("Shop for mods") != null)
             {
-                modsShop = GameObject.Find("Shop for mods").GetComponent<ModsShop.ShopItem>();
+                modsShop = Game.Find("Shop for mods").GetComponent<ModsShop.ShopItem>();
                 List<ProductInformation> shopItems = new List<ProductInformation>
                 {
                     new ProductInformation(turboBig_kit, "Racing Turbocharger Kit", 8100, null),

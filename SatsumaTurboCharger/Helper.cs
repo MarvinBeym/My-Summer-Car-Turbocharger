@@ -8,10 +8,10 @@ using System.Text;
 using UnityEngine;
 using ScrewablePartAPI;
 using HutongGames.PlayMaker;
-using SatsumaTurboCharger.parts;
 using ScrewablePartAPI.V2;
+using Parts;
 
-namespace SatsumaTurboCharger
+namespace Tools
 {
     public static class Helper
     {
@@ -21,7 +21,7 @@ namespace SatsumaTurboCharger
         {
             if(dashButtonAudioSource == null)
             {
-                dashButtonAudioSource = GameObject.Find("dash_button").GetComponent<AudioSource>();
+                dashButtonAudioSource = Game.Find("dash_button").GetComponent<AudioSource>();
             }
             if(dashButtonAudioSource != null)
             {
@@ -50,10 +50,6 @@ namespace SatsumaTurboCharger
             }
         }
 
-        public static void ScrewablePartV2Simple(ScrewablePartV2BaseInfo baseInfo, AdvPart advPart, ScrewV2[] screws)
-        {
-            advPart.screwablePart = new ScrewablePartV2(baseInfo, advPart.id, advPart.rigidPart, screws);
-        }
         public static PlayMakerFSM FindFsmOnGameObject(GameObject gameObject, string fsmName)
         {
             foreach(PlayMakerFSM fSM in gameObject.GetComponents<PlayMakerFSM>())
@@ -136,6 +132,20 @@ namespace SatsumaTurboCharger
             });
             return screwableParts.ToArray();
         }
+        public static ScrewablePart[] GetScrewablePartsArrayFromPartsList(List<SimplePart> partsList)
+        {
+            List<ScrewablePart> screwableParts = new List<ScrewablePart>();
+
+            partsList.ForEach(delegate (SimplePart part)
+            {
+                if (part.screwablePart != null)
+                {
+                    screwableParts.Add(part.screwablePart);
+                }
+            });
+            return screwableParts.ToArray();
+        }
+
         public static GameObject LoadPartAndSetName(AssetBundle assetsBundle, string prefabName, string name)
         {
             GameObject gameObject = assetsBundle.LoadAsset(prefabName) as GameObject;

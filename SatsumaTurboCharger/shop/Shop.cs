@@ -9,6 +9,8 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using SatsumaTurboCharger.parts;
+using Tools;
+using Parts;
 
 namespace SatsumaTurboCharger
 {
@@ -87,6 +89,23 @@ namespace SatsumaTurboCharger
                 productInformation.gameObjectName = productInformation.gameObject.name;
                 AddToShop(productInformation);
             });
+        }
+
+        internal static void Save(Mod mod, string saveFile, AdvPart[] parts)
+        {
+            try
+            {
+                Dictionary<string, bool> save = new Dictionary<string, bool>();
+                foreach (AdvPart part in parts)
+                {
+                    save[part.boughtId] = part.bought;
+                }
+                SaveLoad.SerializeSaveFile<Dictionary<string, bool>>(mod, save, saveFile);
+            }
+            catch (Exception ex)
+            {
+                Logger.New("Error while trying to save shop information", ex);
+            }
         }
     }
 }

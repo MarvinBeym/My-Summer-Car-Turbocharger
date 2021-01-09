@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using SatsumaTurboCharger.painting_system;
+using Tools;
+
 namespace SatsumaTurboCharger
 {
     public class PaintSystem_Logic : MonoBehaviour

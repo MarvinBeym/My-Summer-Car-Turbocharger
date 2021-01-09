@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace SatsumaTurboCharger
+namespace Tools
 {
-    public static class Car
+    public static class CarH
     {
         private static GameObject car;
         private static Drivetrain carDrivetrain;
@@ -75,7 +75,7 @@ namespace SatsumaTurboCharger
             {
                 if(car == null)
                 {
-                    car = GameObject.Find("SATSUMA(557kg, 248)");
+                    car = Game.Find("SATSUMA(557kg, 248)");
                 }
                 return car;
             }

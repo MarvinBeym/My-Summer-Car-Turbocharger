@@ -1,11 +1,14 @@
 ﻿using HutongGames.PlayMaker;
 using MSCLoader;
+using Parts;
 using SatsumaTurboCharger.parts;
 using SatsumaTurboCharger.wear;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Tools;
 using UnityEngine;
+
 
 namespace SatsumaTurboCharger.turbo
 {
@@ -85,7 +88,7 @@ namespace SatsumaTurboCharger.turbo
             smallRequired = requiredInstalled[1];
             otherRequired = requiredInstalled[2];
 
-            Car.drivetrain.clutchTorqueMultiplier = 10f;
+            CarH.drivetrain.clutchTorqueMultiplier = 10f;
             CreateSound(ref loop_source, ref loop_audio, loopSoundFile, true);
             CreateSound(ref grinding_source, ref grinding_audio, grindingSoundFIle, true);
             CreateSound(ref blowoff_source, ref blowoff_audio, blowoffSoundFile, true);
@@ -175,7 +178,7 @@ namespace SatsumaTurboCharger.turbo
             }
             try
             {
-                foreach (PlayMakerFSM fsm in GameObject.Find("DonnerTech_ECU_Mod").GetComponents<PlayMakerFSM>())
+                foreach (PlayMakerFSM fsm in Game.Find("DonnerTech_ECU_Mod").GetComponents<PlayMakerFSM>())
                 {
                     switch (fsm.FsmName)
                     {
@@ -217,10 +220,21 @@ namespace SatsumaTurboCharger.turbo
             }
         }
 
-        public Dictionary<string, float> GetBoost(Dictionary<string, float> boostSave)
+        internal static void Save(Mod mod, string saveFile, Turbo[] turbos)
         {
-            boostSave[part.id] = userSetBoost;
-            return boostSave;
+            try
+            {
+                Dictionary<string, float> save = new Dictionary<string, float>();
+                foreach (Turbo turbo in turbos)
+                {
+                    save[turbo.part.id] = turbo.userSetBoost;
+                }
+                SaveLoad.SerializeSaveFile<Dictionary<string, float>>(mod, save, saveFile);
+            }
+            catch (Exception ex)
+            {
+                Logger.New("Error while trying to save configured boost information", ex);
+            }
         }
     }
 }

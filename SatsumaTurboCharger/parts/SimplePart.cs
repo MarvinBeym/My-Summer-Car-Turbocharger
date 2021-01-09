@@ -8,11 +8,11 @@ using System.Text;
 using UnityEngine;
 using Object = System.Object;
 
-namespace SatsumaTurboCharger.parts
+namespace Parts
 {
     public class SimplePart : Part
     {
-        protected SatsumaTurboCharger mod;
+        protected Mod mod;
         public ScrewablePart screwablePart { get; set; } = null;
         public Vector3 installLocation;
         public PartSaveInfo partSaveInfo;
@@ -27,7 +27,7 @@ namespace SatsumaTurboCharger.parts
 
         public SimplePart(List<Object> loadedData, GameObject part, GameObject partParent, Vector3 installLocation, Quaternion installRotation) : base((PartSaveInfo)loadedData[2], part, partParent, new Trigger(part.name + "_trigger", partParent, installLocation, new Quaternion(0, 0, 0, 0), new Vector3(triggerSize, triggerSize, triggerSize), false), installLocation, installRotation)
         {
-            mod = (SatsumaTurboCharger) loadedData[0];
+            mod = (Mod) loadedData[0];
             saveFile = (string) loadedData[1];
             partSaveInfo = (PartSaveInfo) loadedData[2];
             bought = (bool)loadedData[3];
@@ -39,7 +39,7 @@ namespace SatsumaTurboCharger.parts
             //UnityEngine.Object.Destroy(part);
         }
 
-        public static List<Object> LoadData(SatsumaTurboCharger mod, string id, Dictionary<string, bool> partsBuySave, string boughtId = "")
+        public static List<Object> LoadData(Mod mod, string id, Dictionary<string, bool> partsBuySave, string boughtId = "")
         {
             string saveFile = id + "_saveFile.json";
 
@@ -83,7 +83,7 @@ namespace SatsumaTurboCharger.parts
             };
         }
 
-        public static List<Object> LoadData(SatsumaTurboCharger mod, string id, bool bought)
+        public static List<Object> LoadData(Mod mod, string id, bool bought)
         {
             string saveFile = id + "_saveFile.json";
             string boughtId = null;

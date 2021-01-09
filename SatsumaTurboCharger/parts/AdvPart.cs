@@ -7,9 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Tools;
 using UnityEngine;
 
-namespace SatsumaTurboCharger.parts
+namespace Parts
 {
     public class AdvPart
     {
@@ -364,6 +365,26 @@ namespace SatsumaTurboCharger.parts
             {
                 return part.defaultPartSaveInfo;
             }
+        }
+
+        internal static void Save(Mod mod, string saveFile, AdvPart[] parts)
+        {
+            try
+            {
+                foreach (AdvPart part in parts)
+                {
+                    SaveLoad.SerializeSaveFile<PartSaveInfo>(mod, part.getSaveInfo(), part.saveFile);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.New("Error while trying to save part information", ex);
+            }
+        }
+
+        internal static void ScrewablePartCreator(ScrewablePartV2BaseInfo baseInfo, AdvPart advPart, ScrewV2[] screws)
+        {
+            advPart.screwablePart = new ScrewablePartV2(baseInfo, advPart.id, advPart.rigidPart, screws);
         }
     }
 }

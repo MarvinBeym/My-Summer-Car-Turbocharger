@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace SatsumaTurboCharger.gui
+namespace Tools.gui
 {
     public class GuiDebugInfo
     {

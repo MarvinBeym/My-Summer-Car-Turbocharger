@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace SatsumaTurboCharger
+namespace Tools
 {
     public static class Logger
     {

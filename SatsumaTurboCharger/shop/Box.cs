@@ -7,7 +7,8 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using ScrewablePartAPI.V2;
-using static SatsumaTurboCharger.parts.AdvPart;
+using Parts;
+using static Parts.AdvPart;
 
 namespace SatsumaTurboCharger.parts
 {

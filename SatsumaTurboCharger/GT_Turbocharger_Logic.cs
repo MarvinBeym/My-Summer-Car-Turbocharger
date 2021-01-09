@@ -3,8 +3,10 @@ using MSCLoader;
 using System;
 using System.IO;
 using System.Reflection;
+using Tools;
 using UnityEngine;
 using Random = System.Random;
+
 
 namespace SatsumaTurboCharger
 {
@@ -67,10 +69,10 @@ namespace SatsumaTurboCharger
             CreateTurboGrindingLoop();
             CreateTurboLoopSmall();
 
-            Car.drivetrain.clutchTorqueMultiplier = 10f;
+            Tools.CarH.drivetrain.clutchTorqueMultiplier = 10f;
 
-            weberCarb_inst = GameObject.Find("Racing Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
-            twinCarb_inst = GameObject.Find("Twin Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
+            weberCarb_inst = Game.Find("Racing Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
+            twinCarb_inst = Game.Find("Twin Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
 
             foreach (var playMakerFloatVar in PlayMakerGlobals.Instance.Variables.FloatVariables)
             {
@@ -126,7 +128,7 @@ namespace SatsumaTurboCharger
                 {
                     try
                     {
-                        GameObject smartEngineModule = GameObject.Find("Smart Engine ECU(Clone)");
+                        GameObject smartEngineModule = Game.Find("Smart Engine ECU(Clone)");
                         if (smartEngineModule != null)
                         {
                             smart_engine_moduleFSM = smartEngineModule.GetComponent<PlayMakerFSM>();
@@ -528,7 +530,7 @@ namespace SatsumaTurboCharger
         internal bool throttleUsed{ 
             get
             {
-                return (Car.drivetrain.idlethrottle > 0f);
+                return (CarH.drivetrain.idlethrottle > 0f);
             }
         }
 

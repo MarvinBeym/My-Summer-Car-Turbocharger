@@ -3,8 +3,10 @@ using MSCLoader;
 using SatsumaTurboCharger.wear;
 using System;
 using System.Collections.Generic;
+using Tools;
 using UnityEngine;
 using Random = System.Random;
+
 
 namespace SatsumaTurboCharger.turbo
 {
@@ -26,7 +28,7 @@ namespace SatsumaTurboCharger.turbo
         // Update is called once per frame
         void LateUpdate()
         {
-            if(!turbo.CheckAllRequiredInstalled() || !Car.running)
+            if(!turbo.CheckAllRequiredInstalled() || !CarH.running)
             {
                 //Not all required installed RESET
                 turbo.LoopSound(false);
@@ -35,7 +37,7 @@ namespace SatsumaTurboCharger.turbo
                 return;
             }
             blowoffTimer += Time.deltaTime;
-            float engineRpm = Car.drivetrain.rpm;
+            float engineRpm = CarH.drivetrain.rpm;
             
             turbo.LoopSound(true);
 
@@ -65,7 +67,7 @@ namespace SatsumaTurboCharger.turbo
                 turbo.blowoffAllowed = true;
             }
 
-            bool shifting = Helper.ThrottleButtonDown && (Car.drivetrain.changingGear);
+            bool shifting = Helper.ThrottleButtonDown && (CarH.drivetrain.changingGear);
             bool lettingGoOfThrottle = !Helper.ThrottleButtonDown;
             if (turbo.boost >= config.blowoffTriggerBoost && turbo.blowoffAllowed == true && (shifting || lettingGoOfThrottle))
             {
@@ -110,7 +112,7 @@ namespace SatsumaTurboCharger.turbo
             turbo.rpm = turbo.CalculateRpm(engineRpm, config.rpmMultiplier);
             
             float finalMultiplicator = turbo.boost * config.extraPowerMultiplicator;
-            Car.drivetrain.powerMultiplier = 1f + Mathf.Clamp(finalMultiplicator, config.boostMin, turbo.boostMaxConfigured);
+            CarH.drivetrain.powerMultiplier = 1f + Mathf.Clamp(finalMultiplicator, config.boostMin, turbo.boostMaxConfigured);
 
         }
 
@@ -162,7 +164,7 @@ namespace SatsumaTurboCharger.turbo
 
             backfireTimer += Time.deltaTime;
 
-            if (Car.drivetrain.revLimiterTriggered)
+            if (CarH.drivetrain.revLimiterTriggered)
             {
                 turbo.backfire_Logic.TriggerBackfire();
             }
@@ -194,7 +196,7 @@ namespace SatsumaTurboCharger.turbo
         {
             if(turbine != null && (bool) mod.rotateTurbineSetting.Value)
             {
-                turbine.transform.Rotate(0, 0, (Car.drivetrain.rpm / 500));
+                turbine.transform.Rotate(0, 0, (CarH.drivetrain.rpm / 500));
             }
         }
 

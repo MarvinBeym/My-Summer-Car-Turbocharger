@@ -1,7 +1,10 @@
 ﻿using ModApi.Attachable;
 using MSCLoader;
+using Parts;
 using SatsumaTurboCharger.parts;
+using Tools;
 using UnityEngine;
+
 
 namespace SatsumaTurboCharger
 {
@@ -29,7 +32,7 @@ namespace SatsumaTurboCharger
             this.turboHood = hoodPart.rigidPart;
             turboHoodRigidBody = turboHood.GetComponent<Rigidbody>();
             turboHoodHingeJoint = turboHood.AddComponent<HingeJoint>();
-            turboHoodHingeJoint.connectedBody = Car.satsuma.GetComponent<Rigidbody>();
+            turboHoodHingeJoint.connectedBody = CarH.satsuma.GetComponent<Rigidbody>();
             turboHoodHingeJoint.anchor = new Vector3(0, 0, 0);
             turboHoodHingeJoint.axis = new Vector3(0, 0, 0);
             turboHoodHingeJoint.useSpring = true;
@@ -51,10 +54,10 @@ namespace SatsumaTurboCharger
             turboHoodLatchCollider.transform.localEulerAngles = new Vector3(352f, 0f, 0f);
             turboHoodLatchCollider.transform.localScale = new Vector3(1.21f, 0.05f, 0.85f);
 
-            GameObject normalHood = GameObject.Find("hood(Clone)");
-            GameObject fiberglassHood = GameObject.Find("fiberglass hood(Clone)");
+            GameObject normalHood = Game.Find("hood(Clone)");
+            GameObject fiberglassHood = Game.Find("fiberglass hood(Clone)");
 
-            originalHoodTrigger = GameObject.Find("trigger_hood");
+            originalHoodTrigger = Game.Find("trigger_hood");
             FsmHook.FsmInject(originalHoodTrigger, "Assemble 2", OnOriginalAssemble);
             FsmHook.FsmInject(originalHoodTrigger, "Assemble 3", OnOriginalAssemble);
 
@@ -102,7 +105,7 @@ namespace SatsumaTurboCharger
 
         void Start()
         {
-            FsmHook.FsmInject(GameObject.Find("HoodLocking").transform.FindChild("Trigger").gameObject, "Open", delegate () 
+            FsmHook.FsmInject(Game.Find("HoodLocking").transform.FindChild("Trigger").gameObject, "Open", delegate () 
             {
                 SetHoodAngle(openedAngle);
                 open = true; 

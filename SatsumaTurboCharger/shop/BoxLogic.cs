@@ -5,6 +5,8 @@ using ModApi;
 using MSCLoader;
 using System.Linq;
 using SatsumaTurboCharger.parts;
+using Tools;
+using Parts;
 
 namespace SatsumaTurboCharger
 {

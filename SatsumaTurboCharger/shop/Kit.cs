@@ -1,4 +1,5 @@
-﻿using SatsumaTurboCharger.parts;
+﻿using Parts;
+using SatsumaTurboCharger.parts;
 using System;
 using System.Collections.Generic;
 using System.Linq;

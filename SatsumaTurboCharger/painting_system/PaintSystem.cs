@@ -1,11 +1,13 @@
 ﻿using HutongGames.PlayMaker;
 using MSCLoader;
+using Parts;
 using SatsumaTurboCharger.gui;
 using SatsumaTurboCharger.parts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Tools;
 using UnityEngine;
 
 namespace SatsumaTurboCharger.painting_system
@@ -70,7 +72,7 @@ namespace SatsumaTurboCharger.painting_system
             activeLogic.Init(this, nameOfMaterial, color, part.activePart);
             rigidLogic.Init(this, nameOfMaterial, color, part.rigidPart);
 
-            sprayCanGameObject = GameObject.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/SprayCan");
+            sprayCanGameObject = Game.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/SprayCan");
             sprayCanFsm = sprayCanGameObject.GetComponent<PlayMakerFSM>();
             sprayCanColorFsm = sprayCanFsm.FsmVariables.FindFsmColor("SprayColor");
 
@@ -134,7 +136,7 @@ namespace SatsumaTurboCharger.painting_system
 
         internal void SetMetal(float metal = 0f, float gloss = 0.5f)
         {
-            foreach(Material material in activeLogic.paintableMaterials)
+            foreach (Material material in activeLogic.paintableMaterials)
             {
                 material.SetFloat("_Metallic", metal);
                 material.SetFloat("_Glossiness", gloss);
@@ -143,6 +145,22 @@ namespace SatsumaTurboCharger.painting_system
             {
                 material.SetFloat("_Metallic", metal);
                 material.SetFloat("_Glossiness", gloss);
+            }
+        }
+        internal static void Save(Mod mod, string saveFile, PaintSystem[] paintSystems)
+        {
+            try
+            {
+                Dictionary<string, SaveableColor> save = new Dictionary<string, SaveableColor>();
+                foreach (PaintSystem paintSystem in paintSystems)
+                {
+                    save[paintSystem.part.id] = SaveableColor.ConvertToSaveable(paintSystem.color);
+                }
+                SaveLoad.SerializeSaveFile<Dictionary<string, SaveableColor>>(mod, save, saveFile);
+            }
+            catch (Exception ex)
+            {
+                Logger.New("Error while trying to save color information", ex);
             }
         }
     }

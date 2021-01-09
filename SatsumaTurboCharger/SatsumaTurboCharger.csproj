@@ -89,21 +89,45 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\My Summer Car Modding\CarHelper.cs">
+      <Link>CarHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\My Summer Car Modding\Extension.cs">
+      <Link>Extension.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\My Summer Car Modding\Game.cs">
+      <Link>Game.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\My Summer Car Modding\gui\GuiDebug.cs">
+      <Link>gui\GuiDebug.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\My Summer Car Modding\gui\GuiDebugElement.cs">
+      <Link>gui\GuiDebugElement.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\My Summer Car Modding\gui\GuiDebugInfo.cs">
+      <Link>gui\GuiDebugInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\My Summer Car Modding\Helper.cs">
+      <Link>Helper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\My Summer Car Modding\Logger.cs">
+      <Link>Logger.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\My Summer Car Modding\parts\AdvPart.cs">
+      <Link>parts\AdvPart.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\My Summer Car Modding\parts\NewPart.cs">
+      <Link>parts\NewPart.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\My Summer Car Modding\parts\SimplePart.cs">
+      <Link>parts\SimplePart.cs</Link>
+    </Compile>
     <Compile Include="BoostGauge_Logic.cs" />
-    <Compile Include="CarHelper.cs" />
-    <Compile Include="Extension.cs" />
     <Compile Include="Hood_Logic.cs" />
-    <Compile Include="parts\AdvPart.cs" />
-    <Compile Include="parts\NewPart.cs" />
     <Compile Include="shop\BoxLogic.cs" />
     <Compile Include="GT_Turbocharger_Logic.cs" />
-    <Compile Include="gui\GuiDebugInfo.cs" />
-    <Compile Include="gui\GuiDebugElement.cs" />
-    <Compile Include="gui\GuiDebug.cs" />
-    <Compile Include="Helper.cs" />
     <Compile Include="shop\Kit.cs" />
     <Compile Include="shop\KitLogic.cs" />
-    <Compile Include="Logger.cs" />
     <Compile Include="BoostSave.cs" />
     <Compile Include="old_file_checker\OldFileRenamer.cs" />
     <Compile Include="painting_system\CustomColors.cs" />
@@ -111,7 +135,6 @@
     <Compile Include="painting_system\PaintSystem_Logic.cs" />
     <Compile Include="shop\Box.cs" />
     <Compile Include="painting_system\SaveableColor.cs" />
-    <Compile Include="parts\SimplePart.cs" />
     <Compile Include="shop\ProductInformation.cs" />
     <Compile Include="Racing_Exhaust_Outlet_Straight_Logic.cs" />
     <Compile Include="SatsumaTurboCharger.cs" />
@@ -139,4 +162,9 @@ call "S:\Spiele\Steam\steamapps\common\My Summer Car\Mods\debug.bat"
 copy "$(TargetPath)" "S:\Spiele\Steam\steamapps\common\My Summer Car\Mods" /y
 )</PostBuildEvent>
   </PropertyGroup>
+  <Target Name="CopyLinkedFiles" BeforeTargets="Build">
+	<Copy SourceFiles="%(Compile.Identity)" DestinationFiles="%(Compile.Link)" 
+	SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'%(Compile.Link)'
+	!= ''" />
+  </Target>
 </Project>

@@ -1,7 +1,9 @@
 ﻿using ModApi;
 using MSCLoader;
+using Parts;
 using SatsumaTurboCharger.parts;
 using System;
+using Tools;
 using UnityEngine;
 
 namespace SatsumaTurboCharger

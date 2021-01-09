@@ -4,6 +4,9 @@ using SatsumaTurboCharger.turbo;
 using UnityEngine;
 using ModApi;
 using System;
+using Tools;
+
+using Parts;
 
 namespace SatsumaTurboCharger
 {
@@ -70,16 +73,16 @@ namespace SatsumaTurboCharger
                 MeshRenderer meshRenderer = digitalTextObject.GetComponent<MeshRenderer>();
                 digitalText = digitalTextObject.GetComponent<TextMesh>();
 
-                FsmHook.FsmInject(Car.electricity, "ON", delegate() 
+                FsmHook.FsmInject(CarH.electricity, "ON", delegate() 
                 {
                     if (lastElectricityState == false) { lastElectricityState = true; SwitchedElectricityOn(); };
                 });
-                FsmHook.FsmInject(Car.electricity, "OFF", delegate()
+                FsmHook.FsmInject(CarH.electricity, "OFF", delegate()
                 {
                     if (lastElectricityState == true) { lastElectricityState = false; SwitchedElectricityOff(); };
                 });
 
-                GameObject airFuel = GameObject.Find("AirFuel");
+                GameObject airFuel = Game.Find("AirFuel");
                 GameObject lcd = airFuel.transform.FindChild("LCD").gameObject;
                 MeshRenderer lcdMeshRenderer = lcd.GetComponent<MeshRenderer>();
                 TextMesh lcdTextMesh = lcd.GetComponent<TextMesh>();
@@ -112,7 +115,7 @@ namespace SatsumaTurboCharger
 
         void Update()
         {
-            if(!Car.hasPower || !Helper.DetectRaycastHitObject(analogDigitalSwitch, "Dashboard")) { return; }
+            if(!CarH.hasPower || !Helper.DetectRaycastHitObject(analogDigitalSwitch, "Dashboard")) { return; }
             GaugeMode nextGaugeMode = gaugeMode == GaugeMode.Analog ? GaugeMode.Digital : GaugeMode.Analog;
             ModClient.guiInteract(
                 $"[Left mouse] or [{cInput.GetText("Use")}] to switch to {nextGaugeMode}\n" +
@@ -192,7 +195,7 @@ namespace SatsumaTurboCharger
 
         public void SetBoost(float target, float boost, TurboConfiguration turboConfig)
         {
-            if (!Car.hasPower || analogNeedleAnimation.isPlaying) { return; }
+            if (!CarH.hasPower || analogNeedleAnimation.isPlaying) { return; }
             float boostMin = 0;
 
 

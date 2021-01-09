@@ -1,15 +1,26 @@
 ﻿using ModsShop;
 using MSCLoader;
+using Parts;
 using SatsumaTurboCharger.parts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Tools;
 using UnityEngine;
 using Random = System.Random;
 
 namespace SatsumaTurboCharger.wear
 {
+    public class WearMultiplicatorManipulator
+    {
+        internal float[] manipulatorValues;
+        public WearMultiplicatorManipulator(float[] manipulatorValues)
+        {
+            this.manipulatorValues = manipulatorValues;
+        }
+    }
+
     public class Wear
     {
         public SatsumaTurboCharger mod;
@@ -26,6 +37,8 @@ namespace SatsumaTurboCharger.wear
 
         public float timer = 0;
 
+        internal float[] multiplicatorManipulator;
+
         //Shop
         private ShopItem modsShop;
         private ProductDetails repairProduct;
@@ -36,7 +49,7 @@ namespace SatsumaTurboCharger.wear
             return wear.ToString("000.00000");
         }
 
-        public Wear(SatsumaTurboCharger mod, string id, AdvPart part, List<WearCondition> wearConditions, float wearReductionMultiplier, float wearReductionIntervall, Dictionary<string, float> wearSave, float productPrice, string productImage, int randomFallOff = -1)
+        public Wear(SatsumaTurboCharger mod, string id, AdvPart part, List<WearCondition> wearConditions, float wearReductionMultiplier, float wearReductionIntervall, Dictionary<string, float> wearSave, float productPrice, string productImage, int randomFallOff = -1, float[] multiplicatorManipulator = null)
         {
             this.mod = mod;
             this.id = id;
@@ -44,7 +57,8 @@ namespace SatsumaTurboCharger.wear
             this.wearConditions = wearConditions;
             this.wearReductionIntervall = wearReductionIntervall;
             this.part = part;
-            
+            this.multiplicatorManipulator = multiplicatorManipulator;
+
             try
             {
                 this.wear = wearSave[id];
@@ -67,13 +81,13 @@ namespace SatsumaTurboCharger.wear
         }
         public void SetupModsShop(float productPrice, string productImage)
         {
-            if (GameObject.Find("Shop for mods") == null)
+            if (Game.Find("Shop for mods") == null)
             {
                 ModUI.ShowMessage("ModsShop not found in the game!!");
                 return;
             }
 
-            modsShop = GameObject.Find("Shop for mods").GetComponent<ShopItem>();
+            modsShop = Game.Find("Shop for mods").GetComponent<ShopItem>();
 
             repairProduct = new ProductDetails
             {
@@ -121,9 +135,14 @@ namespace SatsumaTurboCharger.wear
         public float CalculateWearResult(float valueToManipulate)
         {
             float manipulatedValue = valueToManipulate;
+            float manipulator = 1;
             timer += Time.deltaTime;
             for (int i = 0; i < wearConditions.Count; i++)
             {
+                if (multiplicatorManipulator != null)
+                {
+                    manipulator = multiplicatorManipulator[i];
+                }
                 WearCondition wearCondition = wearConditions[i];
                 WearCondition.Check check = wearCondition.conditionCheck;
                 if (check == WearCondition.Check.Equal)
@@ -166,11 +185,21 @@ namespace SatsumaTurboCharger.wear
                 }
             }
         }
-
-        public Dictionary<string, float> GetWear(Dictionary<string, float> partsWear)
+        internal static void Save(Mod mod, string saveFile, Wear[] wears)
         {
-            partsWear[id] = wear;
-            return partsWear;
+            try
+            {
+                Dictionary<string, float> save = new Dictionary<string, float>();
+                foreach (Wear wear in wears)
+                {
+                    save[wear.id] = wear.wear;
+                }
+                SaveLoad.SerializeSaveFile<Dictionary<string, float>>(mod, save, saveFile);
+            }
+            catch(Exception ex)
+            {
+                Logger.New("Error while trying to save wear information", ex);
+            }
         }
     }
 }

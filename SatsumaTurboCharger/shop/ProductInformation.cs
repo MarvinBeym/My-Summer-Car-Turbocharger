@@ -1,13 +1,8 @@
 ﻿using ModsShop;
 using Parts;
-using SatsumaTurboCharger.parts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
-namespace SatsumaTurboCharger.shop
+namespace ModShop
 {
     class ProductInformation
     {

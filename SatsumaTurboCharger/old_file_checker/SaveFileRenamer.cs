@@ -45,7 +45,7 @@ namespace SatsumaTurboCharger.old_file_checker
             oldToNew.Add("turbocharger_mod_wear_SaveFile.txt", "wear_saveFile.json");
             oldToNew.Add("turbocharger_mod_screws_SaveFile.txt", "OLD_screwable_saveFile.txt");
 
-            RenameOldFiles(ModLoader.GetModConfigFolder(mod), oldToNew);
+            RenameOldFiles(ModLoader.GetModSettingsFolder(mod), oldToNew);
         }
     }
 }

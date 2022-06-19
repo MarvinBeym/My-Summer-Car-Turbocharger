@@ -1,23 +1,19 @@
-﻿using Parts;
-using SatsumaTurboCharger.parts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using MSCLoader;
+using Parts;
 using UnityEngine;
 
-namespace SatsumaTurboCharger
+namespace ModShop
 {
     public class Kit
     {
-        private SatsumaTurboCharger mod;
+        private Mod mod;
         public GameObject kitBox;
         public AdvPart[] parts;
         private KitLogic logic;
         public int spawnedCounter = 0;
         public string boughtId;
         public bool bought;
-        public Kit(SatsumaTurboCharger mod, GameObject kitBox, AdvPart[] simpleParts)
+        public Kit(Mod mod, GameObject kitBox, AdvPart[] simpleParts)
         {
             this.mod = mod;
             this.kitBox = kitBox;

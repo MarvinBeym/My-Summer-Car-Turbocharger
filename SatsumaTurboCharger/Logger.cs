@@ -19,7 +19,7 @@ namespace Tools
         {
             Logger.mod = mod;
             Logger.maxErrorsToLog = maxErrorsToLog;
-            logging_filePath = Path.Combine(ModLoader.GetModConfigFolder(mod), file_name);
+            logging_filePath = Path.Combine(ModLoader.GetModSettingsFolder(mod), file_name);
             InitFile();
         }
 

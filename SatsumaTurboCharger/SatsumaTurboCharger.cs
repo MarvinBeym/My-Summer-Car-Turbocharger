@@ -1,5 +1,4 @@
 ﻿using HutongGames.PlayMaker;
-using ModApi;
 using ModApi.Attachable;
 using ModsShop;
 using MSCLoader;
@@ -7,8 +6,6 @@ using Parts;
 using SatsumaTurboCharger.gui;
 using SatsumaTurboCharger.old_file_checker;
 using SatsumaTurboCharger.painting_system;
-using SatsumaTurboCharger.parts;
-using SatsumaTurboCharger.shop;
 using SatsumaTurboCharger.turbo;
 using SatsumaTurboCharger.wear;
 using ScrewablePartAPI.V2;
@@ -16,14 +13,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using Tools;
 using Tools.gui;
 using UnityEngine;
 using static SatsumaTurboCharger.BoostGauge_Logic;
-using Parts;
 using Random = System.Random;
 using static Parts.AdvPart;
+using ModShop;
 
 namespace SatsumaTurboCharger
 {
@@ -71,6 +67,7 @@ namespace SatsumaTurboCharger
          * Code improvement
          * Loading time improvement
          * Performance improvement
+         * Added copyright notice to mod settings
          * 
          */
 
@@ -407,16 +404,16 @@ namespace SatsumaTurboCharger
             };
 
             manifold_weber_part = new AdvPart(advPartBaseInfo,
-                "manifold_weber", "Weber Manifold", weberCarb, "",
+                "manifold_weber", "Weber Manifold", weberCarb,
                 manifold_weber_installLocation, new Vector3(90, 0, 0),
                 true, "manifold_weber_kit");
 
             manifold_twinCarb_part = new AdvPart(advPartBaseInfo,
-                "manifold_twinCarb", "TwinCarb Manifold", twinCarb, "",
+                "manifold_twinCarb", "TwinCarb Manifold", twinCarb,
                 manifold_twinCarb_installLocation, new Vector3(90, 0, 0),
                 true);
             boost_gauge_part = new AdvPart(advPartBaseInfo,
-                "boost_gauge", "Boost Gauge", Game.Find("dashboard(Clone)"), "",
+                "boost_gauge", "Boost Gauge", Game.Find("dashboard(Clone)"),
                 boost_gauge_installLocation, new Vector3(90, 0, 0),
                 true);
             boostGaugeLogic = boost_gauge_part.rigidPart.AddComponent<BoostGauge_Logic>();
@@ -424,58 +421,58 @@ namespace SatsumaTurboCharger
 
 
             intercooler_part = new AdvPart(advPartBaseInfo,
-                "intercooler", "Intercooler", CarH.satsuma, "",
+                "intercooler", "Intercooler", CarH.satsuma,
                 intercooler_installLocation, new Vector3(0, 180, 0),
                 true);
 
             intercooler_manifold_weber_tube_part = new AdvPart(advPartBaseInfo,
-                "intercooler_manifold_weber_tube", "Weber Intercooler-Manifold Tube", manifold_weber_part.part, "",
+                "intercooler_manifold_weber_tube", "Weber Intercooler-Manifold Tube", manifold_weber_part.part,
                 intercooler_manifold_weber_tube_installLocation, new Vector3(0, 0, 0), 
                 true, "manifold_weber_kit");
 
             intercooler_manifold_twinCarb_tube_part = new AdvPart(advPartBaseInfo,
-                "intercooler_manifold_twinCarb_tube", "TwinCarb Intercooler-Manifold Tube", manifold_twinCarb_part.part, "",
+                "intercooler_manifold_twinCarb_tube", "TwinCarb Intercooler-Manifold Tube", manifold_twinCarb_part.part,
                 intercooler_manifold_twinCarb_tube_installLocation, new Vector3(0, 0, 0), 
                 true, "manifold_twinCarb_kit");
 
             exhaust_header_part = new AdvPart(advPartBaseInfo,
-                "exhaust_header", "Turbo Exhaust Header", originalCylinerHead, "",
+                "exhaust_header", "Turbo Exhaust Header", originalCylinerHead,
                 exhaust_header_installLocation, new Vector3(90, 0, 0),
                 true);
 
             turboBig_exhaust_inlet_tube_part = new AdvPart(advPartBaseInfo,
-                "turboBig_exhaust_inlet_tube", "Racing Turbo Exhaust Inlet Tube", exhaust_header_part.part, "",
+                "turboBig_exhaust_inlet_tube", "Racing Turbo Exhaust Inlet Tube", exhaust_header_part.part,
                 turboBig_exhaust_inlet_tube_installLocation, new Vector3(0, 0, 0),
                 true, "turboBig_kit");
 
             turboBig_exhaust_outlet_tube_part = new AdvPart(advPartBaseInfo,
-                "turboBig_exhaust_outlet_tube", "Racing Turbo Exhaust Outlet Tube", Game.Find("racing exhaust(Clone)"), "",
+                "turboBig_exhaust_outlet_tube", "Racing Turbo Exhaust Outlet Tube", Game.Find("racing exhaust(Clone)"),
                 turboBig_exhaust_outlet_tube_installLocation, new Vector3(90, 0, 0),
                 true, "turboBig_kit");
 
 
             turboBig_part = new AdvPart(advPartBaseInfo,
-                "turboBig", "Racing Turbo", turboBig_exhaust_inlet_tube_part.part, "",
+                "turboBig", "Racing Turbo", turboBig_exhaust_inlet_tube_part.part,
                 turboBig_installLocation, new Vector3(0, 0, 0), 
                 true, "turboBig_kit");
 
             turboBig_exhaust_outlet_straight_part = new AdvPart(advPartBaseInfo,
-                "turboBig_exhaust_outlet_straight", "Racing Turbo Exhaust Straight", turboBig_part.part, "",
+                "turboBig_exhaust_outlet_straight", "Racing Turbo Exhaust Straight", turboBig_part.part,
                 turboBig_exhaust_outlet_straight_installLocation, new Vector3(0, 0, 0),
                 true);
 
             turboBig_intercooler_tube_part = new AdvPart(advPartBaseInfo,
-                "turboBig_intercooler_tube", "Racing Turbo Intercooler Tube", intercooler_part.part, "",
+                "turboBig_intercooler_tube", "Racing Turbo Intercooler Tube", intercooler_part.part,
                 turboBig_intercooler_tube_installLocation, new Vector3(0, 0, 0),
                 true, "turboBig_kit");
 
             turboBig_blowoff_valve_part = new AdvPart(advPartBaseInfo,
-                "turboBig_blowoff_valve", "Racing Turbo Blowoff Valve", turboBig_intercooler_tube_part.part, "",
+                "turboBig_blowoff_valve", "Racing Turbo Blowoff Valve", turboBig_intercooler_tube_part.part,
                 turboBig_blowoff_valve_installLocation, new Vector3(0, 0, 45),
                 true);
 
             turboBig_hood_part = new AdvPart(advPartBaseInfo,
-                "turboBig_hood", "Racing Turbo Hood", CarH.satsuma, "",
+                "turboBig_hood", "Racing Turbo Hood", CarH.satsuma,
                 turboBig_hood_installLocation, new Vector3(0, 180, 0),
                 true);
 
@@ -487,34 +484,34 @@ namespace SatsumaTurboCharger
        
             
         turboSmall_part = new AdvPart(advPartBaseInfo,
-                "turboSmall", "GT Turbo", originalCylinerHead, "",
+                "turboSmall", "GT Turbo", originalCylinerHead,
                 turboSmall_installLocation, new Vector3(90, 0, 0),
                 true, "turboSmall_kit");
             turboSmall_logic = turboSmall_part.rigidPart.AddComponent<GT_Turbocharger_Logic>();
             turboSmall_logic.Init(this);
 
             turboSmall_intercooler_tube_part = new AdvPart(advPartBaseInfo,
-                "turboSmall_intercooler_tube", "GT Turbo Intercooler Tube", CarH.satsuma, "",
+                "turboSmall_intercooler_tube", "GT Turbo Intercooler Tube", CarH.satsuma,
                 turboSmall_intercooler_tube_installLocation, new Vector3(0, 180, 0),
                 true, "turboSmall_kit");
 
             turboSmall_manifold_twinCarb_tube_part = new AdvPart(advPartBaseInfo,
-                "turboSmall_manifold_twinCarb_tube", "GT Turbo Manifold TwinCarb Tube", originalCylinerHead, "",
+                "turboSmall_manifold_twinCarb_tube", "GT Turbo Manifold TwinCarb Tube", originalCylinerHead,
                 turboSmall_manifold_twinCarb_tube_installLocation, new Vector3(90, 0, 0),
                 true);
 
             turboSmall_airfilter_part = new AdvPart(advPartBaseInfo,
-                "turboSmall_airfilter", "GT Turbo Airfilter", originalCylinerHead, "",
+                "turboSmall_airfilter", "GT Turbo Airfilter", originalCylinerHead,
                 turboSmall_airfilter_installLocation, new Vector3(90, 0, 0),
                 true);
 
             turboSmall_exhaust_inlet_tube_part = new AdvPart(advPartBaseInfo,
-                "turboSmall_exhaust_inlet_tube", "GT Turbo Exhaust Inlet Tube", originalCylinerHead, "",
+                "turboSmall_exhaust_inlet_tube", "GT Turbo Exhaust Inlet Tube", originalCylinerHead,
                 turboSmall_exhaust_inlet_tube_installLocation, new Vector3(90, 0, 0),
                 true, "turboSmall_kit");
 
             turboSmall_exhaust_outlet_tube_part = new AdvPart(advPartBaseInfo,
-                "turboSmall_exhaust_outlet_tube", "GT Turbo Exhaust Outlet Tube", originalCylinerHead, "",
+                "turboSmall_exhaust_outlet_tube", "GT Turbo Exhaust Outlet Tube", originalCylinerHead,
                 turboSmall_exhaust_outlet_tube_installLocation, new Vector3(90, 0, 0),
                 true, "turboSmall_kit");
 
@@ -741,7 +738,7 @@ namespace SatsumaTurboCharger
 
         private void SetupScrewable()
         {
-            string screwSavePath = Path.Combine(ModLoader.GetModConfigFolder(this), screwableV2_saveFile);
+            string screwSavePath = Path.Combine(ModLoader.GetModSettingsFolder(this), screwableV2_saveFile);
             ScrewablePartV2BaseInfo baseInfo = new ScrewablePartV2BaseInfo(screwSavePath, true);
             //Big turbo
 
@@ -931,6 +928,8 @@ namespace SatsumaTurboCharger
                 "5.Gear: " + newGearRatios[6] + "\n" +
                 "6.Gear: " + newGearRatios[7]
                 );
+           
+            Settings.AddText(this, "Copyright © Marvin Beym 2020-2021");
         }
         public override void OnSave()
         {
@@ -949,7 +948,7 @@ namespace SatsumaTurboCharger
 
             Shop.Save(this, modsShop_saveFile, partsList.ToArray());
 
-            AdvPart.Save(this, modsShop_saveFile, partsList.ToArray());
+            AdvPart.Save(this, partsList.ToArray());
 
             Turbo.Save(this, boost_saveFile, new Turbo[]
             {

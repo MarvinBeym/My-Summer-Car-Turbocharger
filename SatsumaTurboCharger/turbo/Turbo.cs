@@ -1,7 +1,7 @@
 ﻿using HutongGames.PlayMaker;
 using MSCLoader;
 using Parts;
-using SatsumaTurboCharger.parts;
+
 using SatsumaTurboCharger.wear;
 using System;
 using System.Collections.Generic;

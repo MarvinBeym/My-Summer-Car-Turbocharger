@@ -1,16 +1,14 @@
 ﻿using ModApi;
 using MSCLoader;
 using Parts;
-using SatsumaTurboCharger.parts;
-using System;
 using Tools;
 using UnityEngine;
 
-namespace SatsumaTurboCharger
+namespace ModShop
 {
     public class KitLogic : MonoBehaviour
     {
-        private SatsumaTurboCharger mod;
+        private Mod mod;
         private Kit kit;
         private RaycastHit hit;
 
@@ -50,7 +48,7 @@ namespace SatsumaTurboCharger
             }
         }
 
-        public void Init(SatsumaTurboCharger mod, Kit kit)
+        public void Init(Mod mod, Kit kit)
         {
             this.mod = mod;
             this.kit = kit;

@@ -14,6 +14,7 @@ namespace Parts
 {
     public class AdvPart
     {
+        public static List<AdvPart> partsList = new List<AdvPart>();
         public class AdvPartBaseInfo
         {
             public Mod mod { get; set; }
@@ -67,6 +68,16 @@ namespace Parts
             return prefabName;
         }
 
+        public static AdvPart Create(AdvPart advPart, List<AdvPart> secondListToAddTo = null)
+        {
+            if(secondListToAddTo != null)
+            {
+                secondListToAddTo.Add(advPart);
+            }
+                partsList.Add(advPart);
+            return advPart;
+        }
+
         public AdvPart(AdvPartBaseInfo baseInfo, string id, string name, NewPart parentPart, GameObject objectToInstantiate, Vector3 installPosition, Vector3 installRotation, bool dontCollideOnRigid = true, string boughtId = null)
         {
             this.mod = baseInfo.mod;
@@ -95,7 +106,7 @@ namespace Parts
             DefineBasePartCalls(part);
         }
 
-        public AdvPart(AdvPartBaseInfo baseInfo, string id, string name, NewPart parentPart, string prefabName, Vector3 installPosition, Vector3 installRotation, bool dontCollideOnRigid = true, string boughtId = null)
+        public AdvPart(AdvPartBaseInfo baseInfo, string id, string name, NewPart parentPart, Vector3 installPosition, Vector3 installRotation, bool dontCollideOnRigid = true, string boughtId = null, string prefabName = "")
         {
             this.mod = baseInfo.mod;
             AssetBundle assetBundle = baseInfo.assetBundle;
@@ -122,7 +133,7 @@ namespace Parts
             
             DefineBasePartCalls(part);
         }
-        public AdvPart(AdvPartBaseInfo baseInfo, string id, string name, GameObject parentPart, string prefabName, Vector3 installPosition, Vector3 installRotation, bool dontCollideOnRigid = true, string boughtId = null)
+        public AdvPart(AdvPartBaseInfo baseInfo, string id, string name, GameObject parentPart, Vector3 installPosition, Vector3 installRotation, bool dontCollideOnRigid = true, string boughtId = null, string prefabName = "")
         {
             this.mod = baseInfo.mod;
             AssetBundle assetBundle = baseInfo.assetBundle;
@@ -367,7 +378,7 @@ namespace Parts
             }
         }
 
-        internal static void Save(Mod mod, string saveFile, AdvPart[] parts)
+        internal static void Save(Mod mod, AdvPart[] parts)
         {
             try
             {

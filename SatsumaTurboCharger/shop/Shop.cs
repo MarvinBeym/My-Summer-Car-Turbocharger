@@ -1,27 +1,21 @@
-﻿using SatsumaTurboCharger.shop;
-using ModApi.Attachable;
-using ModsShop;
+﻿using ModsShop;
 using MSCLoader;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using UnityEngine;
-using SatsumaTurboCharger.parts;
 using Tools;
 using Parts;
 
-namespace SatsumaTurboCharger
+namespace ModShop
 {
     class Shop
     {
-        private SatsumaTurboCharger mod;
+        private Mod mod;
         private ShopItem modsShopItem;
         private AssetBundle assetBundle;
         private List<ProductInformation> shopItems;
 
-        public Shop(SatsumaTurboCharger mod, ShopItem modsShopItem, AssetBundle assetBundle, List<ProductInformation> shopItems)
+        public Shop(Mod mod, ShopItem modsShopItem, AssetBundle assetBundle, List<ProductInformation> shopItems)
         {
             this.mod = mod;
             this.modsShopItem = modsShopItem;
@@ -56,7 +50,7 @@ namespace SatsumaTurboCharger
         
         private void SetPartBought(bool bought, AdvPart part)
         {
-            part.bought = true;
+            part.bought = bought;
         }
 
         private void AddToShop(ProductInformation productInformation)

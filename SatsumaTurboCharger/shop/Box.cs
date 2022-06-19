@@ -1,16 +1,12 @@
-﻿using SatsumaTurboCharger;
-using ModApi.Attachable;
-using ScrewablePartAPI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using ScrewablePartAPI.V2;
 using Parts;
 using static Parts.AdvPart;
+using MSCLoader;
+using System.Linq;
 
-namespace SatsumaTurboCharger.parts
+namespace ModShop
 {
     public class Box
     {
@@ -20,7 +16,7 @@ namespace SatsumaTurboCharger.parts
         public int spawnedCounter = 0;
         public AdvPart[] parts;
         public BoxLogic logic;
-        public Box(SatsumaTurboCharger mod, GameObject box, GameObject part_gameObject, string partName, int numberOfParts, AdvPart parent, Dictionary<string, bool> partsBuySave, Vector3[] installLocations, Vector3[] installRotations, bool dontCollideOnRigid = true)
+        public Box(Mod mod, GameObject box, GameObject part_gameObject, string boughtId, string partName, int numberOfParts, AdvPart parent, Dictionary<string, bool> partsBuySave, Vector3[] installLocations, Vector3[] installRotations, List<AdvPart> partsList, bool dontCollideOnRigid = true)
         {
             AdvPartBaseInfo advPartBaseInfo = new AdvPartBaseInfo
             {
@@ -29,8 +25,6 @@ namespace SatsumaTurboCharger.parts
             };
 
             this.box = box;
-            id = partName.ToLower().Replace(" ", "_");
-            string boughtId = id + "_box";
 
             parts = new AdvPart[numberOfParts];
 
@@ -49,11 +43,18 @@ namespace SatsumaTurboCharger.parts
                     parts[i].activePart.SetActive(false);
                 }
             }
+
+            if(parts.Any(part => part.bought))
+            {
+                this.bought = true;
+            }
+
             logic = box.AddComponent<BoxLogic>();
             logic.Init(mod, parts, "Unpack " + partName.ToLower(), this);
             foreach (AdvPart part in parts)
             {
-                mod.partsList.Add(part);
+                parent.AddChildPart(part);
+                partsList.Add(part);
             }
         }
 

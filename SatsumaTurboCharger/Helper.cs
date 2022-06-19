@@ -174,7 +174,7 @@ namespace Tools
         }
         public static T LoadSaveOrReturnNew<T>(Mod mod, string savefileName) where T : new()
         {
-            string path = Path.Combine(ModLoader.GetModConfigFolder(mod), savefileName);
+            string path = Path.Combine(ModLoader.GetModSettingsFolder(mod), savefileName);
             if (File.Exists(path))
             {
                 string serializedData = File.ReadAllText(path);

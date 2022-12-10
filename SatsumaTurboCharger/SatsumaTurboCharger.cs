@@ -787,25 +787,25 @@ namespace SatsumaTurboCharger
 				new ShopItem("Turbocharger Exhaust Header", 2100, shopSpawnLocation, exhaust_header_part),
 			});
 
-            TurboConfiguration racingTurboConfig = new TurboConfiguration
-            {
-                boostBase = 2f,
-                boostStartingRpm = 3500,
-                boostStartingRpmOffset = 1600,
-                boostMin = -0.10f,
-                minSettableBoost = 1.65f,
-                boostSteepness = 2.6f,
-                blowoffDelay = 0.8f,
-                blowoffTriggerBoost = 0.6f,
-                backfireThreshold = 4000,
-                backfireRandomRange = 20,
-                rpmMultiplier = 14,
-                extraPowerMultiplicator = 1.5f,
-                boostSettingSteps = 0.05f,
-                soundboostMinVolume = 0.1f,
-                soundboostMaxVolume = 0.35f,
-                soundboostPitchMultiplicator = 4,
-            };
+			TurboConfiguration racingTurboConfig = new TurboConfiguration
+			{
+				boostBase = 2f,
+				boostStartingRpm = 3000,
+				boostStartingRpmOffset = 1600,
+				boostMin = -0.10f,
+				minSettableBoost = 1.65f,
+				boostSteepness = 1.5f,
+				blowoffDelay = 0.8f,
+				blowoffTriggerBoost = 0.6f,
+				backfireThreshold = 4000,
+				backfireRandomRange = 20,
+				rpmMultiplier = 14,
+				extraPowerMultiplicator = 1.5f,
+				boostSettingSteps = 0.05f,
+				soundboostMinVolume = 0.1f,
+				soundboostMaxVolume = 0.35f,
+				soundboostPitchMultiplicator = 4
+			};
 
             //Temporary
             TurboConfiguration gtTurboConfig = new TurboConfiguration

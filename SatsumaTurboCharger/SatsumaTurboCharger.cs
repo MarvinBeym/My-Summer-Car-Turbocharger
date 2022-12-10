@@ -363,8 +363,8 @@ namespace SatsumaTurboCharger
                 originalExhaustPipeRacePosition = new Vector3(exhaustFromPipe.transform.localPosition.x, exhaustFromPipe.transform.localPosition.y, exhaustFromPipe.transform.localPosition.z);
                 originalExhaustPipeRaceRotation = new Quaternion(exhaustFromPipe.transform.localRotation.x, exhaustFromPipe.transform.localRotation.y, exhaustFromPipe.transform.localRotation.z, exhaustFromPipe.transform.localRotation.w);
 
-                weberCarb = Helper.GetGameObjectFromFsm(Game.Find("Racing Carburators"));
-                twinCarb = Helper.GetGameObjectFromFsm(Game.Find("Twin Carburators"));
+				weberCarb = Helper.GetGameObjectFromFsm(Cache.Find("Racing Carburators"));
+				twinCarb = Helper.GetGameObjectFromFsm(Cache.Find("Twin Carburators"));
 
 				weberCarb_inst = Cache.Find("Racing Carburators").GetComponent<PlayMakerFSM>().FsmVariables
 					.FindFsmBool("Installed");
@@ -393,12 +393,13 @@ namespace SatsumaTurboCharger
 				exhaustPipe = Cache.Find("exhaust pipe(Clone)");
 				exhaustMuffler = Cache.Find("exhaust muffler(Clone)");
 
-                originalCylinerHead = Game.Find("cylinder head(Clone)");
-            } 
-            catch(Exception ex)
-            {
-                Logger.New("Error while trying to load required game objects/values", "Gameobject.Find has failed to return the desired object", ex);
-            }
+				originalCylinerHead = Cache.Find("cylinder head(Clone)");
+			}
+			catch (Exception ex)
+			{
+				Logger.New("Error while trying to load required game objects/values",
+					"Gameobject.Find has failed to return the desired object", ex);
+			}
 
             
 
@@ -911,27 +912,8 @@ namespace SatsumaTurboCharger
             //boost_gauge_part;
 
 
-            foreach (ScrewablePartV2 screwablePart in new ScrewablePartV2[]{
-                boost_gauge_part.screwablePart,
-                turboBig_part.screwablePart,
-                turboBig_intercooler_tube_part.screwablePart,
-                turboBig_exhaust_inlet_tube_part.screwablePart,
-                turboBig_exhaust_outlet_tube_part.screwablePart,
-                turboBig_blowoff_valve_part.screwablePart,
-                exhaust_header_part.screwablePart,
-                manifold_weber_part.screwablePart,
-                intercooler_part.screwablePart,
-                intercooler_manifold_weber_tube_part.screwablePart,
-            })
-            {
-                foreach (ScrewV2 screw in screwablePart.screws)
-                {
-                    screwablePart.SetScrewPosition(screw, 8);
-                }
-            }
-            
-            ModConsole.Print(this.Name + $" [v{this.Version} | Screwable v{ScrewablePartV2.version}] finished loading");         
-        }
+			ModConsole.Print(this.Name + $" [v{this.Version} finished loading");
+		}
 
 		private void SetupInspectionPrevention()
 		{

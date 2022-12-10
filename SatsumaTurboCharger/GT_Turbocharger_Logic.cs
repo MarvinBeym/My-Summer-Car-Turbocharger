@@ -1,5 +1,6 @@
 ﻿using HutongGames.PlayMaker;
 using MSCLoader;
+using MscModApi.Caching;
 using System;
 using System.IO;
 using System.Reflection;
@@ -69,10 +70,10 @@ namespace SatsumaTurboCharger
             CreateTurboGrindingLoop();
             CreateTurboLoopSmall();
 
-            Tools.CarH.drivetrain.clutchTorqueMultiplier = 10f;
+            CarH.drivetrain.clutchTorqueMultiplier = 10f;
 
-            weberCarb_inst = Game.Find("Racing Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
-            twinCarb_inst = Game.Find("Twin Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
+            weberCarb_inst = Cache.Find("Racing Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
+            twinCarb_inst = Cache.Find("Twin Carburators").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
 
             foreach (var playMakerFloatVar in PlayMakerGlobals.Instance.Variables.FloatVariables)
             {
@@ -128,7 +129,7 @@ namespace SatsumaTurboCharger
                 {
                     try
                     {
-                        GameObject smartEngineModule = Game.Find("Smart Engine ECU(Clone)");
+                        GameObject smartEngineModule = Cache.Find("Smart Engine ECU(Clone)");
                         if (smartEngineModule != null)
                         {
                             smart_engine_moduleFSM = smartEngineModule.GetComponent<PlayMakerFSM>();

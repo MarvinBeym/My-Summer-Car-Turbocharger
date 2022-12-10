@@ -127,14 +127,25 @@ namespace SatsumaTurboCharger
         //Install & Spawn Locations
         //
 
-        //Big Turbo
-        private Vector3 turboBig_installLocation = new Vector3(-0.067799f, 0.291159f, -0.07805f);                           //DONE                       
-        private Vector3 turboBig_intercooler_tube_installLocation = new Vector3(-0.346378f, 0.201461f, 0.25025f);           //DONE
-        private Vector3 turboBig_exhaust_inlet_tube_installLocation = new Vector3(-0.234201f, -0.020159f, 0.09884f);        //DONE
-        private Vector3 turboBig_exhaust_outlet_tube_installLocation = new Vector3(-0.307337f, 1.044137f, 0.456764f);       //DONE
-        private Vector3 turboBig_blowoff_valve_installLocation = new Vector3(0.026583f, 0.139111f, 0.15561f);               //DONE             
-        private Vector3 turboBig_exhaust_outlet_straight_installLocation = new Vector3(-0.0185f, 0.0385f, 0.159f);          //DONE          
-        private Vector3 turboBig_hood_installLocation = new Vector3(0, 0.2408085f, 1.68f);                                  //DONE                   
+		//Big Turbo
+		private Vector3
+			turboBig_installLocation = new Vector3(-0.300799f, 0.271159f, 0.01994999f); //DONE                       
+
+		private Vector3 turboBig_intercooler_tube_installLocation = new Vector3(-0.346378f, 0.201461f, 0.25025f); //DONE
+
+		private Vector3 turboBig_exhaust_inlet_tube_installLocation =
+			new Vector3(-0.234201f, -0.020159f, 0.09884f); //DONE
+
+		private Vector3 turboBig_exhaust_outlet_tube_installLocation =
+			new Vector3(-0.307337f, 1.044137f, 0.456764f); //DONE
+
+		private Vector3
+			turboBig_blowoff_valve_installLocation = new Vector3(0.026583f, 0.139111f, 0.15561f); //DONE             
+
+		private Vector3
+			turboBig_exhaust_outlet_straight_installLocation = new Vector3(-0.0185f, 0.0385f, 0.159f); //DONE          
+
+		private Vector3 turboBig_hood_installLocation = new Vector3(0, 0.2408085f, 1.68f); //DONE                   
 
         //Small Turbo
         private Vector3 turboSmall_installLocation = new Vector3(-0.25f, -0.1665f, 0.0001f);
@@ -144,17 +155,21 @@ namespace SatsumaTurboCharger
         private Vector3 turboSmall_exhaust_outlet_tube_installLocation = new Vector3(-0.1825f, -0.267f, -0.145f);
         private Vector3 turboSmall_airfilter_installLocation = new Vector3(-0.25f, -0.04f, 0.0001f);
 
-        //Other Parts        
-        private Vector3 manifold_weber_installLocation = new Vector3(-0.009812f, -0.11697f, 0.030088f);                     //DONE
-        private Vector3 manifold_twinCarb_installLocation = new Vector3(-0.007944f, -0.13087f, -0.0316f);                   //DONE   
-        private Vector3 boost_gauge_installLocation = new Vector3(0.4f, -0.019f, 0.152f);                                   //DONE 
-        private Vector3 intercooler_installLocation = new Vector3(0.0f, -0.162f, 1.6775f);                                  //DONE
-        private Vector3 intercooler_manifold_weber_tube_installLocation = new Vector3(0.362165f, -0.139072f, -0.23436f);    //DONE             
-        private Vector3 intercooler_manifold_twinCarb_tube_installLocation = new Vector3(0.325294f, -0.180286f, -0.29813f); //DONE              
-        private Vector3 exhaust_header_installLocation = new Vector3(-0.005f, -0.089f, -0.068809f);                         //DONE                            
+		//Other Parts        
+		private Vector3 manifold_weber_installLocation = new Vector3(-0.009812f, -0.12237f, 0.031888f); //DONE
+		private Vector3 manifold_twinCarb_installLocation = new Vector3(-0.007944f, -0.13087f, -0.0316f); //DONE   
+		private Vector3 boost_gauge_installLocation = new Vector3(0.4f, -0.019f, 0.152f); //DONE 
+		private Vector3 intercooler_installLocation = new Vector3(0.0f, -0.162f, 1.6775f); //DONE
 
-        //Mods Shop
-        private ShopItem modsShop;
+		private Vector3 intercooler_manifold_weber_tube_installLocation =
+			new Vector3(0.365165f, -0.139772f, -0.23436f); //DONE             
+
+		private Vector3 intercooler_manifold_twinCarb_tube_installLocation =
+			new Vector3(0.325294f, -0.180286f, -0.29813f); //DONE              
+
+		private Vector3
+			exhaust_header_installLocation =
+				new Vector3(-0.005f, -0.089f, -0.068809f); //DONE                            
 
         //
         //Game Objects

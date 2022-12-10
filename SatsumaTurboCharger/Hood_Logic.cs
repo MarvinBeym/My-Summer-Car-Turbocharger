@@ -50,12 +50,13 @@ namespace SatsumaTurboCharger
 			turboHoodLatchCollider.transform.localEulerAngles = new Vector3(352f, 0f, 0f);
 			turboHoodLatchCollider.transform.localScale = new Vector3(1.21f, 0.05f, 0.85f);
 
-            GameObject normalHood = Game.Find("hood(Clone)");
-            GameObject fiberglassHood = Game.Find("fiberglass hood(Clone)");
+			GameObject normalHood = Cache.Find("hood(Clone)");
 
-            originalHoodTrigger = Game.Find("trigger_hood");
-            FsmHook.FsmInject(originalHoodTrigger, "Assemble 2", OnOriginalAssemble);
-            FsmHook.FsmInject(originalHoodTrigger, "Assemble 3", OnOriginalAssemble);
+			GameObject fiberglassHood = Helper.GetGameObjectFromFsm(Cache.Find("Fiberglass Hood"));
+			Helper.FindFsmOnGameObject(fiberglassHood, "Removal").InitializeFSM();
+			originalHoodTrigger = Cache.Find("trigger_hood");
+			FsmHook.FsmInject(originalHoodTrigger, "Assemble 2", OnOriginalAssemble);
+			FsmHook.FsmInject(originalHoodTrigger, "Assemble 3", OnOriginalAssemble);
 
             FsmHook.FsmInject(normalHood, "Remove part", OnOriginalDisassemble);
             FsmHook.FsmInject(fiberglassHood, "Remove part", OnOriginalDisassemble);
@@ -102,25 +103,25 @@ namespace SatsumaTurboCharger
 			turboHood.BlockInstall(false);
 		}
 
-        void Start()
-        {
-            FsmHook.FsmInject(Game.Find("HoodLocking").transform.FindChild("Trigger").gameObject, "Open", delegate () 
-            {
-                SetHoodAngle(openedAngle);
-                open = true; 
-            });
-        }
+		void Start()
+		{
+			FsmHook.FsmInject(Cache.Find("HoodLocking").transform.FindChild("Trigger").gameObject, "Open", delegate ()
+			{
+				SetHoodAngle(openedAngle);
+				open = true;
+			});
+		}
 
-        void Update()
-        {
-            if (open && Helper.DetectRaycastHitObject(turboHoodLatchCollider, "Default"))
-            {
-                if (Helper.LeftMouseDown)
-                {
-                    SetHoodAngle(closedAngle);
-                    open = false;
-                }
-            }
+		void Update()
+		{
+			if (open && turboHoodLatchCollider.IsLookingAt())
+			{
+				if (UserInteraction.LeftMouseDown)
+				{
+					SetHoodAngle(closedAngle);
+					open = false;
+				}
+			}
 
         }
 

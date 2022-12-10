@@ -72,17 +72,17 @@ namespace SatsumaTurboCharger.wear
 			activeLogic.Init(this, wearConditions);
 			rigidLogic.Init(this, wearConditions);
 
-            SetupModsShop(productPrice, productImage);
-            
-            
-        }
-        public void SetupModsShop(float productPrice, string productImage)
-        {
-            if (Game.Find("Shop for mods") == null)
-            {
-                ModUI.ShowMessage("ModsShop not found in the game!!");
-                return;
-            }
+			SetupModsShop(productPrice, productImage);
+
+
+		}
+		public void SetupModsShop(float productPrice, string productImage)
+		{
+			if (Cache.Find("Shop for mods") == null)
+			{
+				ModUI.ShowMessage("ModsShop not found in the game!!");
+				return;
+			}
 
 			modsShop = Cache.Find("Shop for mods").GetComponent<ShopItem>();
 

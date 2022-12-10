@@ -70,9 +70,9 @@ namespace SatsumaTurboCharger.painting_system
 			activeLogic.Init(this, nameOfMaterial, color, part);
 			rigidLogic.Init(this, nameOfMaterial, color, part);
 
-            sprayCanGameObject = Game.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/SprayCan");
-            sprayCanFsm = sprayCanGameObject.GetComponent<PlayMakerFSM>();
-            sprayCanColorFsm = sprayCanFsm.FsmVariables.FindFsmColor("SprayColor");
+			sprayCanGameObject = Cache.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/SprayCan");
+			sprayCanFsm = sprayCanGameObject.GetComponent<PlayMakerFSM>();
+			sprayCanColorFsm = sprayCanFsm.FsmVariables.FindFsmColor("SprayColor");
 
             //CUSTOM COLORS // STILL NEEDED/USEFULL
             /*

@@ -36,13 +36,13 @@ namespace SatsumaTurboCharger
             }
             if (!paintSystem.setupDone) { return; }
 
-            if (paintSystem.state == PaintSystem.State.Painting && Helper.DetectRaycastHitObject(sprayCanTrigger, LayerMask.LayerToName(sprayCanTrigger.layer)))
+            if (paintSystem.state == PaintSystem.State.Painting && part.gameObject.IsLookingAt())
             {
                 paintSystem.SetSprayCanColor(paintSystem.sprayCanColorFsm.Value);
             }
         }
 
-        public void Init(PaintSystem paintSystem, string nameOfMaterial, Color initalColor, GameObject sprayCanTrigger)
+        public void Init(PaintSystem paintSystem, string nameOfMaterial, Color initalColor, Part part)
         {
             this.paintSystem = paintSystem;
             this.part = part;

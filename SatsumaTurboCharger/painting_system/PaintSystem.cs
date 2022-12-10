@@ -1,13 +1,11 @@
 ﻿using HutongGames.PlayMaker;
 using MSCLoader;
-using Parts;
+using MscModApi.Caching;
+using MscModApi.Parts;
+using MscModApi.Tools;
 using SatsumaTurboCharger.gui;
-using SatsumaTurboCharger.parts;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Tools;
 using UnityEngine;
 
 namespace SatsumaTurboCharger.painting_system
@@ -21,7 +19,7 @@ namespace SatsumaTurboCharger.painting_system
             NotPainting
         }
 
-        public AdvPart part;
+		public Part part;
 
 
         public State state = State.NotPainting;
@@ -40,14 +38,14 @@ namespace SatsumaTurboCharger.painting_system
         public bool setupDone = false;
         public bool useCarPaintMaterial = false;
 
-        public PaintSystem(Dictionary<string, SaveableColor> partsColorSave, AdvPart part, Color defaultColor, bool useCarPaintMaterial = false, string nameOfMaterial = "Paintable")
-        {
-            this.part = part;
-            this.defaultColor = defaultColor;
-            this.useCarPaintMaterial = useCarPaintMaterial;
+		public PaintSystem(Dictionary<string, SaveableColor> partsColorSave, Part part, Color defaultColor, bool useCarPaintMaterial = false, string nameOfMaterial = "Paintable")
+		{
+			this.part = part;
+			this.defaultColor = defaultColor;
+			this.useCarPaintMaterial = useCarPaintMaterial;
 
-            activeLogic = part.activePart.AddComponent<PaintSystem_Logic>();
-            rigidLogic =  part.rigidPart.AddComponent<PaintSystem_Logic>();
+			activeLogic = part.AddWhenInstalledBehaviour<PaintSystem_Logic>();
+			rigidLogic = part.AddWhenUninstalledBehaviour<PaintSystem_Logic>();
 
             try
             {
@@ -69,8 +67,8 @@ namespace SatsumaTurboCharger.painting_system
 
             }
 
-            activeLogic.Init(this, nameOfMaterial, color, part.activePart);
-            rigidLogic.Init(this, nameOfMaterial, color, part.rigidPart);
+			activeLogic.Init(this, nameOfMaterial, color, part);
+			rigidLogic.Init(this, nameOfMaterial, color, part);
 
             sprayCanGameObject = Game.Find("PLAYER/Pivot/AnimPivot/Camera/FPSCamera/SprayCan");
             sprayCanFsm = sprayCanGameObject.GetComponent<PlayMakerFSM>();

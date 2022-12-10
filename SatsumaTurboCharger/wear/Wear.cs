@@ -1,12 +1,9 @@
-﻿using ModsShop;
-using MSCLoader;
-using Parts;
-using SatsumaTurboCharger.parts;
+﻿using MSCLoader;
+using MscModApi.Caching;
+using MscModApi.Parts;
+using MscModApi.Shopping;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Tools;
 using UnityEngine;
 using Random = System.Random;
 
@@ -21,13 +18,13 @@ namespace SatsumaTurboCharger.wear
         }
     }
 
-    public class Wear
-    {
-        public SatsumaTurboCharger mod;
-        public string id = "";
-        public AdvPart part;
-        public WearLogic activeLogic;
-        public WearLogic rigidLogic;
+	public class Wear
+	{
+		public SatsumaTurboCharger mod;
+		public string id = "";
+		public Part part;
+		public WearLogic activeLogic;
+		public WearLogic rigidLogic;
 
         public List<WearCondition> wearConditions;
         public float wear = 100;
@@ -49,15 +46,15 @@ namespace SatsumaTurboCharger.wear
             return wear.ToString("000.00000");
         }
 
-        public Wear(SatsumaTurboCharger mod, string id, AdvPart part, List<WearCondition> wearConditions, float wearReductionMultiplier, float wearReductionIntervall, Dictionary<string, float> wearSave, float productPrice, string productImage, int randomFallOff = -1, float[] multiplicatorManipulator = null)
-        {
-            this.mod = mod;
-            this.id = id;
-            this.wearReductionMultiplier = wearReductionMultiplier;
-            this.wearConditions = wearConditions;
-            this.wearReductionIntervall = wearReductionIntervall;
-            this.part = part;
-            this.multiplicatorManipulator = multiplicatorManipulator;
+		public Wear(SatsumaTurboCharger mod, string id, Part part, List<WearCondition> wearConditions, float wearReductionMultiplier, float wearReductionIntervall, Dictionary<string, float> wearSave, float productPrice, string productImage, int randomFallOff = -1, float[] multiplicatorManipulator = null)
+		{
+			this.mod = mod;
+			this.id = id;
+			this.wearReductionMultiplier = wearReductionMultiplier;
+			this.wearConditions = wearConditions;
+			this.wearReductionIntervall = wearReductionIntervall;
+			this.part = part;
+			this.multiplicatorManipulator = multiplicatorManipulator;
 
             try
             {
@@ -70,10 +67,10 @@ namespace SatsumaTurboCharger.wear
             this.randomFallOff = randomFallOff;
 
 
-            activeLogic = part.activePart.AddComponent<WearLogic>();
-            rigidLogic = part.rigidPart.AddComponent<WearLogic>();
-            activeLogic.Init(this, wearConditions);
-            rigidLogic.Init(this, wearConditions);
+			activeLogic = part.AddWhenUninstalledBehaviour<WearLogic>();
+			rigidLogic = part.AddWhenInstalledBehaviour<WearLogic>();
+			activeLogic.Init(this, wearConditions);
+			rigidLogic.Init(this, wearConditions);
 
             SetupModsShop(productPrice, productImage);
             
@@ -87,7 +84,7 @@ namespace SatsumaTurboCharger.wear
                 return;
             }
 
-            modsShop = Game.Find("Shop for mods").GetComponent<ShopItem>();
+			modsShop = Cache.Find("Shop for mods").GetComponent<ShopItem>();
 
             repairProduct = new ProductDetails
             {
@@ -105,12 +102,12 @@ namespace SatsumaTurboCharger.wear
         {
             repairPurchaseMade = true;
 
-            if (part.installed || !part.activePart.activeSelf || !Helper.CheckCloseToPosition(part.activePart.transform.position, ModsShop.FleetariSpawnLocation.desk, 0.8f))
-            {
-                ModUI.ShowMessage("Please put the part on the desk where the ModsShop sign is and try again" + "\n" + "Money has been refunded");
-                PlayMakerGlobals.Instance.Variables.FindFsmFloat("PlayerMoney").Value += repairProduct.productPrice;
-                return;
-            }
+			if (part.IsInstalled || !part.activePart.activeSelf || !Helper.CheckCloseToPosition(part.activePart.transform.position, ModsShop.FleetariSpawnLocation.desk, 0.8f))
+			{
+				ModUI.ShowMessage("Please put the part on the desk where the ModsShop sign is and try again" + "\n" + "Money has been refunded");
+				PlayMakerGlobals.Instance.Variables.FindFsmFloat("PlayerMoney").Value += repairProduct.productPrice;
+				return;
+			}
 
             wear = 100;
             //Color has to then also be reset

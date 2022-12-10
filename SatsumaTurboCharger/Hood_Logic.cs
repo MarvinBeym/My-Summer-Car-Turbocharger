@@ -1,8 +1,7 @@
-﻿using ModApi.Attachable;
-using MSCLoader;
-using Parts;
-using SatsumaTurboCharger.parts;
-using Tools;
+﻿using MSCLoader;
+using MscModApi.Caching;
+using MscModApi.Parts;
+using MscModApi.Tools;
 using UnityEngine;
 
 
@@ -11,48 +10,45 @@ namespace SatsumaTurboCharger
     public class Hood_Logic : MonoBehaviour
     {
 
-        private GameObject turboHood;
-        private GameObject turboHoodLatchCollider;
-        private HingeJoint turboHoodHingeJoint;
-        private Rigidbody turboHoodRigidBody;
+		private Part turboHood;
+		private GameObject turboHoodLatchCollider;
+		private HingeJoint turboHoodHingeJoint;
+		private Rigidbody turboHoodRigidBody;
 
         private GameObject originalHoodTrigger;
 
-        private Trigger turboHoodTrigger;
+		private bool open = false;
+		private float springSpeed = 16;
+		private float springDamping = 4;
 
+		private float openedAngle = 87;
+		private float closedAngle = 0;
+		public void Init(Part hoodPart)
+		{
+			turboHood = hoodPart;
 
-        private bool open = false;
-        private float springSpeed = 16;
-        private float springDamping = 4;
+			turboHoodRigidBody = turboHood.GetComponent<Rigidbody>();
+			turboHoodHingeJoint = turboHood.AddComponent<HingeJoint>();
+			turboHoodHingeJoint.connectedBody = CarH.satsuma.GetComponent<Rigidbody>();
+			turboHoodHingeJoint.anchor = new Vector3(0, 0, 0);
+			turboHoodHingeJoint.axis = new Vector3(0, 0, 0);
+			turboHoodHingeJoint.useSpring = true;
+			turboHoodHingeJoint.useLimits = true;
+			turboHoodHingeJoint.limits = new JointLimits
+			{
+				min = -openedAngle,
+				max = closedAngle,
+			};
+			SetHoodAngle(0);
 
-        private float openedAngle = 87;
-        private float closedAngle = 0;
-        public void Init(AdvPart hoodPart)
-        {
-            this.turboHood = hoodPart.rigidPart;
-            turboHoodRigidBody = turboHood.GetComponent<Rigidbody>();
-            turboHoodHingeJoint = turboHood.AddComponent<HingeJoint>();
-            turboHoodHingeJoint.connectedBody = CarH.satsuma.GetComponent<Rigidbody>();
-            turboHoodHingeJoint.anchor = new Vector3(0, 0, 0);
-            turboHoodHingeJoint.axis = new Vector3(0, 0, 0);
-            turboHoodHingeJoint.useSpring = true;
-            turboHoodHingeJoint.useLimits = true;
-            turboHoodHingeJoint.limits = new JointLimits
-            {
-                min = -openedAngle,
-                max = closedAngle,
-            };
-            SetHoodAngle(0);
-
-            this.turboHoodTrigger = hoodPart.partTrigger;
-            turboHoodLatchCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            turboHoodLatchCollider.name = hoodPart.activePart.name.Replace("(Clone)", "_LATCHCOLLIDER");
-            turboHoodLatchCollider.transform.SetParent(turboHood.transform);
-            turboHoodLatchCollider.GetComponent<Collider>().isTrigger = true;
-            turboHoodLatchCollider.GetComponent<Renderer>().enabled = false;
-            turboHoodLatchCollider.transform.localPosition = new Vector3(0f, 0.06f, 0.36f);
-            turboHoodLatchCollider.transform.localEulerAngles = new Vector3(352f, 0f, 0f);
-            turboHoodLatchCollider.transform.localScale = new Vector3(1.21f, 0.05f, 0.85f);
+			turboHoodLatchCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			turboHoodLatchCollider.name = hoodPart.gameObject.name.Replace("(Clone)", "_LATCHCOLLIDER");
+			turboHoodLatchCollider.transform.SetParent(turboHood.transform);
+			turboHoodLatchCollider.GetComponent<Collider>().isTrigger = true;
+			turboHoodLatchCollider.GetComponent<Renderer>().enabled = false;
+			turboHoodLatchCollider.transform.localPosition = new Vector3(0f, 0.06f, 0.36f);
+			turboHoodLatchCollider.transform.localEulerAngles = new Vector3(352f, 0f, 0f);
+			turboHoodLatchCollider.transform.localScale = new Vector3(1.21f, 0.05f, 0.85f);
 
             GameObject normalHood = Game.Find("hood(Clone)");
             GameObject fiberglassHood = Game.Find("fiberglass hood(Clone)");
@@ -69,15 +65,18 @@ namespace SatsumaTurboCharger
             bool normalHoodInstalled = (normalHood.transform.parent != null && normalHood.transform.parent.name == "pivot_hood");
             bool fiberglassHoodInstalled = (fiberglassHood.transform.parent != null && fiberglassHood.transform.parent.name == "pivot_hood");
 
-            if (hoodPart.installed)
-            {
-                if (normalHoodInstalled) { Helper.FindFsmOnGameObject(normalHood, "Removal").SendEvent("REMOVE"); }
-                if (fiberglassHoodInstalled) { Helper.FindFsmOnGameObject(fiberglassHood, "Removal").SendEvent("REMOVE"); }
-            }
+			if (turboHood.IsInstalled())
+			{
+				if (normalHoodInstalled) { Helper.FindFsmOnGameObject(normalHood, "Removal").SendEvent("REMOVE"); }
+				if (fiberglassHoodInstalled) { Helper.FindFsmOnGameObject(fiberglassHood, "Removal").SendEvent("REMOVE"); }
+			}
 
-            turboHoodTrigger.triggerGameObject.SetActive(!normalHoodInstalled && !fiberglassHoodInstalled);
-            originalHoodTrigger.SetActive(!hoodPart.installed);
-        }
+			turboHood.BlockInstall(normalHoodInstalled || fiberglassHoodInstalled);
+			originalHoodTrigger.SetActive(!turboHood.IsInstalled());
+
+			turboHood.AddPostInstallAction(OnTurboHoodAssemble);
+			turboHood.AddPostUninstallAction(OnTurboHoodDisassemble);
+		}
 
         internal void OnTurboHoodAssemble()
         {
@@ -94,14 +93,14 @@ namespace SatsumaTurboCharger
             originalHoodTrigger.SetActive(true);
         }
 
-        private void OnOriginalAssemble()
-        {
-            turboHoodTrigger.triggerGameObject.SetActive(false);
-        }
-        private void OnOriginalDisassemble()
-        {
-            turboHoodTrigger.triggerGameObject.SetActive(true);
-        }
+		private void OnOriginalAssemble()
+		{
+			turboHood.BlockInstall(true);
+		}
+		private void OnOriginalDisassemble()
+		{
+			turboHood.BlockInstall(false);
+		}
 
         void Start()
         {

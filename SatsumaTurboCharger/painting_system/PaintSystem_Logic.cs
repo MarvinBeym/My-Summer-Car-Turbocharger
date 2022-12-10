@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using SatsumaTurboCharger.painting_system;
 using Tools;
+using MscModApi.Parts;
+using MscModApi.Tools;
 
 namespace SatsumaTurboCharger
 {
@@ -15,7 +17,7 @@ namespace SatsumaTurboCharger
 
         public Material[] paintableMaterials;
 
-        private GameObject sprayCanTrigger;
+        private Part part;
 
         // Use this for initialization
         void Start()
@@ -43,7 +45,7 @@ namespace SatsumaTurboCharger
         public void Init(PaintSystem paintSystem, string nameOfMaterial, Color initalColor, GameObject sprayCanTrigger)
         {
             this.paintSystem = paintSystem;
-            this.sprayCanTrigger = sprayCanTrigger;
+            this.part = part;
 
             List<Material> materials = new List<Material>();
             foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>(true))

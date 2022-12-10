@@ -7,15 +7,15 @@ using UnityEngine;
 
 namespace SatsumaTurboCharger
 {
-    public class Hood_Logic : MonoBehaviour
-    {
+	public class Hood_Logic : MonoBehaviour
+	{
 
 		private Part turboHood;
 		private GameObject turboHoodLatchCollider;
 		private HingeJoint turboHoodHingeJoint;
 		private Rigidbody turboHoodRigidBody;
 
-        private GameObject originalHoodTrigger;
+		private GameObject originalHoodTrigger;
 
 		private bool open = false;
 		private float springSpeed = 16;
@@ -58,13 +58,13 @@ namespace SatsumaTurboCharger
 			FsmHook.FsmInject(originalHoodTrigger, "Assemble 2", OnOriginalAssemble);
 			FsmHook.FsmInject(originalHoodTrigger, "Assemble 3", OnOriginalAssemble);
 
-            FsmHook.FsmInject(normalHood, "Remove part", OnOriginalDisassemble);
-            FsmHook.FsmInject(fiberglassHood, "Remove part", OnOriginalDisassemble);
+			FsmHook.FsmInject(normalHood, "Remove part", OnOriginalDisassemble);
+			FsmHook.FsmInject(fiberglassHood, "Remove part", OnOriginalDisassemble);
 
 
 
-            bool normalHoodInstalled = (normalHood.transform.parent != null && normalHood.transform.parent.name == "pivot_hood");
-            bool fiberglassHoodInstalled = (fiberglassHood.transform.parent != null && fiberglassHood.transform.parent.name == "pivot_hood");
+			bool normalHoodInstalled = (normalHood.transform.parent != null && normalHood.transform.parent.name == "pivot_hood");
+			bool fiberglassHoodInstalled = (fiberglassHood.transform.parent != null && fiberglassHood.transform.parent.name == "pivot_hood");
 
 			if (turboHood.IsInstalled())
 			{
@@ -79,20 +79,20 @@ namespace SatsumaTurboCharger
 			turboHood.AddPostUninstallAction(OnTurboHoodDisassemble);
 		}
 
-        internal void OnTurboHoodAssemble()
-        {
-            originalHoodTrigger.SetActive(false);
-        }
-        internal void OnTurboHoodDisassemble()
-        {
-            JointSpring spring = turboHoodHingeJoint.spring;
-            spring.spring = springSpeed;
-            spring.damper = springDamping;
-            spring.targetPosition = -closedAngle;
-            turboHoodHingeJoint.spring = spring;
-            open = false;
-            originalHoodTrigger.SetActive(true);
-        }
+		internal void OnTurboHoodAssemble()
+		{
+			originalHoodTrigger.SetActive(false);
+		}
+		internal void OnTurboHoodDisassemble()
+		{
+			JointSpring spring = turboHoodHingeJoint.spring;
+			spring.spring = springSpeed;
+			spring.damper = springDamping;
+			spring.targetPosition = -closedAngle;
+			turboHoodHingeJoint.spring = spring;
+			open = false;
+			originalHoodTrigger.SetActive(true);
+		}
 
 		private void OnOriginalAssemble()
 		{
@@ -123,15 +123,15 @@ namespace SatsumaTurboCharger
 				}
 			}
 
-        }
+		}
 
-        private void SetHoodAngle(float angle)
-        {
-            JointSpring spring = turboHoodHingeJoint.spring;
-            spring.spring = springSpeed;
-            spring.damper = springDamping;
-            spring.targetPosition = angle;
-            turboHoodHingeJoint.spring = spring;
-        }
-    }
+		private void SetHoodAngle(float angle)
+		{
+			JointSpring spring = turboHoodHingeJoint.spring;
+			spring.spring = springSpeed;
+			spring.damper = springDamping;
+			spring.targetPosition = angle;
+			turboHoodHingeJoint.spring = spring;
+		}
+	}
 }

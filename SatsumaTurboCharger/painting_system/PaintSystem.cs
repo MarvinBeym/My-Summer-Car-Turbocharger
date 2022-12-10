@@ -11,32 +11,32 @@ using UnityEngine;
 namespace SatsumaTurboCharger.painting_system
 {
 
-    public class PaintSystem
-    {
-        public enum State
-        {
-            Painting,
-            NotPainting
-        }
+	public class PaintSystem
+	{
+		public enum State
+		{
+			Painting,
+			NotPainting
+		}
 
 		public Part part;
 
 
-        public State state = State.NotPainting;
+		public State state = State.NotPainting;
 
-        PaintSystem_Logic activeLogic;
-        PaintSystem_Logic rigidLogic;
+		PaintSystem_Logic activeLogic;
+		PaintSystem_Logic rigidLogic;
 
-        public GameObject sprayCanGameObject;
-        public PlayMakerFSM sprayCanFsm;
-        public FsmColor sprayCanColorFsm;
-        public Material carPaintRegular;
+		public GameObject sprayCanGameObject;
+		public PlayMakerFSM sprayCanFsm;
+		public FsmColor sprayCanColorFsm;
+		public Material carPaintRegular;
 
 
-        public Color color;
-        public Color defaultColor;
-        public bool setupDone = false;
-        public bool useCarPaintMaterial = false;
+		public Color color;
+		public Color defaultColor;
+		public bool setupDone = false;
+		public bool useCarPaintMaterial = false;
 
 		public PaintSystem(Dictionary<string, SaveableColor> partsColorSave, Part part, Color defaultColor, bool useCarPaintMaterial = false, string nameOfMaterial = "Paintable")
 		{
@@ -47,25 +47,25 @@ namespace SatsumaTurboCharger.painting_system
 			activeLogic = part.AddWhenInstalledBehaviour<PaintSystem_Logic>();
 			rigidLogic = part.AddWhenUninstalledBehaviour<PaintSystem_Logic>();
 
-            try
-            {
-                color = SaveableColor.ConvertToColor(partsColorSave[part.id]);
-            }
-            catch
-            {
-                color = defaultColor;
-            }
+			try
+			{
+				color = SaveableColor.ConvertToColor(partsColorSave[part.id]);
+			}
+			catch
+			{
+				color = defaultColor;
+			}
 
-            Material[] materialCollecion = Resources.FindObjectsOfTypeAll<Material>();
-            foreach (Material material in materialCollecion)
-            {
-                if (material.name == "CAR_PAINT_REGULAR")
-                {
-                    carPaintRegular = material;
-                    break;
-                }
+			Material[] materialCollecion = Resources.FindObjectsOfTypeAll<Material>();
+			foreach (Material material in materialCollecion)
+			{
+				if (material.name == "CAR_PAINT_REGULAR")
+				{
+					carPaintRegular = material;
+					break;
+				}
 
-            }
+			}
 
 			activeLogic.Init(this, nameOfMaterial, color, part);
 			rigidLogic.Init(this, nameOfMaterial, color, part);
@@ -74,8 +74,8 @@ namespace SatsumaTurboCharger.painting_system
 			sprayCanFsm = sprayCanGameObject.GetComponent<PlayMakerFSM>();
 			sprayCanColorFsm = sprayCanFsm.FsmVariables.FindFsmColor("SprayColor");
 
-            //CUSTOM COLORS // STILL NEEDED/USEFULL
-            /*
+			//CUSTOM COLORS // STILL NEEDED/USEFULL
+			/*
             modSprayColors[0] = new Color(205f / 255, 205f / 255, 205f / 255, 1f);    // white
             modSprayColors[1] = new Color(40f / 255, 40f / 255, 40f / 255, 1f);       // black
             modSprayColors[2] = new Color(205f / 255, 0f / 255, 0f / 255, 1f);        // red
@@ -91,75 +91,75 @@ namespace SatsumaTurboCharger.painting_system
             modSprayColors[12] = new Color(40f / 255, 40f / 255, 40f / 255, 1f);       // mattblack
             */
 
-            //PaintSystem //CAR_PAINT_REGULAR (Instance) // MAYBE STILL NEEDED/USEFULL
-        }
+			//PaintSystem //CAR_PAINT_REGULAR (Instance) // MAYBE STILL NEEDED/USEFULL
+		}
 
-        private void SetColor(Material[] materials, Color color)
-        {
-            this.color = color;
-            foreach (Material material in materials)
-            {
-                material.SetColor("_Color", color);
-            }
-        }
+		private void SetColor(Material[] materials, Color color)
+		{
+			this.color = color;
+			foreach (Material material in materials)
+			{
+				material.SetColor("_Color", color);
+			}
+		}
 
-        public void SetSprayCanColor(Color color)
-        {
-            this.color = color;
-            SetColor(activeLogic.paintableMaterials, color);
-            SetColor(rigidLogic.paintableMaterials, color);
-        }
+		public void SetSprayCanColor(Color color)
+		{
+			this.color = color;
+			SetColor(activeLogic.paintableMaterials, color);
+			SetColor(rigidLogic.paintableMaterials, color);
+		}
 
-        public void SetupPaintSystem()
-        {
-            setupDone = true;
-            FsmHook.FsmInject(sprayCanGameObject, "Stage 1", delegate () { HookPainting(State.NotPainting); });
-            FsmHook.FsmInject(sprayCanGameObject, "Painting", delegate () { HookPainting(State.Painting); });
-        }
+		public void SetupPaintSystem()
+		{
+			setupDone = true;
+			FsmHook.FsmInject(sprayCanGameObject, "Stage 1", delegate () { HookPainting(State.NotPainting); });
+			FsmHook.FsmInject(sprayCanGameObject, "Painting", delegate () { HookPainting(State.Painting); });
+		}
 
-        private void HookPainting(State state)
-        {
-            this.state = state;
-        }
+		private void HookPainting(State state)
+		{
+			this.state = state;
+		}
 
-        public static Dictionary<string, SaveableColor> CollectSave(PaintSystem[] paintSystems)
-        {
-            Dictionary<string, SaveableColor> save = new Dictionary<string, SaveableColor>();
-            foreach (PaintSystem paintSystem in paintSystems)
-            {
-                save[paintSystem.part.id] = SaveableColor.ConvertToSaveable(paintSystem.color);
-            }
-            return save;
-        }
+		public static Dictionary<string, SaveableColor> CollectSave(PaintSystem[] paintSystems)
+		{
+			Dictionary<string, SaveableColor> save = new Dictionary<string, SaveableColor>();
+			foreach (PaintSystem paintSystem in paintSystems)
+			{
+				save[paintSystem.part.id] = SaveableColor.ConvertToSaveable(paintSystem.color);
+			}
+			return save;
+		}
 
-        internal void SetMetal(float metal = 0f, float gloss = 0.5f)
-        {
-            foreach (Material material in activeLogic.paintableMaterials)
-            {
-                material.SetFloat("_Metallic", metal);
-                material.SetFloat("_Glossiness", gloss);
-            }
-            foreach (Material material in rigidLogic.paintableMaterials)
-            {
-                material.SetFloat("_Metallic", metal);
-                material.SetFloat("_Glossiness", gloss);
-            }
-        }
-        internal static void Save(Mod mod, string saveFile, PaintSystem[] paintSystems)
-        {
-            try
-            {
-                Dictionary<string, SaveableColor> save = new Dictionary<string, SaveableColor>();
-                foreach (PaintSystem paintSystem in paintSystems)
-                {
-                    save[paintSystem.part.id] = SaveableColor.ConvertToSaveable(paintSystem.color);
-                }
-                SaveLoad.SerializeSaveFile<Dictionary<string, SaveableColor>>(mod, save, saveFile);
-            }
-            catch (Exception ex)
-            {
-                Logger.New("Error while trying to save color information", ex);
-            }
-        }
-    }
+		internal void SetMetal(float metal = 0f, float gloss = 0.5f)
+		{
+			foreach (Material material in activeLogic.paintableMaterials)
+			{
+				material.SetFloat("_Metallic", metal);
+				material.SetFloat("_Glossiness", gloss);
+			}
+			foreach (Material material in rigidLogic.paintableMaterials)
+			{
+				material.SetFloat("_Metallic", metal);
+				material.SetFloat("_Glossiness", gloss);
+			}
+		}
+		internal static void Save(Mod mod, string saveFile, PaintSystem[] paintSystems)
+		{
+			try
+			{
+				Dictionary<string, SaveableColor> save = new Dictionary<string, SaveableColor>();
+				foreach (PaintSystem paintSystem in paintSystems)
+				{
+					save[paintSystem.part.id] = SaveableColor.ConvertToSaveable(paintSystem.color);
+				}
+				SaveLoad.SerializeSaveFile<Dictionary<string, SaveableColor>>(mod, save, saveFile);
+			}
+			catch (Exception ex)
+			{
+				Logger.New("Error while trying to save color information", ex);
+			}
+		}
+	}
 }

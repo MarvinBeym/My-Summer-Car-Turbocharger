@@ -47,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Editor\CreateAssetBundles.cs" />
-     <None Include="Assets\other\3DText.shader" />
+     <None Include="Assets\new turbo\3DText.shader" />
      <None Include="Assets\Materials\Fire\AdditiveTintable.shader" />
      <None Include="Assets\other stuff\Custom3DTextDigital.shader" />
  <Reference Include="UnityEngine.UI">

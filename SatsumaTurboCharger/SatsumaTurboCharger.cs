@@ -259,18 +259,18 @@ namespace SatsumaTurboCharger
 
 		public override void OnLoad()
 		{
-			ModConsole.Print(this.Name + $" [v{this.Version} started loading");
+			ModConsole.Print(Name + $" [v{Version} started loading");
 
 			ecuModInstalled = ModLoader.IsModPresent("DonnerTech_ECU_Mod");
 
-			guiDebug = new GuiDebug(Screen.width - 310, 50, 300, "ECU MOD DEBUG", new GuiDebugElement[]
+			guiDebug = new GuiDebug(Screen.width - 310, 50, 300, "ECU MOD DEBUG", new[]
 			{
 				new GuiDebugElement("DEBUG"),
 				new GuiDebugElement("Wear"),
 			});
 
 			resetPosSetting.DoAction = PosReset;
-			useCustomGearRatios.DoAction = new Action(delegate()
+			useCustomGearRatios.DoAction = delegate
 			{
 				if ((bool)useCustomGearRatios.Value)
 				{
@@ -280,7 +280,7 @@ namespace SatsumaTurboCharger
 				{
 					CarH.drivetrain.gearRatios = originalGearRatios;
 				}
-			});
+			};
 			assetsBundle = Helper.LoadAssetBundle(this, "turbochargermod.unity3d");
 
 			try
@@ -355,7 +355,7 @@ namespace SatsumaTurboCharger
 				new Vector3(0.59f, 0.59f, 0.59f));
 			manifold_weber_part.AddClampModel(new Vector3(-0.1235f, -0.0061f, -0.02f), new Vector3(-20, 0, 0),
 				new Vector3(0.59f, 0.59f, 0.59f));
-			manifold_weber_part.AddScrews(new Screw[]
+			manifold_weber_part.AddScrews(new[]
 			{
 				new Screw(new Vector3(0.1275f, -0.0061f, -0.02f), new Vector3(0, 0, 0)),
 				new Screw(new Vector3(0.1275f, -0.0061f, -0.02f), new Vector3(0, 0, 0)),
@@ -380,7 +380,7 @@ namespace SatsumaTurboCharger
 
 			intercooler_part = new Part("intercooler", "Intercooler", CarH.satsuma, new Vector3(0.0f, -0.162f, 1.6775f),
 				new Vector3(0, 180, 0), partBaseInfo);
-			intercooler_part.AddScrews(new Screw[]
+			intercooler_part.AddScrews(new[]
 			{
 				new Screw(new Vector3(-0.245f, 0.081f, 0.039f), new Vector3(180, 0, 0)),
 				new Screw(new Vector3(0.265f, 0.081f, 0.039f), new Vector3(180, 0, 0)),
@@ -398,7 +398,7 @@ namespace SatsumaTurboCharger
 				new Vector3(0, 90, -90), new Vector3(0.65f, 0.65f, 0.65f));
 			intercooler_manifold_weber_tube_part.AddClampModel(new Vector3(0.143f, 0.232f, 0.2955f),
 				new Vector3(0, 90, 0), new Vector3(0.65f, 0.65f, 0.65f));
-			intercooler_manifold_weber_tube_part.AddScrews(new Screw[]
+			intercooler_manifold_weber_tube_part.AddScrews(new[]
 			{
 				new Screw(new Vector3(-0.0675f, -0.243f, -0.479f), new Vector3(-90, 0, 0)),
 				new Screw(new Vector3(0 - 0.152f, 0.254f, 0.213f), new Vector3(0, 0, 0)),
@@ -426,7 +426,7 @@ namespace SatsumaTurboCharger
 				new Vector3(90, 0, 0),
 				partBaseInfo
 			);
-			exhaust_header_part.AddScrews(new Screw[]
+			exhaust_header_part.AddScrews(new[]
 			{
 				new Screw(new Vector3(0.169f, 0.076f, -0.022f), new Vector3(0, 0, 0), Screw.Type.Nut),
 				new Screw(new Vector3(0.13f, 0.0296f, -0.022f), new Vector3(0, 0, 0), Screw.Type.Nut),
@@ -443,7 +443,7 @@ namespace SatsumaTurboCharger
 				new Vector3(90, 0, 0),
 				partBaseInfo
 			);
-			turboBig_exhaust_inlet_tube_part.AddScrews(new Screw[]
+			turboBig_exhaust_inlet_tube_part.AddScrews(new[]
 			{
 				new Screw(new Vector3(0.205f, -0.055f, -0.05f), new Vector3(-90, 0, 0)),
 				new Screw(new Vector3(0.262f, -0.055f, -0.05f), new Vector3(-90, 0, 0)),
@@ -457,7 +457,7 @@ namespace SatsumaTurboCharger
 				new Vector3(90, 0, 0),
 				partBaseInfo
 			);
-			turboBig_exhaust_outlet_tube_part.AddScrews(new Screw[]
+			turboBig_exhaust_outlet_tube_part.AddScrews(new[]
 			{
 				new Screw(new Vector3(0f, 0.206f, -0.055f), new Vector3(0, 0, 0)),
 				new Screw(new Vector3(-0.042f, 0.164f, -0.055f), new Vector3(0, 0, 0)),
@@ -487,7 +487,7 @@ namespace SatsumaTurboCharger
 				new Vector3(0, 0, 0),
 				partBaseInfo
 			);
-			turboBig_exhaust_outlet_straight_part.AddScrews(new Screw[]
+			turboBig_exhaust_outlet_straight_part.AddScrews(new[]
 			{
 				new Screw(new Vector3(0, 0, 0), new Vector3(0, 0, 0)),
 				new Screw(new Vector3(0, 0, 0), new Vector3(0, 0, 0)),
@@ -529,7 +529,7 @@ namespace SatsumaTurboCharger
 				new Vector3(0, 180, 0),
 				partBaseInfo
 			);
-			turboBig_hood_part.AddScrews(new Screw[]
+			turboBig_hood_part.AddScrews(new[]
 			{
 				new Screw(new Vector3(0.4075f, 0.01f, 0.02f), new Vector3(90, 0, 0)),
 				new Screw(new Vector3(0.4075f, 0.01f, 0.02f), new Vector3(90, 0, 0)),
@@ -565,7 +565,7 @@ namespace SatsumaTurboCharger
 				new Vector3(0, 90, 0), new Vector3(0.62f, 0.62f, 0.62f));
 			turboSmall_intercooler_tube_part.AddClampModel(new Vector3(0.0225f, 0.24f, 0.313f), new Vector3(90, 0, 0),
 				new Vector3(0.5f, 0.5f, 0.5f));
-			turboSmall_intercooler_tube_part.AddScrews(new Screw[]
+			turboSmall_intercooler_tube_part.AddScrews(new[]
 			{
 				new Screw(new Vector3(0.034f, -0.13f, -0.1638f), new Vector3(180f, 0f, 0f)),
 				new Screw(new Vector3(0.014f, 0.24f, 0.332f), new Vector3(0f, -90f, 0f)),
@@ -592,7 +592,7 @@ namespace SatsumaTurboCharger
 				new Vector3(90, 0, 0),
 				partBaseInfo
 			);
-			turboSmall_exhaust_inlet_tube_part.AddScrews(new Screw[]
+			turboSmall_exhaust_inlet_tube_part.AddScrews(new[]
 			{
 				new Screw(new Vector3(0.114f, -0.044f, -0.035f), new Vector3(-90f, 0f, 0f)),
 				new Screw(new Vector3(0.06f, -0.044f, -0.044f), new Vector3(-90f, 0f, 0f)),
@@ -648,7 +648,7 @@ namespace SatsumaTurboCharger
 
 			turboBig_kit = new Kit(
 				"Racing Turbocharger Kit",
-				new Part[]
+				new[]
 				{
 					turboBig_part,
 					turboBig_intercooler_tube_part,
@@ -657,7 +657,7 @@ namespace SatsumaTurboCharger
 				});
 			turboSmall_kit = new Kit(
 				"GT Turbocharger Kit",
-				new Part[]
+				new[]
 				{
 					turboSmall_part,
 					turboSmall_exhaust_inlet_tube_part,
@@ -667,14 +667,14 @@ namespace SatsumaTurboCharger
 
 			manifoldWeber_kit = new Kit(
 				"Weber Kit",
-				new Part[]
+				new[]
 				{
 					manifold_weber_part,
 					intercooler_manifold_weber_tube_part
 				});
 			manifoldTwinCarb_kit = new Kit(
 				"TwinCarb Kit",
-				new Part[]
+				new[]
 				{
 					manifold_twinCarb_part,
 					intercooler_manifold_twinCarb_tube_part
@@ -685,7 +685,7 @@ namespace SatsumaTurboCharger
 			var shopSpawnLocation = Shop.SpawnLocation.Fleetari.Counter;
 
 
-			Shop.Add(shopBaseInfo, Shop.ShopLocation.Fleetari, new ShopItem[]
+			Shop.Add(shopBaseInfo, Shop.ShopLocation.Fleetari, new[]
 			{
 				new ShopItem("Racing Turbocharger Kit", 8100, shopSpawnLocation, turboBig_kit),
 				new ShopItem("GT Turbocharger Kit", 4150, shopSpawnLocation, turboSmall_kit),
@@ -744,7 +744,7 @@ namespace SatsumaTurboCharger
 
 			racingTurbo = new Turbo(this, turboBig_part, boostSave, "turbocharger_loop.wav", "grinding sound.wav",
 				"turbocharger_blowoff.wav",
-				new bool[]
+				new[]
 				{
 					true,
 					false,
@@ -832,7 +832,7 @@ namespace SatsumaTurboCharger
 			racingTurbo.SetConditions(racingTurbo_conditions);
 
 			gtTurbo = new Turbo(this, turboSmall_part, boostSave, "turbocharger_loop.wav", "grinding sound.wav", null,
-				new bool[]
+				new[]
 				{
 					false,
 					true,
@@ -842,7 +842,7 @@ namespace SatsumaTurboCharger
 			SetupInspectionPrevention();
 			assetsBundle.Unload(false);
 
-			ModConsole.Print(this.Name + $" [v{this.Version} finished loading");
+			ModConsole.Print(Name + $" [v{Version} finished loading");
 		}
 
 		private void SetupInspectionPrevention()

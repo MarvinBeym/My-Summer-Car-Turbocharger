@@ -51,13 +51,13 @@ namespace SatsumaTurboCharger
 		{
 			this.boostGauge = boostGauge;
 
-			GameObject digitalTextObject = this.transform.FindChild("boost_gauge_digital_text").gameObject;
+			GameObject digitalTextObject = this.transform.FindChild("boost-gauge-digital-text").gameObject;
 
-			analogDigitalSwitch = this.transform.FindChild("boost_gauge_button").gameObject;
+			analogDigitalSwitch = this.transform.FindChild("boost-gauge-button").gameObject;
 
-			analogNeedle = this.transform.FindChild("boost_gauge_needle").gameObject;
+			analogNeedle = this.transform.FindChild("boost-gauge-needle").gameObject;
 			analogNeedleAnimation = analogNeedle.GetComponent<Animation>();
-			foreach (Material material in this.transform.FindChild("boost_gauge__").GetComponent<Renderer>().materials)
+			foreach (Material material in this.transform.FindChild("boost-gauge-main").GetComponent<Renderer>().materials)
 			{
 				if (!material.name.Contains("boost_gauge_foreground")) { continue; }
 				foregroundMaterial = material;

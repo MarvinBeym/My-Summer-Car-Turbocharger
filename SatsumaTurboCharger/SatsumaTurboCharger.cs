@@ -105,7 +105,6 @@ namespace SatsumaTurboCharger
 
 		//Saves
 		public Dictionary<string, float> partsWearSave;
-		public Dictionary<string, bool> partsBuySave;
 
 		public Dictionary<string, float> boostSave;
 
@@ -115,60 +114,6 @@ namespace SatsumaTurboCharger
 		private const string boost_saveFile = "turbocharger_mod_boost_SaveFile.txt";
 		private const string wear_saveFile = "wear_saveFile.json";
 
-		private const string screwableV2_saveFile = "screwableV2_saveFile.json";
-		private const string color_saveFile = "color_saveFile.json";
-
-		//
-		//Install & Spawn Locations
-		//
-
-		//Big Turbo
-		private Vector3
-			turboBig_installLocation = new Vector3(-0.300799f, 0.271159f, 0.01994999f); //DONE                       
-
-		private Vector3 turboBig_intercooler_tube_installLocation = new Vector3(-0.346378f, 0.201461f, 0.25025f); //DONE
-
-		private Vector3 turboBig_exhaust_inlet_tube_installLocation =
-			new Vector3(-0.234201f, -0.020159f, 0.09884f); //DONE
-
-		private Vector3 turboBig_exhaust_outlet_tube_installLocation =
-			new Vector3(-0.307337f, 1.044137f, 0.456764f); //DONE
-
-		private Vector3
-			turboBig_blowoff_valve_installLocation = new Vector3(0.026583f, 0.139111f, 0.15561f); //DONE             
-
-		private Vector3
-			turboBig_exhaust_outlet_straight_installLocation = new Vector3(-0.0185f, 0.0385f, 0.159f); //DONE          
-
-		private Vector3 turboBig_hood_installLocation = new Vector3(0, 0.2408085f, 1.68f); //DONE                   
-
-		//Small Turbo
-		private Vector3 turboSmall_installLocation = new Vector3(-0.25f, -0.1665f, 0.0001f);
-		private Vector3 turboSmall_manifold_twinCarb_tube_installLocation = new Vector3(-0.188f, -0.23f, 0.14f);
-		private Vector3 turboSmall_intercooler_tube_installLocation = new Vector3(0.316f, -0.041f, 1.518f);
-		private Vector3 turboSmall_exhaust_inlet_tube_installLocation = new Vector3(-0.0918f, -0.1774f, -0.094f);
-		private Vector3 turboSmall_exhaust_outlet_tube_installLocation = new Vector3(-0.1825f, -0.267f, -0.145f);
-		private Vector3 turboSmall_airfilter_installLocation = new Vector3(-0.25f, -0.04f, 0.0001f);
-
-		//Other Parts        
-		private Vector3 manifold_weber_installLocation = new Vector3(-0.009812f, -0.12237f, 0.031888f); //DONE
-		private Vector3 manifold_twinCarb_installLocation = new Vector3(-0.007944f, -0.13087f, -0.0316f); //DONE   
-		private Vector3 boost_gauge_installLocation = new Vector3(0.4f, -0.019f, 0.152f); //DONE 
-		private Vector3 intercooler_installLocation = new Vector3(0.0f, -0.162f, 1.6775f); //DONE
-
-		private Vector3 intercooler_manifold_weber_tube_installLocation =
-			new Vector3(0.365165f, -0.139772f, -0.23436f); //DONE             
-
-		private Vector3 intercooler_manifold_twinCarb_tube_installLocation =
-			new Vector3(0.325294f, -0.180286f, -0.29813f); //DONE              
-
-		private Vector3
-			exhaust_header_installLocation =
-				new Vector3(-0.005f, -0.089f, -0.068809f); //DONE                            
-
-		//
-		//Game Objects
-		//
 		//Parts
 		private GameObject weberCarb;
 		private GameObject twinCarb;
@@ -392,7 +337,6 @@ namespace SatsumaTurboCharger
 			try
 			{
 				partsWearSave = Helper.LoadSaveOrReturnNew<Dictionary<string, float>>(this, wear_saveFile);
-				partsBuySave = Helper.LoadSaveOrReturnNew<Dictionary<string, bool>>(this, modsShop_saveFile);
 				boostSave = Helper.LoadSaveOrReturnNew<Dictionary<string, float>>(this, boost_saveFile);
 			}
 			catch (Exception ex)
@@ -402,7 +346,7 @@ namespace SatsumaTurboCharger
 
 			partBaseInfo = new PartBaseInfo(this, assetsBundle, partsList);
 			manifold_weber_part = new Part("manifold-weberCarb", "Weber Manifold", weberCarb,
-				manifold_weber_installLocation, new Vector3(90, 0, 0), partBaseInfo);
+				new Vector3(-0.009812f, -0.12237f, 0.031888f), new Vector3(90, 0, 0), partBaseInfo);
 			manifold_weber_part.AddClampModel(new Vector3(0.1275f, -0.0061f, -0.02f), new Vector3(-20, 0, 0),
 				new Vector3(0.59f, 0.59f, 0.59f));
 			manifold_weber_part.AddClampModel(new Vector3(0.051f, -0.0061f, -0.02f), new Vector3(-20, 0, 0),
@@ -420,21 +364,21 @@ namespace SatsumaTurboCharger
 			}, 0.5f);
 
 			manifold_twinCarb_part = new Part("manifold-twinCarb", "TwinCarb Manifold", twinCarb,
-				manifold_twinCarb_installLocation, new Vector3(90, 0, 0), partBaseInfo);
+				new Vector3(-0.007944f, -0.13087f, -0.0316f), new Vector3(90, 0, 0), partBaseInfo);
 			manifold_twinCarb_part.AddClampModel(new Vector3(-0.013f, 0.105f, 0f), new Vector3(90, 0, 0),
 				new Vector3(0.8f, 0.8f, 0.8f));
 			manifold_twinCarb_part.AddScrew(new Screw(new Vector3(-0.003f, 0.105f, 0.0305f), new Vector3(0, 90, 0),
 				Screw.Type.Normal, 0.5f));
 
 			boost_gauge_part = new Part("boost-gauge", "Boost Gauge", Cache.Find("dashboard(Clone)"),
-				boost_gauge_installLocation, new Vector3(90, 0, 0), partBaseInfo);
+				new Vector3(0.4f, -0.019f, 0.152f), new Vector3(90, 0, 0), partBaseInfo);
 			boost_gauge_part.AddScrew(new Screw(new Vector3(0f, -0.0405f, 0.003f), new Vector3(-90, 0, 0),
 				Screw.Type.Normal, 0.4f));
 
 			boostGaugeLogic = boost_gauge_part.AddWhenInstalledBehaviour<BoostGauge_Logic>();
 			boostGaugeLogic.Init(boost_gauge_part);
 
-			intercooler_part = new Part("intercooler", "Intercooler", CarH.satsuma, intercooler_installLocation,
+			intercooler_part = new Part("intercooler", "Intercooler", CarH.satsuma, new Vector3(0.0f, -0.162f, 1.6775f),
 				new Vector3(0, 180, 0), partBaseInfo);
 			intercooler_part.AddScrews(new Screw[]
 			{
@@ -446,7 +390,7 @@ namespace SatsumaTurboCharger
 				"intercooler-manifold-weberCarb-tube",
 				"Weber Intercooler-Manifold Tube",
 				manifold_weber_part,
-				intercooler_manifold_weber_tube_installLocation,
+				new Vector3(0.365165f, -0.139772f, -0.23436f),
 				new Vector3(0, 0, 0),
 				partBaseInfo
 			);
@@ -464,7 +408,7 @@ namespace SatsumaTurboCharger
 				"intercooler-manifold-twinCarb-tube",
 				"TwinCarb Intercooler-Manifold Tube",
 				manifold_twinCarb_part,
-				intercooler_manifold_twinCarb_tube_installLocation,
+				new Vector3(0.325294f, -0.180286f, -0.29813f),
 				new Vector3(0, 0, 0),
 				partBaseInfo
 			);
@@ -473,11 +417,12 @@ namespace SatsumaTurboCharger
 			intercooler_manifold_twinCarb_tube_part.AddScrew(new Screw(new Vector3(-0.0425f, -0.1205f, -0.241f),
 				new Vector3(180, 0, 0), Screw.Type.Normal, 0.4f));
 
+			var exhaustHeaderInstallLocation = new Vector3(-0.005f, -0.089f, -0.068809f);
 			exhaust_header_part = new Part(
 				"exhaust-header",
 				"Turbo Exhaust Header",
 				originalCylinerHead,
-				exhaust_header_installLocation,
+				exhaustHeaderInstallLocation,
 				new Vector3(90, 0, 0),
 				partBaseInfo
 			);
@@ -494,7 +439,7 @@ namespace SatsumaTurboCharger
 				"turboBig-exhaust-inlet-tube",
 				"Racing Turbo Exhaust Inlet Tube",
 				originalCylinerHead,
-				exhaust_header_installLocation,
+				exhaustHeaderInstallLocation,
 				new Vector3(90, 0, 0),
 				partBaseInfo
 			);
@@ -508,7 +453,7 @@ namespace SatsumaTurboCharger
 				"turboBig-exhaust-outlet-tube",
 				"Racing Turbo Exhaust Outlet Tube",
 				Cache.Find("racing exhaust(Clone)"),
-				turboBig_exhaust_outlet_tube_installLocation,
+				new Vector3(-0.307337f, 1.044137f, 0.456764f),
 				new Vector3(90, 0, 0),
 				partBaseInfo
 			);
@@ -524,7 +469,7 @@ namespace SatsumaTurboCharger
 				"turboBig",
 				"Racing Turbo",
 				turboBig_exhaust_inlet_tube_part,
-				turboBig_installLocation,
+				 new Vector3(-0.300799f, 0.271159f, 0.01994999f),
 				new Vector3(0, 0, 0),
 				partBaseInfo
 			);
@@ -538,7 +483,7 @@ namespace SatsumaTurboCharger
 				"turboBig-exhaust-outlet-straight-tube",
 				"Racing Turbo Exhaust Straight",
 				turboBig_part,
-				turboBig_exhaust_outlet_straight_installLocation,
+				new Vector3(-0.0185f, 0.0385f, 0.159f),
 				new Vector3(0, 0, 0),
 				partBaseInfo
 			);
@@ -554,7 +499,7 @@ namespace SatsumaTurboCharger
 				"turboBig-intercooler-tube",
 				"Racing Turbo Intercooler Tube",
 				intercooler_part,
-				turboBig_intercooler_tube_installLocation,
+				new Vector3(-0.346378f, 0.201461f, 0.25025f),
 				new Vector3(0, 0, 0),
 				partBaseInfo
 			);
@@ -567,7 +512,7 @@ namespace SatsumaTurboCharger
 				"turboBig-blowoff-valve",
 				"Racing Turbo Blowoff Valve",
 				turboBig_intercooler_tube_part,
-				turboBig_blowoff_valve_installLocation,
+				new Vector3(0.026583f, 0.139111f, 0.15561f),
 				new Vector3(0, 0, 45),
 				partBaseInfo
 			);
@@ -580,7 +525,7 @@ namespace SatsumaTurboCharger
 				"turboBig-hood",
 				"Racing Turbo Hood",
 				CarH.satsuma,
-				turboBig_hood_installLocation,
+				new Vector3(0, 0.2408085f, 1.68f),
 				new Vector3(0, 180, 0),
 				partBaseInfo
 			);
@@ -599,7 +544,7 @@ namespace SatsumaTurboCharger
 				"turboSmall",
 				"GT Turbo",
 				originalCylinerHead,
-				turboSmall_installLocation,
+				new Vector3(-0.25f, -0.1665f, 0.0001f),
 				new Vector3(90, 0, 0),
 				partBaseInfo
 			);
@@ -612,7 +557,7 @@ namespace SatsumaTurboCharger
 				"turboSmall-intercooler-tube",
 				"GT Turbo Intercooler Tube",
 				CarH.satsuma,
-				turboSmall_intercooler_tube_installLocation,
+				new Vector3(0.316f, -0.041f, 1.518f),
 				new Vector3(0, 180, 0),
 				partBaseInfo
 			);
@@ -630,7 +575,7 @@ namespace SatsumaTurboCharger
 				"turboSmall-airfilter",
 				"GT Turbo Airfilter",
 				originalCylinerHead,
-				turboSmall_airfilter_installLocation,
+				new Vector3(-0.25f, -0.04f, 0.0001f),
 				new Vector3(90, 0, 0),
 				partBaseInfo
 			);
@@ -643,7 +588,7 @@ namespace SatsumaTurboCharger
 				"turboSmall-exhaust-inlet-tube",
 				"GT Turbo Exhaust Inlet Tube",
 				originalCylinerHead,
-				turboSmall_exhaust_inlet_tube_installLocation,
+				new Vector3(-0.0918f, -0.1774f, -0.094f),
 				new Vector3(90, 0, 0),
 				partBaseInfo
 			);
@@ -657,7 +602,7 @@ namespace SatsumaTurboCharger
 				"turboSmall-exhaust-outlet-tube",
 				"GT Turbo Exhaust Outlet Tube",
 				originalCylinerHead,
-				turboSmall_exhaust_outlet_tube_installLocation,
+				new Vector3(-0.1825f, -0.267f, -0.145f),
 				new Vector3(90, 0, 0),
 				partBaseInfo
 			);

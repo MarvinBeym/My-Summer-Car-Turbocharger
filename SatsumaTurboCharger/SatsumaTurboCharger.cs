@@ -109,8 +109,6 @@ namespace SatsumaTurboCharger
 		public Dictionary<string, float> boostSave;
 
 		//Files
-		private const string logger_saveFile = "turbo_mod.log";
-		private const string modsShop_saveFile = "mod_shop_saveFile.json";
 		private const string boost_saveFile = "turbocharger_mod_boost_SaveFile.txt";
 		private const string wear_saveFile = "wear_saveFile.json";
 
@@ -260,6 +258,7 @@ namespace SatsumaTurboCharger
 		public override void OnLoad()
 		{
 			ModConsole.Print(Name + $" [v{Version} started loading");
+			Logger.InitLogger(this);
 
 			ecuModInstalled = ModLoader.IsModPresent("DonnerTech_ECU_Mod");
 

@@ -8,15 +8,15 @@ namespace SatsumaTurboCharger.part
 	{
 		protected override string partId => "turboSmall-airfilter";
 		protected override string partName => "GT Turbo Airfilter";
-		protected override Vector3 partInstallPosition => new Vector3(-0.25f, -0.04f, 0.0001f);
-		protected override Vector3 partInstallRotation => new Vector3(90, 0, 0);
+		protected override Vector3 partInstallPosition => new Vector3(0f, 0.02525f, -0.172f);
+		protected override Vector3 partInstallRotation => new Vector3(-90, 0, 0);
 
-		public TurboSmallAirfilter() : base(Cache.Find("cylinder head(Clone)"), SatsumaTurboCharger.partBaseInfo)
+		public TurboSmallAirfilter(TurboSmall parent) : base(parent, SatsumaTurboCharger.partBaseInfo)
 		{
-			AddClampModel(new Vector3(0f, 0f, 0.049f), new Vector3(0, 0, 0),
-				new Vector3(0.65f, 0.65f, 0.65f));
-			AddScrew(new Screw(new Vector3(0.0095f, 0.025f, 0.0488f), new Vector3(0, 90, 0),
-				Screw.Type.Normal, 0.4f));
+			AddClampModel(new Vector3(0f, -0.115f, -0.025f), new Vector3(90, 0, 0),
+				new Vector3(1.02f, 1.02f, 1.02f));
+			AddScrew(new Screw(new Vector3(0.0254f, -0.1150f, 0.0145f), new Vector3(0, 90, 0),
+				Screw.Type.Normal, 0.5f));
 		}
 
 

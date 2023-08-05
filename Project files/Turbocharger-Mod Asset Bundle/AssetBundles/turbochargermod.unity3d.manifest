@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1383221110
+CRC: 3196693563
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: f0446507b5ff8c43e95ee122256c2dac
+    Hash: 15f8704b61bc17ebd170fdc9426fec66
   TypeTreeHash:
     serializedVersion: 2
     Hash: 73bc32fab9372834e75637ce3e60f709
@@ -53,7 +53,7 @@ Assets:
 - Assets/ProductImages/repair_turbocharger_small_ProductImage.png
 - Assets/ProductImages/turbocharger_manifold_twinCarb_kit_ProductImage.png
 - Assets/new turbo/files/other/manifold-weberCarb.prefab
-- Assets/new turbo/files/turboSmall/turboSmall-intercooler-tube.prefab
+- Assets/new turbo/files/turboSmall/turboSmall-intercooler-tube/turboSmall-intercooler-tube.prefab
 - Assets/turboBig/turboBig.prefab
 - Assets/ProductImages/repair_intercooler_ProductImage.png
 - Assets/turboBig/turboBig_exhaust_outlet_tube.prefab

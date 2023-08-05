@@ -7,6 +7,7 @@ using SatsumaTurboCharger.wear;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using SatsumaTurboCharger.part;
 using UnityEngine;
 
 
@@ -63,12 +64,14 @@ namespace SatsumaTurboCharger.turbo
 		private ModAudio loop_audio = new ModAudio();
 		private ModAudio grinding_audio = new ModAudio();
 		private ModAudio blowoff_audio = new ModAudio();
+		public readonly BoostGauge boostGauge;
 
-		public Turbo(SatsumaTurboCharger mod, Part part, Dictionary<string, float> boostSave, string loopSoundFile, string grindingSoundFIle, string blowoffSoundFile, bool[] requiredInstalled, TurboConfiguration config, GameObject boostChangingGameObject)
+		public Turbo(BoostGauge boostGauge, SatsumaTurboCharger mod, Part part, Dictionary<string, float> boostSave, string loopSoundFile, string grindingSoundFIle, string blowoffSoundFile, bool[] requiredInstalled, TurboConfiguration config, GameObject boostChangingGameObject)
 		{
 			this.mod = mod;
 			this.part = part;
 			this.config = config;
+			this.boostGauge = boostGauge;
 			logic = this.part.AddWhenInstalledBehaviour<Turbo_Logic>();
 			logic.Init(mod, this);
 			ecu_mod_installed = SetupEcuMod();

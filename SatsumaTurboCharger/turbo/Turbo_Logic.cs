@@ -108,7 +108,7 @@ namespace SatsumaTurboCharger.turbo
 
 			float boostGaugeTarget = UserInteraction.ThrottleDown ? boostBeforeRelease : config.boostMin;
 
-			mod.boostGaugeLogic.SetBoost(boostGaugeTarget, boostBeforeRelease, config);
+			turbo.boostGauge.SetBoost(boostGaugeTarget, boostBeforeRelease, config);
 
 			turbo.rpm = turbo.CalculateRpm(engineRpm, config.rpmMultiplier);
 

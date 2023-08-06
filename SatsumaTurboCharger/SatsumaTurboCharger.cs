@@ -352,6 +352,7 @@ namespace SatsumaTurboCharger
             intercoolerManifoldWeberTube = new IntercoolerManifoldWeberTube(manifoldWeber);
             intercoolerManifoldTwinCarbTube = new IntercoolerManifoldTwinCarbTube(manifoldTwinCarb);
             exhaustHeader = new ExhaustHeader();
+
             turboBigExhaustInletTube = new TurboBigExhaustInletTube(exhaustHeader);
             turboBigExhaustOutletTube = new TurboBigExhaustOutletTube();
             turboBigIntercoolerTube = new TurboBigIntercoolerTube(intercooler);
@@ -362,14 +363,10 @@ namespace SatsumaTurboCharger
             turboBig.AddBackfire(turboBigExhaustOutletStraight);
             turboBigHood = new TurboBigHood();
 
-            turboSmall = new TurboSmall(this, boostSave);
-
-            turboSmallIntercoolerTube = new TurboSmallIntercoolerTube();
-
-            turboSmallAirfilter = new TurboSmallAirfilter();
-
-
-            turboSmallExhaustInletTube = new TurboSmallExhaustInletTube();
+            turboSmallExhaustInletTube = new TurboSmallExhaustInletTube(exhaustHeader);
+            turboSmall = new TurboSmall(turboSmallExhaustInletTube, this, boostSave);
+            turboSmallIntercoolerTube = new TurboSmallIntercoolerTube(intercooler);
+            turboSmallAirfilter = new TurboSmallAirfilter(turboSmall);
 
             turboSmallExhaustOutletTube = new TurboSmallExhaustOutletTube();
 
@@ -460,6 +457,8 @@ namespace SatsumaTurboCharger
                 new ShopItem("Boost Gauge", 180, shopSpawnLocation, boostGauge),
                 new ShopItem("Turbocharger Exhaust Header", 2100, shopSpawnLocation, exhaustHeader),
             });
+
+            SetupPartInstallBlocking();
 
             //Temporary => Adapt to fit gt turbo style
 
@@ -656,49 +655,108 @@ namespace SatsumaTurboCharger
             }*/
 
             HandleExhaustSystem();
-            //HandlePartsTrigger();
         }
 
-        private void HandlePartsTrigger()
+        private void SetupPartInstallBlocking()
         {
+            //Block different exhausts for bigTurbo
+	        turboBigExhaustOutletStraight.AddPostInstallAction(() =>
+	        {
+		        turboBigExhaustOutletTube.installBlocked = true;
+		        
+		        turboSmallExhaustOutletTube.installBlocked = true;
+	        });
+	        turboBigExhaustOutletStraight.AddPostUninstallAction(() =>
+	        {
+		        turboBigExhaustOutletTube.installBlocked = false;
+		        
+		        turboSmallExhaustOutletTube.installBlocked = false;
+	        });
+	        turboBigExhaustOutletTube.AddPostInstallAction(() =>
+	        {
+		        turboBigExhaustOutletStraight.installBlocked = true;
+		        
+		        turboSmallExhaustOutletTube.installBlocked = true;
+	        });
+	        turboBigExhaustOutletTube.AddPostUninstallAction(() =>
+	        {
+		        turboBigExhaustOutletStraight.installBlocked = false;
+
+		        turboSmallExhaustOutletTube.installBlocked = false;
+	        });
+
+            //Block different exhausts for smallTurbo
+            turboSmallExhaustOutletTube.AddPostInstallAction(() =>
+	        {
+		        turboBigExhaustOutletTube.installBlocked = true;
+		        turboBigExhaustOutletStraight.installBlocked = true;
+	        });
+            turboSmallExhaustOutletTube.AddPostUninstallAction(() =>
+	        {
+		        turboBigExhaustOutletTube.installBlocked = false;
+		        turboBigExhaustOutletStraight.installBlocked = false;
+	        });
+
+	        //Allow only one inlet to be installed to race exhaust
+            turboBigExhaustInletTube.AddPostInstallAction(() => turboSmallExhaustInletTube.installBlocked = true);
+	        turboBigExhaustInletTube.AddPostUninstallAction(() => turboSmallExhaustInletTube.installBlocked = false);
+	        turboSmallExhaustInletTube.AddPostInstallAction(() => turboBigExhaustInletTube.installBlocked = true);
+	        turboSmallExhaustInletTube.AddPostUninstallAction(() => turboBigExhaustInletTube.installBlocked = false);
+
+            //Allow only one intercooler tube to be installed to intercooler
+            turboBigIntercoolerTube.AddPostInstallAction(() => turboSmallIntercoolerTube.installBlocked = true);
+            turboBigIntercoolerTube.AddPostUninstallAction(() => turboSmallIntercoolerTube.installBlocked = false);
+            turboSmallIntercoolerTube.AddPostInstallAction(() => turboBigIntercoolerTube.installBlocked = true);
+            turboSmallIntercoolerTube.AddPostUninstallAction(() => turboBigIntercoolerTube.installBlocked = false);
+
+
+            foreach (Part bigPart in bigPartsList)
+	        {
+		        bigPart.AddPostInstallAction(() =>
+		        {
+			        smallPartsList.ForEach(smallPart =>
+			        {
+				        smallPart.installBlocked = true;
+			        });
+		        });
+
+		        bigPart.AddPostUninstallAction(() =>
+		        {
+			        if (bigPartsList.All(part => !part.installed))
+			        {
+				        smallPartsList.ForEach(smallPart =>
+				        {
+					        smallPart.installBlocked = false;
+				        });
+			        }
+		        });
+	        }
+
+	        foreach (Part smallPart in smallPartsList)
+	        {
+		        smallPart.AddPostInstallAction(() =>
+		        {
+			        bigPartsList.ForEach((Part bigPart) =>
+			        {
+				        bigPart.installBlocked = true;
+			        });
+		        });
+
+		        smallPart.AddPostUninstallAction(() =>
+		        {
+			        if (bigPartsList.All(part => !part.installed))
+			        {
+				        bigPartsList.ForEach((Part bigPart) =>
+				        {
+					        bigPart.installBlocked = false;
+				        });
+			        }
+		        });
+	        }
+
             /* replace with part.Add...Action implementation
             bool anyBig = AnyBigInstalled(true);
             bool anySmall = AnySmallInstalled(true);
-            if (anyBig)
-            {
-                turboSmall.partTrigger.triggerGameObject.SetActive(false);
-                turboSmallIntercoolerTube.partTrigger.triggerGameObject.SetActive(false);
-                turboSmallExhaustInletTube.partTrigger.triggerGameObject.SetActive(false);
-                turboSmallExhaustOutletTube.partTrigger.triggerGameObject.SetActive(false);
-                turboSmallAirfilter.partTrigger.triggerGameObject.SetActive(false);
-            }
-            else
-            {
-                turboSmall.partTrigger.triggerGameObject.SetActive(true);
-                turboSmallIntercoolerTube.partTrigger.triggerGameObject.SetActive(true);
-                turboSmallExhaustInletTube.partTrigger.triggerGameObject.SetActive(true);
-                turboSmallExhaustOutletTube.partTrigger.triggerGameObject.SetActive(true);
-                turboSmallAirfilter.partTrigger.triggerGameObject.SetActive(true);
-            }
-
-            if (anySmall)
-            {
-                turboBig.partTrigger.triggerGameObject.SetActive(false);
-                turboBigIntercoolerTube.partTrigger.triggerGameObject.SetActive(false);
-                turboBigExhaustInletTube.partTrigger.triggerGameObject.SetActive(false);
-                turboBigExhaustOutletTube.partTrigger.triggerGameObject.SetActive(false);
-                turboBigBlowoffValve.partTrigger.triggerGameObject.SetActive(false);
-                turboBigExhaustOutletStraight.partTrigger.triggerGameObject.SetActive(false);
-            }
-            else
-            {
-                turboBig.partTrigger.triggerGameObject.SetActive(true);
-                turboBigIntercoolerTube.partTrigger.triggerGameObject.SetActive(true);
-                turboBigExhaustInletTube.partTrigger.triggerGameObject.SetActive(true);
-                turboBigExhaustOutletTube.partTrigger.triggerGameObject.SetActive(true);
-                turboBigBlowoffValve.partTrigger.triggerGameObject.SetActive(true);
-                turboBigExhaustOutletStraight.partTrigger.triggerGameObject.SetActive(true);
-            }
 
             if (weberCarb_inst.Value)
             {

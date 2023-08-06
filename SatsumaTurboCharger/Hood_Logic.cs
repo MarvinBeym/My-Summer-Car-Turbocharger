@@ -66,17 +66,17 @@ namespace SatsumaTurboCharger
 			bool normalHoodInstalled = (normalHood.transform.parent != null && normalHood.transform.parent.name == "pivot_hood");
 			bool fiberglassHoodInstalled = (fiberglassHood.transform.parent != null && fiberglassHood.transform.parent.name == "pivot_hood");
 
-			if (turboHood.IsInstalled())
+			if (turboHood.installed)
 			{
 				if (normalHoodInstalled) { Helper.FindFsmOnGameObject(normalHood, "Removal").SendEvent("REMOVE"); }
 				if (fiberglassHoodInstalled) { Helper.FindFsmOnGameObject(fiberglassHood, "Removal").SendEvent("REMOVE"); }
 			}
 
-			turboHood.BlockInstall(normalHoodInstalled || fiberglassHoodInstalled);
-			originalHoodTrigger.SetActive(!turboHood.IsInstalled());
+			turboHood.installBlocked = normalHoodInstalled || fiberglassHoodInstalled;
+			originalHoodTrigger.SetActive(!turboHood.installed);
 
-			turboHood.AddPostInstallAction(OnTurboHoodAssemble);
-			turboHood.AddPostUninstallAction(OnTurboHoodDisassemble);
+			turboHood.AddEventListener(Part.EventTime.Post, Part.EventType.Install, OnTurboHoodAssemble);
+			turboHood.AddEventListener(Part.EventTime.Post, Part.EventType.Uninstall, OnTurboHoodAssemble);
 		}
 
 		internal void OnTurboHoodAssemble()
@@ -96,11 +96,11 @@ namespace SatsumaTurboCharger
 
 		private void OnOriginalAssemble()
 		{
-			turboHood.BlockInstall(true);
+			turboHood.installBlocked = true;
 		}
 		private void OnOriginalDisassemble()
 		{
-			turboHood.BlockInstall(false);
+			turboHood.installBlocked = false;
 		}
 
 		void Start()

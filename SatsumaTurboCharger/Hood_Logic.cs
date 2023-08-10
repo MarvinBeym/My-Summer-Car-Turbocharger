@@ -3,6 +3,7 @@ using MscModApi.Caching;
 using MscModApi.Parts;
 using MscModApi.Tools;
 using UnityEngine;
+using EventType = MscModApi.Parts.EventType;
 
 
 namespace SatsumaTurboCharger
@@ -75,8 +76,8 @@ namespace SatsumaTurboCharger
 			turboHood.installBlocked = normalHoodInstalled || fiberglassHoodInstalled;
 			originalHoodTrigger.SetActive(!turboHood.installed);
 
-			turboHood.AddEventListener(Part.EventTime.Post, Part.EventType.Install, OnTurboHoodAssemble);
-			turboHood.AddEventListener(Part.EventTime.Post, Part.EventType.Uninstall, OnTurboHoodAssemble);
+			turboHood.AddEventListener(EventTime.Post, EventType.Install, OnTurboHoodAssemble);
+			turboHood.AddEventListener(EventTime.Post, EventType.Uninstall, OnTurboHoodAssemble);
 		}
 
 		internal void OnTurboHoodAssemble()

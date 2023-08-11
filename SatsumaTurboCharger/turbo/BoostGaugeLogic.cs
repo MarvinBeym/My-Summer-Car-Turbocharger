@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace SatsumaTurboCharger
 {
-	public class BoostGauge_Logic : MonoBehaviour
+	public class BoostGaugeLogic : MonoBehaviour
 	{
 		public enum GaugeMode
 		{

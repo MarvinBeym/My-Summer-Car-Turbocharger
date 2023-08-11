@@ -116,7 +116,6 @@
     <Compile Include="turbo\TurboConditionStorage.cs" />
     <Compile Include="turbo\TurboConfiguration.cs" />
     <Compile Include="turbo\TurboLogic.cs" />
-    <Compile Include="turbo\Turbo.cs" />
     <Compile Include="wear\Wear.cs" />
     <Compile Include="wear\WearCondition.cs" />
     <Compile Include="wear\WearLogic.cs" />

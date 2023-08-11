@@ -273,5 +273,37 @@ namespace SatsumaTurboCharger.turbo
 			this.setBoost = setBoost;
 			this.conditionStorage = conditionStorage;
 		}
+
+		/* //Backup for future implementation
+		private bool SetupEcuMod()
+		{
+			bool installed = ModLoader.IsModPresent("SatsumaTurboCharger");
+			if (!installed)
+			{
+				return false;
+			}
+			try
+			{
+				foreach (PlayMakerFSM fsm in Cache.Find("DonnerTech_ECU_Mod").GetComponents<PlayMakerFSM>())
+				{
+					switch (fsm.FsmName)
+					{
+						case "Installed":
+							ecu_installedFSM = fsm;
+							break;
+						case "Modules":
+							ecu_modulesFSM = fsm;
+							break;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Logger.New("Ecu mod gameobject could not be found or the component is missing", "Mod was found but not gameobject", ex);
+				return false;
+			}
+			return true;
+		}
+		*/
 	}
 }

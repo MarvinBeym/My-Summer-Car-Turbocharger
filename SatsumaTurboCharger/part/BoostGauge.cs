@@ -12,14 +12,14 @@ namespace SatsumaTurboCharger.part
 		protected override Vector3 partInstallPosition => new Vector3(0.368f, -0.029f, 0.154f);
 		protected override Vector3 partInstallRotation => new Vector3(90, 0, 0);
 
-		protected BoostGauge_Logic logic;
+		protected BoostGaugeLogic logic;
 
 		public BoostGauge() : base(Cache.Find("dashboard(Clone)"), SatsumaTurboCharger.partBaseInfo)
 		{
 			AddScrew(new Screw(new Vector3(0f, -0.0270f, 0.003f), new Vector3(-90, 0, 0),
 				Screw.Type.Normal, 0.4f));
 
-			logic = AddWhenInstalledBehaviour<BoostGauge_Logic>();
+			logic = AddWhenInstalledBehaviour<BoostGaugeLogic>();
 			logic.Init(this);
 		}
 

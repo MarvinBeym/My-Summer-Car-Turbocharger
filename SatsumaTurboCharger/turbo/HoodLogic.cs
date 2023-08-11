@@ -8,7 +8,7 @@ using EventType = MscModApi.Parts.EventType;
 
 namespace SatsumaTurboCharger
 {
-	public class Hood_Logic : MonoBehaviour
+	public class HoodLogic : MonoBehaviour
 	{
 
 		private Part turboHood;

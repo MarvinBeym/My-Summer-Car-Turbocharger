@@ -4,14 +4,17 @@ using MscModApi.Caching;
 using MscModApi.Parts;
 using MscModApi.Shopping;
 using MscModApi.Tools;
-using SatsumaTurboCharger.turbo;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using MscModApi.PaintingSystem;
+using MscModApi.Parts.ReplacePart;
 using SatsumaTurboCharger.part;
+using SatsumaTurboCharger.turbo;
 using Tools.gui;
 using UnityEngine;
+using EventType = MscModApi.Parts.EventType;
 
 namespace SatsumaTurboCharger
 {
@@ -107,18 +110,14 @@ namespace SatsumaTurboCharger
 		public Dictionary<string, float> boostSave;
 
 		//Files
-		private const string boost_saveFile = "turbocharger_mod_boost_SaveFile.txt";
+		private const string boost_saveFile = "boost_SaveFile.json";
 		private const string wear_saveFile = "wear_saveFile.json";
 
 		//Parts
-		private GameObject weberCarb;
-		private GameObject twinCarb;
 		private GameObject racingExhaustPipe;
-		private GameObject steelHeaders;
 		private GameObject racingExhaustMuffler;
 
 		private GameObject exhaustPipe;
-		private GameObject headers;
 		private GameObject exhaustMuffler;
 
 		private GameObject originalCylinerHead;
@@ -134,12 +133,8 @@ namespace SatsumaTurboCharger
 		private FsmEvent inspectionFailedEvent;
 
 		//Parts installed
-		private FsmBool weberCarb_inst;
-		private FsmBool twinCarb_inst;
-		private FsmBool steelHeaders_inst;
 		private FsmBool racingExhaustPipe_inst;
 		private FsmBool racingExhaustMuffler_inst;
-		private FsmBool headers_inst;
 		private FsmBool exhaustPipe_inst;
 		private FsmBool exhaustMuffler_inst;
 		private FsmBool exhaustMufflerDualTip_inst;
@@ -163,10 +158,10 @@ namespace SatsumaTurboCharger
 		private Settings resetPosSetting = new Settings("resetPos", "Reset", Helper.WorkAroundAction);
 		public Settings partsWearSetting = new Settings("partsWearSetting", "Use parts wear system", true);
 
-		public Settings rotateTurbineSetting =
+		public static Settings rotateTurbineSetting =
 			new Settings("rotateTurbineSetting", "Allow turbo turbine rotation", false);
 
-		public Settings backfireEffectSetting =
+		public static Settings backfireEffectSetting =
 			new Settings("backfireEffectSetting", "Allow backfire effect for turbo", false);
 
 		private Settings useCustomGearRatios =
@@ -202,6 +197,12 @@ namespace SatsumaTurboCharger
 		public Intercooler intercooler; //Done
 		public IntercoolerManifoldWeberTube intercoolerManifoldWeberTube; //Done
 		public IntercoolerManifoldTwinCarbTube intercoolerManifoldTwinCarbTube; //Done
+
+		//Game parts
+		public GamePart weberCarb;
+		public GamePart twinCarb;
+		public GamePart steelHeaders;
+		public GamePart headers;
 
 		internal static List<Part> partsList = new List<Part>();
 		public List<Part> bigPartsList;
@@ -277,9 +278,8 @@ namespace SatsumaTurboCharger
 				}
 			};
 			assetsBundle = Helper.LoadAssetBundle(this, "turbochargermod.unity3d");
+			TurboPart.LoadAssets(assetsBundle);
 			partBaseInfo = new PartBaseInfo(this, assetsBundle, partsList);
-
-
 
 			try
 			{
@@ -296,21 +296,16 @@ namespace SatsumaTurboCharger
 					exhaustFromPipe.transform.localRotation.y, exhaustFromPipe.transform.localRotation.z,
 					exhaustFromPipe.transform.localRotation.w);
 
-				weberCarb = Helper.GetGameObjectFromFsm(Cache.Find("Racing Carburators"));
-				twinCarb = Helper.GetGameObjectFromFsm(Cache.Find("Twin Carburators"));
+				weberCarb = new GamePart("Racing Carburators");
+				twinCarb = new GamePart("Twin Carburators");
+				steelHeaders = new GamePart("Steel Headers");
+				headers = new GamePart("Headers");
 
-				weberCarb_inst = Cache.Find("Racing Carburators").GetComponent<PlayMakerFSM>().FsmVariables
-					.FindFsmBool("Installed");
-				twinCarb_inst = Cache.Find("Twin Carburators").GetComponent<PlayMakerFSM>().FsmVariables
-					.FindFsmBool("Installed");
-				steelHeaders_inst = Cache.Find("Steel Headers").GetComponent<PlayMakerFSM>().FsmVariables
-					.FindFsmBool("Installed");
 				racingExhaustPipe_inst = Cache.Find("Racing Exhaust").GetComponent<PlayMakerFSM>().FsmVariables
 					.FindFsmBool("Installed");
 				racingExhaustMuffler_inst = Cache.Find("Racing Muffler").GetComponent<PlayMakerFSM>().FsmVariables
 					.FindFsmBool("Installed");
 
-				headers_inst = Cache.Find("Headers").GetComponent<PlayMakerFSM>().FsmVariables.FindFsmBool("Installed");
 				exhaustPipe_inst = Cache.Find("ExhaustPipe").GetComponent<PlayMakerFSM>().FsmVariables
 					.FindFsmBool("Installed");
 				exhaustMuffler_inst = Cache.Find("ExhaustMuffler").GetComponent<PlayMakerFSM>().FsmVariables
@@ -318,11 +313,9 @@ namespace SatsumaTurboCharger
 				exhaustMufflerDualTip_inst = Cache.Find("ExhaustDualTip").GetComponent<PlayMakerFSM>().FsmVariables
 					.FindFsmBool("Installed");
 
-				steelHeaders = Cache.Find("headers(Clone)");
 				racingExhaustPipe = Cache.Find("racing exhaust(Clone)");
 				racingExhaustMuffler = Cache.Find("racing muffler(Clone)");
 
-				headers = Cache.Find("steel headers(Clone)");
 				exhaustPipe = Cache.Find("exhaust pipe(Clone)");
 				exhaustMuffler = Cache.Find("exhaust muffler(Clone)");
 
@@ -354,17 +347,36 @@ namespace SatsumaTurboCharger
 			exhaustHeader = new ExhaustHeader();
 
 			turboBigExhaustInletTube = new TurboBigExhaustInletTube(exhaustHeader);
-			turboBigExhaustOutletTube = new TurboBigExhaustOutletTube();
 			turboBigIntercoolerTube = new TurboBigIntercoolerTube(intercooler);
 			turboBigBlowoffValve = new TurboBigBlowoffValve(turboBigIntercoolerTube);
 
-			turboBig = new TurboBig(this, boostSave, turboBigExhaustInletTube, turboBigBlowoffValve, turboBigExhaustOutletStraight);
+			turboBig = new TurboBig(
+				this,
+				boostGauge, 
+				turboBigBlowoffValve,
+				turboBigExhaustInletTube, 
+				new List<Part>() {
+
+				}, 
+				boostSave);
+			turboBigExhaustOutletTube = new TurboBigExhaustOutletTube(turboBig);
 			turboBigExhaustOutletStraight = new TurboBigExhaustOutletStraight(turboBig);
-			turboBig.AddBackfire(turboBigExhaustOutletStraight);
+
+			turboBig.audioHandler.Add("backfire", turboBigExhaustOutletStraight, "backFire_once.wav");
+			turboBig.DefineBackfire(turboBigExhaustOutletStraight, turboBig.audioHandler.Get("backfire"));
+			turboBig.backFireLogic.fireFXPosition = new Vector3(0.0185f, 0.073f, 0.0217f);
+			turboBig.backFireLogic.fireFxRotation = new Vector3(-75, 0, 0);
+
 			turboBigHood = new TurboBigHood();
 
 			turboSmallExhaustInletTube = new TurboSmallExhaustInletTube(exhaustHeader);
-			turboSmall = new TurboSmall(turboSmallExhaustInletTube, this, boostSave);
+			turboSmall = new TurboSmall(
+				this,
+				boostGauge, 
+				turboSmallExhaustInletTube, 
+				new List<Part>() {
+
+				}, boostSave);
 			turboSmallIntercoolerTube = new TurboSmallIntercoolerTube(intercooler);
 			turboSmallAirfilter = new TurboSmallAirfilter(turboSmall);
 
@@ -598,10 +610,10 @@ namespace SatsumaTurboCharger
 
 			//AdvPart.Save(this, modsShop_saveFile, partsList.ToArray());
 
-			Turbo.Save(this, boost_saveFile, new Turbo[]
+			TurboPart.Save(this, boost_saveFile, new TurboPart[]
 			{
-				turboBig.turbo,
-				turboSmall.turbo,
+				turboBig,
+				turboSmall,
 			});
 
 			/*
@@ -621,8 +633,8 @@ namespace SatsumaTurboCharger
 				guiDebug.Handle(new GuiDebugInfo[]
 				{
 					new GuiDebugInfo("DEBUG", "Engine RPM", ((int)CarH.drivetrain.rpm).ToStringOrEmpty()),
-					new GuiDebugInfo("DEBUG", "Racing Turbo bar", turboBig.turbo.boost.ToStringOrEmpty()),
-					new GuiDebugInfo("DEBUG", "GT Turbo bar", turboSmall.turbo.boost.ToStringOrEmpty()),
+					new GuiDebugInfo("DEBUG", "Racing Turbo bar", turboBig.boost.ToStringOrEmpty()),
+					new GuiDebugInfo("DEBUG", "GT Turbo bar", turboSmall.boost.ToStringOrEmpty()),
 					new GuiDebugInfo("DEBUG", "Power multiplier", CarH.drivetrain.powerMultiplier.ToStringOrEmpty()),
 					new GuiDebugInfo("DEBUG", "KM/H", ((int)CarH.drivetrain.differentialSpeed).ToStringOrEmpty()),
 					new GuiDebugInfo("DEBUG", "Torque", CarH.drivetrain.torque.ToStringOrEmpty()),
@@ -635,13 +647,6 @@ namespace SatsumaTurboCharger
 
 		public override void Update()
 		{
-			bool allBig = AllBigInstalled();
-			bool allSmall = AllSmallInstalled();
-			bool allOther = AllOtherInstalled();
-
-			turboBig.turbo.Handle(allBig, allSmall, allOther);
-			turboBig.turbo.UpdateCondition("weberCarb", weberCarb_inst.Value);
-			turboBig.turbo.UpdateCondition("twinCarb", twinCarb_inst.Value);
 
 			//Todo
 			/*
@@ -660,25 +665,25 @@ namespace SatsumaTurboCharger
 		private void SetupPartInstallBlocking()
 		{
 			//Block different exhausts for bigTurbo
-			turboBigExhaustOutletStraight.AddEventListener(Part.EventTime.Post, Part.EventType.Install, () =>
+			turboBigExhaustOutletStraight.AddEventListener(EventTime.Post, EventType.Install, () =>
 			{
 				turboBigExhaustOutletTube.installBlocked = true;
 
 				turboSmallExhaustOutletTube.installBlocked = true;
 			});
-			turboBigExhaustOutletStraight.AddEventListener(Part.EventTime.Post, Part.EventType.Uninstall, () =>
+			turboBigExhaustOutletStraight.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
 			{
 				turboBigExhaustOutletTube.installBlocked = false;
 
 				turboSmallExhaustOutletTube.installBlocked = false;
 			});
-			turboBigExhaustOutletTube.AddEventListener(Part.EventTime.Post, Part.EventType.Install, () =>
+			turboBigExhaustOutletTube.AddEventListener(EventTime.Post, EventType.Install, () =>
 			{
 				turboBigExhaustOutletStraight.installBlocked = true;
 
 				turboSmallExhaustOutletTube.installBlocked = true;
 			});
-			turboBigExhaustOutletTube.AddEventListener(Part.EventTime.Post, Part.EventType.Uninstall, () =>
+			turboBigExhaustOutletTube.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
 			{
 				if (turboSmallExhaustOutletTube.installed)
 				{
@@ -690,12 +695,12 @@ namespace SatsumaTurboCharger
 			});
 
 			//Block different exhausts for smallTurbo
-			turboSmallExhaustOutletTube.AddEventListener(Part.EventTime.Post, Part.EventType.Install, () =>
+			turboSmallExhaustOutletTube.AddEventListener(EventTime.Post, EventType.Install, () =>
 			{
 				turboBigExhaustOutletTube.installBlocked = true;
 				turboBigExhaustOutletStraight.installBlocked = true;
 			});
-			turboSmallExhaustOutletTube.AddEventListener(Part.EventTime.Post, Part.EventType.Uninstall, () =>
+			turboSmallExhaustOutletTube.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
 			{
 				if (turboBigExhaustOutletTube.installed || turboBigExhaustOutletStraight.installed)
 				{
@@ -707,20 +712,74 @@ namespace SatsumaTurboCharger
 			});
 			
 			//Allow only one inlet to be installed to race exhaust
-			turboBigExhaustInletTube.AddEventListener(Part.EventTime.Post, Part.EventType.Install, () => turboSmallExhaustInletTube.installBlocked = true);
-			turboBigExhaustInletTube.AddEventListener(Part.EventTime.Post, Part.EventType.Uninstall, () => turboSmallExhaustInletTube.installBlocked = false);
-			turboSmallExhaustInletTube.AddEventListener(Part.EventTime.Post, Part.EventType.Install, () => turboBigExhaustInletTube.installBlocked = true);
-			turboSmallExhaustInletTube.AddEventListener(Part.EventTime.Post, Part.EventType.Uninstall, () => turboBigExhaustInletTube.installBlocked = false);
+			turboBigExhaustInletTube.AddEventListener(EventTime.Post, EventType.Install, () => turboSmallExhaustInletTube.installBlocked = true);
+			turboBigExhaustInletTube.AddEventListener(EventTime.Post, EventType.Uninstall, () => turboSmallExhaustInletTube.installBlocked = false);
+			turboSmallExhaustInletTube.AddEventListener(EventTime.Post, EventType.Install, () => turboBigExhaustInletTube.installBlocked = true);
+			turboSmallExhaustInletTube.AddEventListener(EventTime.Post, EventType.Uninstall, () => turboBigExhaustInletTube.installBlocked = false);
 
 			//Allow only one intercooler tube to be installed to intercooler
-			turboBigIntercoolerTube.AddEventListener(Part.EventTime.Post, Part.EventType.Install, () => turboSmallIntercoolerTube.installBlocked = true);
-			turboBigIntercoolerTube.AddEventListener(Part.EventTime.Post, Part.EventType.Uninstall, () => turboSmallIntercoolerTube.installBlocked = false);
-			turboSmallIntercoolerTube.AddEventListener(Part.EventTime.Post, Part.EventType.Install, () => turboBigIntercoolerTube.installBlocked = true);
-			turboSmallIntercoolerTube.AddEventListener(Part.EventTime.Post, Part.EventType.Uninstall, () => turboBigIntercoolerTube.installBlocked = false);
+			turboBigIntercoolerTube.AddEventListener(EventTime.Post, EventType.Install, () => turboSmallIntercoolerTube.installBlocked = true);
+			turboBigIntercoolerTube.AddEventListener(EventTime.Post, EventType.Uninstall, () => turboSmallIntercoolerTube.installBlocked = false);
+			turboSmallIntercoolerTube.AddEventListener(EventTime.Post, EventType.Install, () => turboBigIntercoolerTube.installBlocked = true);
+			turboSmallIntercoolerTube.AddEventListener(EventTime.Post, EventType.Uninstall, () => turboBigIntercoolerTube.installBlocked = false);
 
+			exhaustHeader.AddEventListener(EventTime.Post, EventType.Install, () =>
+			{
+				steelHeaders.installBlocked = true;
+				headers.installBlocked = true;
+			});
+
+			exhaustHeader.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
+			{
+				steelHeaders.installBlocked = false;
+				headers.installBlocked = false;
+			});
+
+			steelHeaders.AddEventListener(EventTime.Post, EventType.Install, () =>
+			{
+				exhaustHeader.installBlocked = true;
+			});
+
+			steelHeaders.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
+			{
+				exhaustHeader.installBlocked = false;
+			});
+
+			headers.AddEventListener(EventTime.Post, EventType.Install, () =>
+			{
+				exhaustHeader.installBlocked = true;
+			});
+
+			headers.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
+			{
+				exhaustHeader.installBlocked = false;
+			});
+
+			weberCarb.AddEventListener(EventTime.Post, EventType.Install, () =>
+			{
+				turboBig.conditionStorage.UpdateCondition("weberCarb", true);
+			});
+
+			weberCarb.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
+			{
+				turboBig.conditionStorage.UpdateCondition("weberCarb", false);
+			});
+
+			twinCarb.AddEventListener(EventTime.Post, EventType.Install, () =>
+			{
+				turboBig.conditionStorage.UpdateCondition("twinCarb", true);
+			});
+
+			twinCarb.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
+			{
+				turboBig.conditionStorage.UpdateCondition("twinCarb", false);
+			});
+
+
+			/*
 			foreach (Part bigPart in bigPartsList)
 			{
-				bigPart.AddEventListener(Part.EventTime.Post, Part.EventType.Install, () =>
+				bigPart.AddEventListener(EventTime.Post, EventType.Install, () =>
 				{
 					smallPartsList.ForEach(smallPart =>
 					{
@@ -728,7 +787,7 @@ namespace SatsumaTurboCharger
 					});
 				});
 
-				bigPart.AddEventListener(Part.EventTime.Post, Part.EventType.Uninstall, () =>
+				bigPart.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
 				{
 					if (bigPartsList.All(part => !part.installed))
 					{
@@ -742,7 +801,7 @@ namespace SatsumaTurboCharger
 
 			foreach (Part smallPart in smallPartsList)
 			{
-				smallPart.AddEventListener(Part.EventTime.Post, Part.EventType.Install, () =>
+				smallPart.AddEventListener(EventTime.Post, EventType.Install, () =>
 				{
 					bigPartsList.ForEach((Part bigPart) =>
 					{
@@ -750,7 +809,7 @@ namespace SatsumaTurboCharger
 					});
 				});
 
-				smallPart.AddEventListener(Part.EventTime.Post, Part.EventType.Uninstall, () =>
+				smallPart.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
 				{
 					if (bigPartsList.All(part => !part.installed))
 					{
@@ -760,7 +819,7 @@ namespace SatsumaTurboCharger
 						});
 					}
 				});
-			}
+			}*/
 
 			/* replace with part.Add...Action implementation
             bool anyBig = AnyBigInstalled(true);
@@ -838,7 +897,7 @@ namespace SatsumaTurboCharger
 			bool allSmall = AllSmallInstalled();
 			bool allOther = AllOtherInstalled();
 
-			if (steelHeaders_inst.Value || headers_inst.Value)
+			if (steelHeaders.installed || headers.installed)
 			{
 				if (exhaustHeader.installed)
 				{
@@ -854,8 +913,8 @@ namespace SatsumaTurboCharger
 					exhaustFromPipe.SetActive(true);
 
 					exhaustFromPipe.transform.parent = turboBigExhaustOutletStraight.gameObject.transform;
-					exhaustFromPipe.transform.localPosition = turboBig.turbo.backfire_Logic.GetFireFXPos();
-					exhaustFromPipe.transform.localRotation = turboBig.turbo.backfire_Logic.GetFireFXRot();
+					//exhaustFromPipe.transform.localPosition = turboBig.backFireLogic.fireFXPosition;
+					//exhaustFromPipe.transform.localRotation = turboBig.backFireLogic.fireFxRotation;
 					exhaustFromMuffler.SetActive(false);
 				}
 				else
@@ -887,8 +946,8 @@ namespace SatsumaTurboCharger
 					}
 					else
 					{
-						if ((steelHeaders_inst.Value && racingExhaustPipe_inst.Value &&
-							 racingExhaustMuffler_inst.Value) || (headers_inst.Value && exhaustPipe_inst.Value &&
+						if ((steelHeaders.installed && racingExhaustPipe_inst.Value &&
+							 racingExhaustMuffler_inst.Value) || (headers.installed && exhaustPipe_inst.Value &&
 																  (exhaustMuffler_inst.Value ||
 																   exhaustMufflerDualTip_inst.Value)))
 						{
@@ -896,8 +955,8 @@ namespace SatsumaTurboCharger
 							exhaustFromPipe.SetActive(false);
 							exhaustFromMuffler.SetActive(true);
 						}
-						else if ((steelHeaders_inst.Value && racingExhaustPipe_inst.Value) ||
-								 (headers_inst.Value && exhaustPipe_inst.Value))
+						else if ((steelHeaders.installed && racingExhaustPipe_inst.Value) ||
+								 (headers.installed && exhaustPipe_inst.Value))
 						{
 							exhaustFromEngine.SetActive(false);
 							exhaustFromPipe.SetActive(true);
@@ -934,50 +993,50 @@ namespace SatsumaTurboCharger
 
 		public bool AllBigInstalled(bool ignoreScrewable = false)
 		{
-			return turboBig.IsFixed(ignoreScrewable) &&
-				   turboBigIntercoolerTube.IsFixed(ignoreScrewable) &&
-				   turboBigExhaustInletTube.IsFixed(ignoreScrewable) &&
-				   (turboBigExhaustOutletTube.IsFixed(ignoreScrewable) ||
-					turboBigExhaustOutletStraight.IsFixed(ignoreScrewable)) &&
-				   turboBigBlowoffValve.IsFixed(ignoreScrewable);
+			return turboBig.bolted &&
+				   turboBigIntercoolerTube.bolted &&
+				   turboBigExhaustInletTube.bolted &&
+				   (turboBigExhaustOutletTube.bolted ||
+					turboBigExhaustOutletStraight.bolted) &&
+				   turboBigBlowoffValve.bolted;
 		}
 
 		public bool AllSmallInstalled(bool ignoreScrewable = false)
 		{
-			return turboSmall.IsFixed(ignoreScrewable) &&
-				   turboSmallIntercoolerTube.IsFixed(ignoreScrewable) &&
-				   turboSmallExhaustInletTube.IsFixed(ignoreScrewable) &&
-				   turboSmallExhaustOutletTube.IsFixed(ignoreScrewable);
+			return turboSmall.bolted &&
+				   turboSmallIntercoolerTube.bolted &&
+				   turboSmallExhaustInletTube.bolted &&
+				   turboSmallExhaustOutletTube.bolted;
 		}
 
 		public bool AllOtherInstalled(bool ignoreScrewable = false)
 		{
-			return (manifoldWeber.IsFixed(ignoreScrewable) || manifoldTwinCarb.IsFixed(ignoreScrewable)) &&
+			return (manifoldWeber.bolted || manifoldTwinCarb.bolted) &&
 				   (
-					   (intercooler.IsFixed(ignoreScrewable) &&
-						(intercoolerManifoldWeberTube.IsFixed(ignoreScrewable) ||
-						 intercoolerManifoldTwinCarbTube.IsFixed(ignoreScrewable))
+					   (intercooler.bolted &&
+						(intercoolerManifoldWeberTube.bolted ||
+						 intercoolerManifoldTwinCarbTube.bolted)
 					   ) &&
-					   exhaustHeader.IsFixed(ignoreScrewable));
+					   exhaustHeader.bolted);
 		}
 
 		public bool AnyBigInstalled(bool ignoreScrewable = false)
 		{
-			return turboBig.IsFixed(ignoreScrewable) ||
-				   turboBigIntercoolerTube.IsFixed(ignoreScrewable) ||
-				   turboBigExhaustInletTube.IsFixed(ignoreScrewable) ||
-				   turboBigExhaustOutletTube.IsFixed(ignoreScrewable) ||
-				   turboBigBlowoffValve.IsFixed(ignoreScrewable) ||
-				   turboBigExhaustOutletStraight.IsFixed(ignoreScrewable);
+			return turboBig.bolted ||
+				   turboBigIntercoolerTube.bolted ||
+				   turboBigExhaustInletTube.bolted ||
+				   turboBigExhaustOutletTube.bolted ||
+				   turboBigBlowoffValve.bolted ||
+				   turboBigExhaustOutletStraight.bolted;
 		}
 
 		public bool AnySmallInstalled(bool ignoreScrewable = false)
 		{
-			return turboSmall.IsFixed(ignoreScrewable) ||
-				   turboSmallIntercoolerTube.IsFixed(ignoreScrewable) ||
-				   turboSmallExhaustInletTube.IsFixed(ignoreScrewable) ||
-				   turboSmallExhaustOutletTube.IsFixed(ignoreScrewable) ||
-				   turboSmallAirfilter.IsFixed(ignoreScrewable);
+			return turboSmall.bolted ||
+				   turboSmallIntercoolerTube.bolted ||
+				   turboSmallExhaustInletTube.bolted ||
+				   turboSmallExhaustOutletTube.bolted ||
+				   turboSmallAirfilter.bolted;
 		}
 	}
 }

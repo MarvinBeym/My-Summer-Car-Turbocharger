@@ -18,7 +18,7 @@ namespace SatsumaTurboCharger.turbo
 
 		protected SatsumaTurboCharger mod;
 		protected Part part;
-		protected Turbo_Logic logic;
+		protected TurboLogic logic;
 		protected bool ecu_mod_installed = false;
 		protected PlayMakerFSM ecu_installedFSM;
 		protected PlayMakerFSM ecu_modulesFSM;
@@ -72,8 +72,8 @@ namespace SatsumaTurboCharger.turbo
 			this.part = part;
 			this.config = config;
 			this.boostGauge = boostGauge;
-			logic = this.part.AddWhenInstalledBehaviour<Turbo_Logic>();
-			logic.Init(mod, this);
+			logic = this.part.AddWhenInstalledBehaviour<TurboLogic>();
+			//logic.Init(mod, this);
 			ecu_mod_installed = SetupEcuMod();
 			this.boostChangingGameObject = boostChangingGameObject;
 			//userSetBoost = config.boostBase;
@@ -140,37 +140,6 @@ namespace SatsumaTurboCharger.turbo
 			}
 		}
 
-		public void Sound(bool playOrStop, AudioSource source)
-		{
-			if (source != null)
-			{
-				if (playOrStop)
-				{
-					if (!source.isPlaying)
-					{
-						source.Play();
-					}
-				}
-				else
-				{
-					source.Stop();
-				}
-			}
-		}
-
-		public void LoopSound(bool playOrStop)
-		{
-			Sound(playOrStop, loop_source);
-		}
-		public void BlowoffSound()
-		{
-			blowoff_source.PlayOneShot(blowoff_source.clip);
-		}
-		public void GrindingSound(bool playOrStop)
-		{
-			Sound(playOrStop, grinding_source);
-		}
-
 		private bool SetupEcuMod()
 		{
 			bool installed = ModLoader.IsModPresent("SatsumaTurboCharger");
@@ -199,44 +168,6 @@ namespace SatsumaTurboCharger.turbo
 				return false;
 			}
 			return true;
-		}
-
-		public void Handle(bool allBigInstalled, bool allSmallInstalled, bool allOtherInstalled)
-		{
-			this.allBigInstalled = allBigInstalled;
-			this.allSmallInstalled = allSmallInstalled;
-			this.allOtherInstalled = allOtherInstalled;
-		}
-
-		public void SetConditions(Dictionary<string, Condition> conditions)
-		{
-			this.conditions = conditions;
-		}
-
-		public void UpdateCondition(string id, bool applyCondition)
-		{
-			if (conditions[id].applyCondition != applyCondition)
-			{
-				conditions[id].applyCondition = applyCondition;
-				conditionsHaveUpdated = true;
-			}
-		}
-
-		internal static void Save(Mod mod, string saveFile, Turbo[] turbos)
-		{
-			try
-			{
-				Dictionary<string, float> save = new Dictionary<string, float>();
-				foreach (Turbo turbo in turbos)
-				{
-					save[turbo.part.id] = turbo.userSetBoost;
-				}
-				SaveLoad.SerializeSaveFile<Dictionary<string, float>>(mod, save, saveFile);
-			}
-			catch (Exception ex)
-			{
-				Logger.New("Error while trying to save configured boost information", ex);
-			}
 		}
 	}
 }

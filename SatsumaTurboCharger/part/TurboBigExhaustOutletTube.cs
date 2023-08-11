@@ -8,9 +8,9 @@ namespace SatsumaTurboCharger.part
 	{
 		protected override string partId => "turboBig-exhaust-outlet-tube";
 		protected override string partName => "Racing Turbo Exhaust Outlet Tube";
-		protected override Vector3 partInstallPosition => new Vector3(-0.307337f, 1.044137f, 0.456764f);
-		protected override Vector3 partInstallRotation => new Vector3(90, 0, 0);
-		public TurboBigExhaustOutletTube() : base(Cache.Find("racing exhaust(Clone)"), SatsumaTurboCharger.partBaseInfo)
+		protected override Vector3 partInstallPosition => new Vector3(-0.0012f, -0.165f, 0.1662f);
+		protected override Vector3 partInstallRotation => new Vector3(0, 0, 0);
+		public TurboBigExhaustOutletTube(TurboBig parent) : base(parent, SatsumaTurboCharger.partBaseInfo)
 		{ 
 			AddScrews(new[]
 			{

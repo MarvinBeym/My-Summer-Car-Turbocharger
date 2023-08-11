@@ -1,45 +1,51 @@
-﻿using MSCLoader;
+﻿using System;
+using MSCLoader;
 using UnityEngine;
 
 namespace SatsumaTurboCharger.turbo
 {
     public class Backfire_Logic : MonoBehaviour
     {
-        private AudioSource audioFx;
+        private AudioSource backfireAudioSource;
         private ParticleSystem particleFx;
 
-        // Use this for initialization
-        void Start()
+        public Vector3 fireFXPosition
         {
-            audioFx = this.gameObject.GetComponentInChildren<AudioSource>();
-            audioFx.spatialBlend = 0.8f;
-            audioFx.rolloffMode = AudioRolloffMode.Linear;
-            particleFx = this.gameObject.GetComponentInChildren<ParticleSystem>();
+	        get => particleFx.transform.localPosition;
+	        set => particleFx.transform.localPosition = value;
         }
 
-        // Update is called once per frame
-        void Update()
+        public Vector3 fireFxRotation
         {
-
+	        get => particleFx.transform.localRotation.eulerAngles;
+            set => particleFx.transform.localRotation = Quaternion.Euler(value);
         }
 
-        internal void TriggerBackfire()
+        public void Init(AudioSource backfireAudioSource)
         {
-            if (audioFx != null && particleFx != null && !audioFx.isPlaying && !particleFx.isPlaying)
+	        if (backfireAudioSource == null)
+	        {
+		        throw new Exception("No backfire audio source supplied");
+	        }
+
+	        this.backfireAudioSource = backfireAudioSource;
+	        backfireAudioSource.spatialBlend = 0.8f;
+	        backfireAudioSource.rolloffMode = AudioRolloffMode.Linear;
+	        particleFx = gameObject.GetComponentInChildren<ParticleSystem>();
+
+	        if (particleFx == null)
+	        {
+		        throw new Exception("No ParticleSystem found");
+	        }
+        }
+
+        public void TriggerBackfire()
+        {
+            if (backfireAudioSource != null && particleFx != null && !backfireAudioSource.isPlaying && !particleFx.isPlaying)
             {
-                audioFx.Play();
+	            backfireAudioSource.Play();
                 particleFx.Emit(2);
             }
-        }
-
-        internal Vector3 GetFireFXPos()
-        {
-            return particleFx.transform.localPosition;
-        }
-
-        internal Quaternion GetFireFXRot()
-        {
-            return particleFx.transform.localRotation;
         }
     }
 }

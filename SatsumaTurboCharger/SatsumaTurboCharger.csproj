@@ -96,6 +96,7 @@
     <Compile Include="part\ManifoldWeber.cs" />
     <Compile Include="part\TurboBig.cs" />
     <Compile Include="part\TurboBigIntercoolerTube.cs" />
+    <Compile Include="part\TurboPart.cs" />
     <Compile Include="Racing_Exhaust_Outlet_Straight_Logic.cs" />
     <Compile Include="SatsumaTurboCharger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -111,8 +112,10 @@
     <Compile Include="part\TurboSmallIntercoolerTube.cs" />
     <Compile Include="turbo\Backfire_Logic.cs" />
     <Compile Include="turbo\Condition.cs" />
+    <Compile Include="AudioHandler.cs" />
+    <Compile Include="turbo\TurboConditionStorage.cs" />
     <Compile Include="turbo\TurboConfiguration.cs" />
-    <Compile Include="turbo\Turbo_Logic.cs" />
+    <Compile Include="turbo\TurboLogic.cs" />
     <Compile Include="turbo\Turbo.cs" />
     <Compile Include="wear\Wear.cs" />
     <Compile Include="wear\WearCondition.cs" />

@@ -11,48 +11,37 @@ using UnityEngine;
 
 namespace SatsumaTurboCharger.part
 {
-	public class TurboBig : DerivablePart
+	public class TurboBig : TurboPart
 	{
+		private readonly TurboBigBlowoffValve turboBigBlowoffValve;
+
 		protected override string partName => "Racing Turbo";
 		protected override string partId => "turboBig";
 		protected override Vector3 partInstallPosition => new Vector3(-0.0668f, 0.28826f, -0.08025f);
 		protected override Vector3 partInstallRotation => new Vector3(0, 0, 0);
-		public Turbo turbo;
 
-		public TurboBig(SatsumaTurboCharger mod, Dictionary<string, float> boostSave, TurboBigExhaustInletTube parent, TurboBigBlowoffValve turboBigBlowoffValve, TurboBigExhaustOutletStraight turboBigExhaustOutletStraight) : base(parent, SatsumaTurboCharger.partBaseInfo)
+		public TurboBig(SatsumaTurboCharger mod, BoostGauge boostGauge, TurboBigBlowoffValve turboBigBlowoffValve, Part parent, List<Part> requiredParts, Dictionary<string, float> boostSave) : base(mod, boostGauge, parent, requiredParts, boostSave)
 		{
+			this.turboBigBlowoffValve = turboBigBlowoffValve;
 			AddClampModel(new Vector3(0.078f, -0.09f, -0.058f), new Vector3(-90, 0, 0),
 				new Vector3(0.85f, 0.85f, 0.85f));
 			AddScrew(new Screw(new Vector3(0.0540f, -0.09f, -0.091f), new Vector3(0, -90, 0),
 				Screw.Type.Normal, 0.5f));
 
 			PaintingSystem.Setup(partBaseInfo.mod, this, gameObject.FindChild("turboBig-center").FindChild("turboBig-compressor-turbine").gameObject);
-			
-			turbo = new Turbo(mod.boostGauge, mod, this, boostSave, "turbocharger_loop.wav", "grinding sound.wav",
-				"turbocharger_blowoff.wav",
-				new[]
-				{
-					true,
-					false,
-					true
-				}, GetTurboConfig(),
-				turboBigBlowoffValve.gameObject.transform.FindChild("turboBig-blowoff-valve-main").gameObject);
 
-			turbo.turbine = gameObject.transform.FindChild("turboBig-center").FindChild("turboBig-compressor-turbine").gameObject;
-			
-			Dictionary<string, Condition> racingTurbo_conditions = new Dictionary<string, Condition>();
-			racingTurbo_conditions["weberCarb"] = new Condition("weberCarb", 0.5f);
-			racingTurbo_conditions["twinCarb"] = new Condition("twinCarb", 0.2f);
-			turbo.SetConditions(racingTurbo_conditions);
+			DefineBoostChangingGameObject(
+				turboBigBlowoffValve.gameObject.transform.FindChild("turboBig-blowoff-valve-main").gameObject
+				);
+			DefineSpinningTurbineGameObject(gameObject.transform.FindChild("turboBig-center").FindChild("turboBig-compressor-turbine").gameObject);
+
+			audioHandler.Add("turboLoop", this, "turbocharger_loop.wav", true);
+			audioHandler.Add("grinding", this, "grinding sound.wav", true);
+			audioHandler.Add("blowoff", this, "turbocharger_blowoff.wav", false);
 		}
 
-		public void AddBackfire(Part backfirePart)
-		{
-			turbo.backfire_Logic = backfirePart.gameObject.AddComponent<Backfire_Logic>();
 
-		}
-		
-		private TurboConfiguration GetTurboConfig()
+		protected override TurboConfiguration SetupTurboConfig()
 		{
 			return new TurboConfiguration
 			{
@@ -73,6 +62,17 @@ namespace SatsumaTurboCharger.part
 				soundboostMaxVolume = 0.35f,
 				soundboostPitchMultiplicator = 4
 			};
+		}
+
+		protected override TurboConditionStorage SetupTurboConditions()
+		{
+			TurboConditionStorage turboConditionStorage = new TurboConditionStorage();
+			turboConditionStorage.AddConditions(new Condition[]
+			{
+				new Condition("weberCarb", 0.5f),
+				new Condition("twinCarb", 0.2f),
+			});
+			return turboConditionStorage;
 		}
 	}
 }

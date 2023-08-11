@@ -22,17 +22,16 @@ namespace SatsumaTurboCharger.part
 		public FsmFloat powerMultiplier;
 		public TurboConditionStorage conditionStorage { get; protected set; }
 		protected readonly BoostGauge boostGauge;
-		protected readonly List<Part> requiredParts;
+		public TurboLogicRequiredParts requiredParts;
 		protected readonly TurboLogic logic;
 		public readonly AudioHandler audioHandler;
 		public GameObject boostChangingGameObject;
 		protected static GameObject backfireFxModel;
 
-		protected TurboPart(SatsumaTurboCharger mod, BoostGauge boostGauge, Part parent, List<Part> requiredParts, Dictionary<string, float> boostSave) : base(parent, SatsumaTurboCharger.partBaseInfo)
+		protected TurboPart(SatsumaTurboCharger mod, BoostGauge boostGauge, Part parent, Dictionary<string, float> boostSave) : base(parent, SatsumaTurboCharger.partBaseInfo)
 		{
 			audioHandler = new AudioHandler(mod);
 			this.boostGauge = boostGauge;
-			this.requiredParts = requiredParts;
 			CarH.drivetrain.clutchTorqueMultiplier = 10f;
 			config = SetupTurboConfig();
 			conditionStorage = SetupTurboConditions();
@@ -58,11 +57,9 @@ namespace SatsumaTurboCharger.part
 			);
 		}
 
-		public bool requiredInstalled => requiredParts.All(part => part.installed && part.bolted && parentInstalled && parentBolted);
-
 		public void DefineBoostChangingGameObject(GameObject boostChangingGameObject)
 		{
-			if (boostChangingGameObject != null)
+			if (this.boostChangingGameObject != null)
 			{
 				return;
 			}
@@ -98,6 +95,15 @@ namespace SatsumaTurboCharger.part
 		protected abstract TurboConfiguration SetupTurboConfig();
 
 		protected abstract TurboConditionStorage SetupTurboConditions();
+
+		public void DefineRequiredParts(TurboLogicRequiredParts requiredParts)
+		{
+			if (this.requiredParts != null)
+			{
+				return;
+			}
+			this.requiredParts = requiredParts;
+		}
 
 		public static void Save(SatsumaTurboCharger mod, string saveFile, TurboPart[] turbos)
 		{

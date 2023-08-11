@@ -13,7 +13,7 @@ namespace SatsumaTurboCharger.part
 		protected override Vector3 partInstallPosition => new Vector3(-0.1398f, 0.1299f, -0.0155f);
 		protected override Vector3 partInstallRotation => new Vector3(0, 0, 0);
 
-		public TurboSmall(SatsumaTurboCharger mod, BoostGauge boostGauge, TurboSmallExhaustInletTube parent, List<Part> requiredParts, Dictionary<string, float> boostSave) : base(mod, boostGauge, parent, requiredParts, boostSave)
+		public TurboSmall(SatsumaTurboCharger mod, BoostGauge boostGauge, TurboSmallExhaustInletTube parent, Dictionary<string, float> boostSave) : base(mod, boostGauge, parent, boostSave)
 		{
 			AddClampModel(new Vector3(-0.00775f, -0.07375f, -0.0355f), new Vector3(-45, 90, 0),
 				new Vector3(0.5f, 0.5f, 0.49f));

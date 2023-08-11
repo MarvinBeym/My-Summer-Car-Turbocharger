@@ -96,6 +96,7 @@
     <Compile Include="part\ManifoldWeber.cs" />
     <Compile Include="part\TurboBig.cs" />
     <Compile Include="part\TurboBigIntercoolerTube.cs" />
+    <Compile Include="part\TurboLogicRequiredParts.cs" />
     <Compile Include="part\TurboPart.cs" />
     <Compile Include="Racing_Exhaust_Outlet_Straight_Logic.cs" />
     <Compile Include="SatsumaTurboCharger.cs" />

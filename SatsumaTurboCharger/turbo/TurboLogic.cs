@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using MSCLoader;
+using MscModApi.Parts;
 using SatsumaTurboCharger.part;
 using UnityEngine;
+using EventType = MscModApi.Parts.EventType;
 using Random = System.Random;
 
 
@@ -27,6 +29,7 @@ namespace SatsumaTurboCharger.turbo
 		public GameObject spinningTurbineGameObject;
 		protected AudioHandler audioHandler;
 		private AudioSource turboLoopAudio;
+		private AudioSource blowoffAudio;
 
 		public float boost { get; protected set; } = 0;
 
@@ -49,10 +52,31 @@ namespace SatsumaTurboCharger.turbo
 		public float boostMaxConfigured { get; protected set; } = 0;
 
 		public GameObject boostChangingGameObject => turboPart.boostChangingGameObject;
+		public bool requiredInstalledAndBolted => turboPart.requiredParts == null || turboPart.requiredParts.requiredInstalledAndBolted;
 
-		void LateUpdate()
+		protected void Start()
 		{
-			if (!turboPart.requiredInstalled || !CarH.running)
+			turboLoopAudio = audioHandler.Get("turboLoop");
+			blowoffAudio = audioHandler.Get("blowoff");
+			conditionStorage.DefineConditionsHaveUpdatedAction(() =>
+			{
+				float newCalculatedIncrease = 0;
+				conditionStorage.GetConditions().ForEach(condition =>
+				{
+					if (condition.applyCondition)
+					{
+						newCalculatedIncrease += condition.valueToApply;
+					}
+				});
+
+
+				boostMaxConfigured = config.boostBase + newCalculatedIncrease;
+			});
+		}
+
+		protected void LateUpdate()
+		{
+			if (!requiredInstalledAndBolted || !CarH.running)
 			{
 				//Not all required installed RESET
 				audioHandler.StopAll();
@@ -60,11 +84,7 @@ namespace SatsumaTurboCharger.turbo
 			}
 			blowoffTimer += Time.deltaTime;
 
-			turboLoopAudio = audioHandler.Get("turboLoop");
-
 			audioHandler.Play(turboLoopAudio);
-
-			audioHandler.Play("turboLoop");
 
 			//boostMaxConfigured = CalculateConfigurationBoost(boostMaxConfigured, config.boostBase, turbo.conditions);
 			float soundBoost = CalculateBoost(engineRpm);
@@ -98,7 +118,7 @@ namespace SatsumaTurboCharger.turbo
 				boost = config.boostMin;
 				blowoffAllowed = false;
 				blowoffTimer = 0;
-				audioHandler.Play("blowoff");
+				audioHandler.Play(blowoffAudio);
 			}
 
 			if (blowoffTimer >= config.blowoffDelay)
@@ -252,21 +272,6 @@ namespace SatsumaTurboCharger.turbo
 			this.turboPart = turboPart;
 			this.setBoost = setBoost;
 			this.conditionStorage = conditionStorage;
-
-			conditionStorage.DefineConditionsHaveUpdatedAction(() =>
-			{
-				float newCalculatedIncrease = 0;
-				conditionStorage.GetConditions().ForEach(condition =>
-				{
-					if (condition.applyCondition)
-					{
-						newCalculatedIncrease += condition.valueToApply;
-					}
-				});
-
-
-				boostMaxConfigured = config.boostBase + newCalculatedIncrease;
-			});
 		}
 	}
 }

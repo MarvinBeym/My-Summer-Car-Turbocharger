@@ -25,7 +25,7 @@ namespace SatsumaTurboCharger.turbo
 		protected bool canBackfire = false;
 		protected bool blowoffAllowed = false;
 
-		public Backfire_Logic backFireLogic;
+		public BackfireLogic backFireLogic;
 		public GameObject spinningTurbineGameObject;
 		protected AudioHandler audioHandler;
 		private AudioSource turboLoopAudio;

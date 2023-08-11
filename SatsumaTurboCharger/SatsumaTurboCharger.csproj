@@ -82,12 +82,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="part\BoostGauge.cs" />
-    <Compile Include="BoostGauge_Logic.cs" />
+    <Compile Include="turbo\BoostGaugeLogic.cs" />
     <Compile Include="part\ExhausHeader.cs" />
     <Compile Include="gui\GuiDebug.cs" />
     <Compile Include="gui\GuiDebugElement.cs" />
     <Compile Include="gui\GuiDebugInfo.cs" />
-    <Compile Include="Hood_Logic.cs" />
+    <Compile Include="turbo\HoodLogic.cs" />
     <Compile Include="BoostSave.cs" />
     <Compile Include="part\Intercooler.cs" />
     <Compile Include="part\IntercoolerManifoldTwinCarbTube.cs" />
@@ -96,9 +96,8 @@
     <Compile Include="part\ManifoldWeber.cs" />
     <Compile Include="part\TurboBig.cs" />
     <Compile Include="part\TurboBigIntercoolerTube.cs" />
-    <Compile Include="part\TurboLogicRequiredParts.cs" />
+    <Compile Include="turbo\TurboLogicRequiredParts.cs" />
     <Compile Include="part\TurboPart.cs" />
-    <Compile Include="Racing_Exhaust_Outlet_Straight_Logic.cs" />
     <Compile Include="SatsumaTurboCharger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="part\TurboBigBlowoffValve.cs" />
@@ -111,7 +110,7 @@
     <Compile Include="part\TurboSmallExhaustInletTube.cs" />
     <Compile Include="part\TurboSmallExhaustOutletTube.cs" />
     <Compile Include="part\TurboSmallIntercoolerTube.cs" />
-    <Compile Include="turbo\Backfire_Logic.cs" />
+    <Compile Include="turbo\BackfireLogic.cs" />
     <Compile Include="turbo\Condition.cs" />
     <Compile Include="AudioHandler.cs" />
     <Compile Include="turbo\TurboConditionStorage.cs" />

@@ -17,7 +17,7 @@ namespace SatsumaTurboCharger.part
 		public float rpm => logic.rpm;
 		public float setBoost => logic.setBoost;
 
-		public Backfire_Logic backFireLogic => logic.backFireLogic;
+		public BackfireLogic backFireLogic => logic.backFireLogic;
 
 		public FsmFloat powerMultiplier;
 		public TurboConditionStorage conditionStorage { get; protected set; }
@@ -77,7 +77,7 @@ namespace SatsumaTurboCharger.part
 			GameObject backfireFxGameObject = GameObject.Instantiate(backfireFxModel);
 			backfireFxGameObject.transform.parent = backfirePart.transform;
 
-			logic.backFireLogic = backfirePart.AddWhenInstalledBehaviour<Backfire_Logic>();
+			logic.backFireLogic = backfirePart.AddWhenInstalledBehaviour<BackfireLogic>();
 			logic.backFireLogic.Init(backfireAudioSource);
 		}
 

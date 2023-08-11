@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SatsumaTurboCharger.turbo
 {
-    public class Backfire_Logic : MonoBehaviour
+    public class BackfireLogic : MonoBehaviour
     {
         private AudioSource backfireAudioSource;
         private ParticleSystem particleFx;

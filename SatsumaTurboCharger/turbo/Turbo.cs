@@ -33,7 +33,7 @@ namespace SatsumaTurboCharger.turbo
 		protected bool allSmallInstalled = false;
 		protected bool allOtherInstalled = false;
 
-		public Backfire_Logic backfire_Logic;
+		public BackfireLogic backfire_Logic;
 		public bool canBackfire = false;
 
 		public FsmFloat powerMultiplier;

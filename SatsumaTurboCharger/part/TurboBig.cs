@@ -49,7 +49,7 @@ namespace SatsumaTurboCharger.part
 
 		protected override TurboConfiguration SetupTurboConfig()
 		{
-			return new TurboConfiguration
+			return new TurboConfiguration()
 			{
 				boostBase = 2f,
 				boostStartingRpm = 3000,
@@ -58,15 +58,16 @@ namespace SatsumaTurboCharger.part
 				minSettableBoost = 1.65f,
 				boostSteepness = 1.5f,
 				blowoffDelay = 0.8f,
-				blowoffTriggerBoost = 0.6f,
-				backfireThreshold = 4000,
+				blowoffTriggerBoost = 0.75f,
+				backfireThreshold = 5500,
 				backfireRandomRange = 20,
 				rpmMultiplier = 14,
 				extraPowerMultiplicator = 1.5f,
 				boostSettingSteps = 0.05f,
-				soundboostMinVolume = 0.1f,
-				soundboostMaxVolume = 0.35f,
-				soundboostPitchMultiplicator = 4
+				soundboostMinVolume = 0.03f,
+				soundboostMaxVolume = 0.12f,
+				soundboostPitchMultiplicator = 5,
+				backfireDelay = 0.05f,
 			};
 		}
 

@@ -30,8 +30,14 @@ namespace SatsumaTurboCharger.part
 
 			PaintingSystem.Setup(partBaseInfo.mod, this, gameObject.FindChild("turboBig-center").FindChild("turboBig-compressor-turbine").gameObject);
 
+			GameObject boostChangingGameObject = turboBigBlowoffValve.gameObject.transform
+				.FindChild("turboBig-blowoff-valve-main").gameObject;
+
+			//Fixing collider too small on model
+			boostChangingGameObject.GetComponent<BoxCollider>().size = new Vector3(0.09f, 0.09f, 0.09f);
+
 			DefineBoostChangingGameObject(
-				turboBigBlowoffValve.gameObject.transform.FindChild("turboBig-blowoff-valve-main").gameObject
+				boostChangingGameObject
 				);
 			DefineSpinningTurbineGameObject(gameObject.transform.FindChild("turboBig-center").FindChild("turboBig-compressor-turbine").gameObject);
 

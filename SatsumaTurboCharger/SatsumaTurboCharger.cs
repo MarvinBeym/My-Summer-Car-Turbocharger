@@ -105,13 +105,18 @@ namespace SatsumaTurboCharger
 		private Kit manifoldTwinCarb_kit;
 
 		//Saves
+#if DEBUG
 		public Dictionary<string, float> partsWearSave;
+#endif
 
 		public Dictionary<string, float> boostSave;
 
 		//saveFiles
 		private const string boostSaveFile = "boost_saveFile.json";
+
+#if DEBUG
 		private const string wearSaveFile = "wear_saveFile.json";
+#endif
 
 		//Exhaust smoke handling
 		private GameObject exhaustFromMuffler;
@@ -146,7 +151,9 @@ namespace SatsumaTurboCharger
 
 		private Settings debugGuiSetting = new Settings("debugGuiSetting", "Show DEBUG GUI", false);
 		private Settings resetPosSetting = new Settings("resetPos", "Reset", Helper.WorkAroundAction);
+#if DEBUG
 		public Settings partsWearSetting = new Settings("partsWearSetting", "Use parts wear system", true);
+#endif
 
 		public static Settings rotateTurbineSetting =
 			new Settings("rotateTurbineSetting", "Allow turbo turbine rotation", false);
@@ -236,6 +243,26 @@ namespace SatsumaTurboCharger
 
 		public AssetBundle assetsBundle;
 
+/*
+		public static SettingsSlider boostBase;
+		public static SettingsSliderInt boostStartingRpm;
+		public static SettingsSlider boostMin;
+		public static SettingsSlider boostSettingSteps;
+		public static SettingsSlider minSettableBoost;
+		public static SettingsSlider boostSteepness;
+		public static SettingsSliderInt boostStartingRpmOffset;
+		public static SettingsSlider blowoffDelay;
+		public static SettingsSlider blowoffTriggerBoost;
+		public static SettingsSlider backfireThreshold;
+		public static SettingsSliderInt backfireRandomRange;
+		public static SettingsSlider rpmMultiplier;
+		public static SettingsSlider extraPowerMultiplicator;
+		public static SettingsSlider soundboostMinVolume;
+		public static SettingsSlider soundboostMaxVolume;
+		public static SettingsSlider soundboostPitchMultiplicator;
+		public static SettingsSlider backfireDelay;
+*/
+
 		public override void OnNewGame()
 		{
 			MscModApi.MscModApi.NewGameCleanUp(this);
@@ -252,10 +279,12 @@ namespace SatsumaTurboCharger
 
 			ecuModInstalled = ModLoader.IsModPresent("DonnerTech_ECU_Mod");
 
-			guiDebug = new GuiDebug(Screen.width - 310, 50, 300, "ECU MOD DEBUG", new[]
+			guiDebug = new GuiDebug(Screen.width - 310, 50, 300, "TURBO MOD DEBUG", new[]
 			{
 				new GuiDebugElement("DEBUG"),
+#if DEBUG 
 				new GuiDebugElement("Wear"),
+#endif
 			});
 
 			resetPosSetting.DoAction = PosReset;
@@ -295,7 +324,9 @@ namespace SatsumaTurboCharger
 
 			try
 			{
+#if DEBUG
 				partsWearSave = Helper.LoadSaveOrReturnNew<Dictionary<string, float>>(this, wearSaveFile);
+#endif
 				boostSave = Helper.LoadSaveOrReturnNew<Dictionary<string, float>>(this, boostSaveFile);
 			}
 			catch (Exception ex)
@@ -536,6 +567,28 @@ namespace SatsumaTurboCharger
 			Settings.AddCheckBox(this, partsWearSetting);
 #endif
 			Settings.AddCheckBox(this, useCustomGearRatios);
+
+			Settings.AddHeader(this, "", Color.clear);
+/*
+			boostBase = Settings.AddSlider(this,"boostBaseSetting", "Boost Base", 0, 2f, 0.8f);
+			boostStartingRpm = Settings.AddSlider(this,"boostStartingRpmSetting", "Boost Starting Rpm", 0, 7000, 2400);
+			boostStartingRpmOffset = Settings.AddSlider(this, "boostStartingRpmOffsetSetting", "Boost Starting Rpm Offset", 1000, 5000, 1000);
+			boostMin = Settings.AddSlider(this,"boostMinSetting", "Boost Min", -0.2f, 1f, -0.04f);
+			minSettableBoost = Settings.AddSlider(this,"minSettableBoostSetting", "Mit Settable Boost", 0.3f, 1.8f, 0.4f);
+			boostSteepness = Settings.AddSlider(this,"boostSteepnessSetting", "Boost Steepness", 0.8f, 2f, 1f);
+			blowoffDelay = Settings.AddSlider(this,"blowoffDelaySetting", "Blowoff Delay", 0.1f, 1.4f, 0.8f);
+			blowoffTriggerBoost = Settings.AddSlider(this,"blowoffTriggerBoostSetting", "Blowoff Trigger Boost", 0.1f, 1f, 0.75f);
+			backfireThreshold = Settings.AddSlider(this,"backfireThresholdSetting", "Backfire RPM Threshold", 1000, 6000, 5500f);
+			backfireRandomRange = Settings.AddSlider(this,"backfireRandomRangeSetting", "Backfire Random Range", 1, 60, 20);
+			rpmMultiplier = Settings.AddSlider(this,"rpmMultiplierSetting", "RPM Multiplier", 1, 30, 10f);
+			extraPowerMultiplicator = Settings.AddSlider(this,"extraPowerMultiplicatorSetting", "Extra Power Multiplicator", 0.2f, 3f, 1.5f);
+			boostSettingSteps = Settings.AddSlider(this, "boostSettingStepsSetting", "Boost Setting Steps", 0.01f, 0.2f, 0.05f);
+			soundboostMinVolume = Settings.AddSlider(this,"soundboostMinVolumeSetting", "Soundboost Min Volume", 0.005f, 0.3f, 0.03f);
+			soundboostMaxVolume = Settings.AddSlider(this,"soundboostMaxVolumeSetting", "Soundboost Max Volume", 0.01f, 0.5f, 0.08f);
+			soundboostPitchMultiplicator = Settings.AddSlider(this,"soundboostPitchMultiplicatorSetting", "Soundboost Pitch Multiplicator", 0.5f, 8f, 5f);
+			backfireDelay = Settings.AddSlider(this, "backfireDelaySetting", "Delay between a backfire trigger", 0.001f, 0.5f, 0.1f, null, 4);
+*/
+
 			Settings.AddHeader(this, "", Color.clear);
 			Settings.AddText(this, "New Gear ratios\n" +
 								   "1.Gear: " + newGearRatios[2] + "\n" +
@@ -560,14 +613,25 @@ namespace SatsumaTurboCharger
 		{
 			if ((bool)debugGuiSetting.Value)
 			{
+				TurboPart turboInstalled = null;
+				if (turboBig.installed)
+				{
+					turboInstalled = turboBig;
+				} else if (turboSmall.installed)
+				{
+					turboInstalled = turboSmall;
+				}
+
 				guiDebug.Handle(new GuiDebugInfo[]
 				{
 					new GuiDebugInfo("DEBUG", "Engine RPM", ((int)CarH.drivetrain.rpm).ToStringOrEmpty()),
-					new GuiDebugInfo("DEBUG", "Racing Turbo bar", turboBig.boost.ToStringOrEmpty()),
-					new GuiDebugInfo("DEBUG", "GT Turbo bar", turboSmall.boost.ToStringOrEmpty()),
+					new GuiDebugInfo("DEBUG", "Turbo pressure (bar)", turboInstalled == null ? "NOT INSTALLED" : turboInstalled.boost.ToStringOrEmpty()),
+					new GuiDebugInfo("DEBUG", "Turbo rpm", turboInstalled == null ? "NOT INSTALLED" : turboInstalled.rpm.ToStringOrEmpty()),
+					new GuiDebugInfo("DEBUG", "Turbo boost set", turboInstalled == null ? "NOT INSTALLED" : turboInstalled.setBoost.ToStringOrEmpty()),
 					new GuiDebugInfo("DEBUG", "Power multiplier", CarH.drivetrain.powerMultiplier.ToStringOrEmpty()),
 					new GuiDebugInfo("DEBUG", "KM/H", ((int)CarH.drivetrain.differentialSpeed).ToStringOrEmpty()),
 					new GuiDebugInfo("DEBUG", "Torque", CarH.drivetrain.torque.ToStringOrEmpty()),
+					new GuiDebugInfo("DEBUG", "HP", CarH.drivetrain.currentPower.ToStringOrEmpty()),
 					new GuiDebugInfo("DEBUG", "Clutch Max Torque", CarH.drivetrain.clutchMaxTorque.ToStringOrEmpty()),
 					new GuiDebugInfo("DEBUG", "Clutch Torque Multiplier",
 						CarH.drivetrain.clutchTorqueMultiplier.ToStringOrEmpty()),

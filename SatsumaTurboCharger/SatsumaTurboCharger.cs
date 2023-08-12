@@ -525,15 +525,7 @@ namespace SatsumaTurboCharger
 		private void SetupInspectionPrevention()
 		{
 			GameObject inspectionProcess = Cache.Find("InspectionProcess");
-			inspectionPlayMakerFsm = inspectionProcess.GetComponents<PlayMakerFSM>()[0];
-			foreach (PlayMakerFSM playMakerFSM in inspectionProcess.GetComponents<PlayMakerFSM>())
-			{
-				if (playMakerFSM.FsmName == "Inspect")
-				{
-					inspectionPlayMakerFsm = playMakerFSM;
-					break;
-				}
-			}
+			inspectionPlayMakerFsm = inspectionProcess.FindFsm("Inspect");
 
 			foreach (FsmEvent fsmEvent in inspectionPlayMakerFsm.FsmEvents)
 			{
@@ -544,15 +536,13 @@ namespace SatsumaTurboCharger
 				}
 			}
 
-			FsmHook.FsmInject(inspectionProcess, "Results", InspectionResults);
-		}
-
-		public void InspectionResults()
-		{
-			if (partsList.Any(part => part.installed))
+			FsmHook.FsmInject(inspectionProcess, "Results", () =>
 			{
-				PlayMakerFSM.BroadcastEvent(inspectionFailedEvent);
-			}
+				if (partsList.Any(part => part.installed))
+				{
+					PlayMakerFSM.BroadcastEvent(inspectionFailedEvent);
+				}
+			});
 		}
 
 		public override void ModSettings()

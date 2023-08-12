@@ -43,7 +43,7 @@ namespace SatsumaTurboCharger.part
 
 			audioHandler.Add("turboLoop", this, "turbocharger_loop.wav", true);
 			audioHandler.Add("grinding", this, "grinding sound.wav", true);
-			audioHandler.Add("blowoff", this, "turbocharger_blowoff.wav", false);
+			audioHandler.Add("blowoff", this, "turbocharger_blowoff.wav");
 		}
 
 

@@ -161,9 +161,6 @@ namespace SatsumaTurboCharger
 		public static Settings backfireEffectSetting =
 			new Settings("backfireEffectSetting", "Allow backfire effect for turbo", false);
 
-		private static Settings useCustomGearRatios =
-			new Settings("useCustomGearRatios", "Use custom gear ratios", false, Helper.WorkAroundAction);
-
 		internal static PartBaseInfo partBaseInfo;
 
 		//
@@ -243,7 +240,7 @@ namespace SatsumaTurboCharger
 
 		public AssetBundle assetsBundle;
 
-/*
+		/*
 		public static SettingsSlider boostBase;
 		public static SettingsSliderInt boostStartingRpm;
 		public static SettingsSlider boostMin;
@@ -262,6 +259,12 @@ namespace SatsumaTurboCharger
 		public static SettingsSlider soundboostPitchMultiplicator;
 		public static SettingsSlider backfireDelay;
 */
+		public static SettingsCheckBox useCustomGearRatios;
+		public static SettingsDropDownList changeTransmission;
+
+		public static string transmissionTypeToSet;
+		public static float[] gearRatiosToSet;
+
 
 		public override void OnNewGame()
 		{
@@ -288,17 +291,6 @@ namespace SatsumaTurboCharger
 			});
 
 			resetPosSetting.DoAction = PosReset;
-			useCustomGearRatios.DoAction = delegate
-			{
-				if ((bool)useCustomGearRatios.Value)
-				{
-					CarH.drivetrain.gearRatios = newGearRatios;
-				}
-				else
-				{
-					CarH.drivetrain.gearRatios = originalGearRatios;
-				}
-			};
 			assetsBundle = Helper.LoadAssetBundle(this, "turbochargermod.unity3d");
 			TurboPart.LoadAssets(assetsBundle);
 			partBaseInfo = new PartBaseInfo(this, assetsBundle, partsList);
@@ -556,10 +548,25 @@ namespace SatsumaTurboCharger
 #if DEBUG
 			Settings.AddCheckBox(this, partsWearSetting);
 #endif
-			Settings.AddCheckBox(this, useCustomGearRatios);
 
+			useCustomGearRatios = Settings.AddCheckBox(this, "useCustomGearRatios", "Use custom gear ratios", false, () => 
+			{
+				gearRatiosToSet = useCustomGearRatios.GetValue() ? newGearRatios : originalGearRatios;
+			});
+
+			changeTransmission = Settings.AddDropDownList(this, "changeTransmission", "Change Car Transmission type", new string[]
+			{
+				Drivetrain.Transmissions.FWD.ToString(),
+				Drivetrain.Transmissions.RWD.ToString(),
+				Drivetrain.Transmissions.AWD.ToString(),
+			}, 0, () =>
+			{
+				transmissionTypeToSet = changeTransmission.GetSelectedItemName();
+			});
+
+
+			/*
 			Settings.AddHeader(this, "", Color.clear);
-/*
 			boostBase = Settings.AddSlider(this,"boostBaseSetting", "Boost Base", 0, 2f, 0.8f);
 			boostStartingRpm = Settings.AddSlider(this,"boostStartingRpmSetting", "Boost Starting Rpm", 0, 7000, 2400);
 			boostStartingRpmOffset = Settings.AddSlider(this, "boostStartingRpmOffsetSetting", "Boost Starting Rpm Offset", 1000, 5000, 1000);
@@ -577,7 +584,7 @@ namespace SatsumaTurboCharger
 			soundboostMaxVolume = Settings.AddSlider(this,"soundboostMaxVolumeSetting", "Soundboost Max Volume", 0.01f, 0.5f, 0.08f);
 			soundboostPitchMultiplicator = Settings.AddSlider(this,"soundboostPitchMultiplicatorSetting", "Soundboost Pitch Multiplicator", 0.5f, 8f, 5f);
 			backfireDelay = Settings.AddSlider(this, "backfireDelaySetting", "Delay between a backfire trigger", 0.001f, 0.5f, 0.1f, null, 4);
-*/
+			*/
 
 			Settings.AddHeader(this, "", Color.clear);
 			Settings.AddText(this, "New Gear ratios\n" +
@@ -631,17 +638,31 @@ namespace SatsumaTurboCharger
 
 		public override void Update()
 		{
+			//Required as ModLoader settings may call action at any time (Menu)
+			if (transmissionTypeToSet != null && CarH.drivetrain != null)
+			{
+				if (transmissionTypeToSet == Drivetrain.Transmissions.FWD.ToString())
+				{
+					CarH.drivetrain.SetTransmission(Drivetrain.Transmissions.FWD);
+				}
 
-			//Todo
-			/*
-            if (!turboBig.turbo.CheckAllRequiredInstalled() && !turboSmall.turbo.CheckAllRequiredInstalled() && CarH.hasPower)
-            {
-                //boostGaugeLogic.SetDigitalText("ERR");
-            }
-            else if (CarH.hasPower && boostGaugeLogic.gaugeMode != GaugeMode.Digital)
-            {
-                boostGaugeLogic.SetDigitalText("");
-            }*/
+				if (transmissionTypeToSet == Drivetrain.Transmissions.RWD.ToString())
+				{
+					CarH.drivetrain.SetTransmission(Drivetrain.Transmissions.RWD);
+				}
+
+				if (transmissionTypeToSet == Drivetrain.Transmissions.AWD.ToString())
+				{
+					CarH.drivetrain.SetTransmission(Drivetrain.Transmissions.AWD);
+				}
+			}
+
+			//Required as ModLoader settings may call action at any time (Menu)
+			if (gearRatiosToSet != null && CarH.drivetrain != null)
+			{
+				CarH.drivetrain.gearRatios = gearRatiosToSet;
+
+			}
 
 			HandleExhaustSystem();
 		}

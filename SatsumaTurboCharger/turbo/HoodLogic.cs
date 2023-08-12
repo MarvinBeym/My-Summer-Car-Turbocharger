@@ -10,129 +10,100 @@ namespace SatsumaTurboCharger
 {
 	public class HoodLogic : MonoBehaviour
 	{
+		protected enum OpenState
+		{
+			Closed = 0,
+			Open = 87,
+			Lifted = 2
+		}
 
 		private Part turboHood;
-		private GameObject turboHoodLatchCollider;
-		private HingeJoint turboHoodHingeJoint;
-		private Rigidbody turboHoodRigidBody;
+		private GameObject latchCollider;
+		private HingeJoint hingeJoint;
 
-		private GameObject originalHoodTrigger;
+		protected OpenState openState = OpenState.Closed;
 
-		private bool open = false;
-		private float springSpeed = 16;
-		private float springDamping = 4;
-
-		private float openedAngle = 87;
-		private float closedAngle = 0;
-		public void Init(Part hoodPart)
-		{
-			turboHood = hoodPart;
-
-			turboHoodRigidBody = turboHood.GetComponent<Rigidbody>();
-			turboHoodHingeJoint = turboHood.AddComponent<HingeJoint>();
-			turboHoodHingeJoint.connectedBody = CarH.satsuma.GetComponent<Rigidbody>();
-			turboHoodHingeJoint.anchor = new Vector3(0, 0, 0);
-			turboHoodHingeJoint.axis = new Vector3(0, 0, 0);
-			turboHoodHingeJoint.useSpring = true;
-			turboHoodHingeJoint.useLimits = true;
-			turboHoodHingeJoint.limits = new JointLimits
-			{
-				min = -openedAngle,
-				max = closedAngle,
-			};
-			SetHoodAngle(0);
-
-			turboHoodLatchCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
-			turboHoodLatchCollider.name = hoodPart.gameObject.name.Replace("(Clone)", "_LATCHCOLLIDER");
-			turboHoodLatchCollider.transform.SetParent(turboHood.transform);
-			turboHoodLatchCollider.GetComponent<Collider>().isTrigger = true;
-			turboHoodLatchCollider.GetComponent<Renderer>().enabled = false;
-			turboHoodLatchCollider.transform.localPosition = new Vector3(0f, 0.06f, 0.36f);
-			turboHoodLatchCollider.transform.localEulerAngles = new Vector3(352f, 0f, 0f);
-			turboHoodLatchCollider.transform.localScale = new Vector3(1.21f, 0.05f, 0.85f);
-
-			GameObject normalHood = Cache.Find("hood(Clone)");
-
-			GameObject fiberglassHood = Helper.GetGameObjectFromFsm(Cache.Find("Fiberglass Hood"));
-			Helper.FindFsmOnGameObject(fiberglassHood, "Removal").InitializeFSM();
-			originalHoodTrigger = Cache.Find("trigger_hood");
-			FsmHook.FsmInject(originalHoodTrigger, "Assemble 2", OnOriginalAssemble);
-			FsmHook.FsmInject(originalHoodTrigger, "Assemble 3", OnOriginalAssemble);
-
-			FsmHook.FsmInject(normalHood, "Remove part", OnOriginalDisassemble);
-			FsmHook.FsmInject(fiberglassHood, "Remove part", OnOriginalDisassemble);
+		private float springSpeed = 24;
+		private float springDamping = 12;
 
 
-
-			bool normalHoodInstalled = (normalHood.transform.parent != null && normalHood.transform.parent.name == "pivot_hood");
-			bool fiberglassHoodInstalled = (fiberglassHood.transform.parent != null && fiberglassHood.transform.parent.name == "pivot_hood");
-
-			if (turboHood.installed)
-			{
-				if (normalHoodInstalled) { Helper.FindFsmOnGameObject(normalHood, "Removal").SendEvent("REMOVE"); }
-				if (fiberglassHoodInstalled) { Helper.FindFsmOnGameObject(fiberglassHood, "Removal").SendEvent("REMOVE"); }
-			}
-
-			turboHood.installBlocked = normalHoodInstalled || fiberglassHoodInstalled;
-			originalHoodTrigger.SetActive(!turboHood.installed);
-
-			turboHood.AddEventListener(EventTime.Post, EventType.Install, OnTurboHoodAssemble);
-			turboHood.AddEventListener(EventTime.Post, EventType.Uninstall, OnTurboHoodAssemble);
-		}
-
-		internal void OnTurboHoodAssemble()
-		{
-			originalHoodTrigger.SetActive(false);
-		}
-		internal void OnTurboHoodDisassemble()
-		{
-			JointSpring spring = turboHoodHingeJoint.spring;
-			spring.spring = springSpeed;
-			spring.damper = springDamping;
-			spring.targetPosition = -closedAngle;
-			turboHoodHingeJoint.spring = spring;
-			open = false;
-			originalHoodTrigger.SetActive(true);
-		}
-
-		private void OnOriginalAssemble()
-		{
-			turboHood.installBlocked = true;
-		}
-		private void OnOriginalDisassemble()
-		{
-			turboHood.installBlocked = false;
-		}
-
-		void Start()
+		public void Start()
 		{
 			FsmHook.FsmInject(Cache.Find("HoodLocking").transform.FindChild("Trigger").gameObject, "Open", delegate ()
 			{
-				SetHoodAngle(openedAngle);
-				open = true;
+				if (openState == OpenState.Open)
+				{
+					return;
+				}
+
+
+				SetHoodState(openState == OpenState.Closed ? OpenState.Lifted : OpenState.Closed);
+			});
+
+			latchCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			latchCollider.name = turboHood.name + "_LATCHCOLLIDER";
+			latchCollider.transform.SetParent(turboHood.transform);
+			latchCollider.GetComponent<Collider>().isTrigger = true;
+			latchCollider.GetComponent<Renderer>().enabled = false;
+			latchCollider.transform.localPosition = new Vector3(0f, 0.06f, 0.36f);
+			latchCollider.transform.localEulerAngles = new Vector3(352f, 0f, 0f);
+			latchCollider.transform.localScale = new Vector3(1.21f, 0.05f, 0.85f);
+
+			turboHood.AddEventListener(EventTime.Post, EventType.Install, () =>
+			{
+				latchCollider.SetActive(true);
+				hingeJoint = turboHood.AddComponent<HingeJoint>();
+
+				hingeJoint.connectedBody = CarH.satsuma.GetComponent<Rigidbody>();
+				hingeJoint.anchor = new Vector3(0, 0, 0);
+				hingeJoint.axis = new Vector3(0, 0, 0);
+				hingeJoint.useSpring = true;
+				hingeJoint.useLimits = true;
+				hingeJoint.enableCollision = false; 
+				hingeJoint.limits = new JointLimits
+				{
+					min = -(float) OpenState.Open,
+					max = (float) OpenState.Closed,
+				};
+
+				SetHoodState(OpenState.Closed);
+			});
+
+			turboHood.AddEventListener(EventTime.Pre, EventType.Uninstall, () =>
+			{
+				latchCollider.SetActive(false);
+				Destroy(hingeJoint);
 			});
 		}
 
-		void Update()
+		public void Init(Part turboHood)
 		{
-			if (open && turboHoodLatchCollider.IsLookingAt())
-			{
-				if (UserInteraction.LeftMouseDown)
-				{
-					SetHoodAngle(closedAngle);
-					open = false;
-				}
-			}
-
+			this.turboHood = turboHood;
 		}
 
-		private void SetHoodAngle(float angle)
+		void LateUpdate()
 		{
-			JointSpring spring = turboHoodHingeJoint.spring;
+			if (openState == OpenState.Closed || !latchCollider.IsLookingAt())
+			{
+				return;
+			}
+
+			UserInteraction.GuiInteraction($"Press [{cInput.GetText("Use")}] to {(openState == OpenState.Lifted ? "Open" : "Close")} Hood");
+			if (UserInteraction.UseButtonDown)
+			{
+				SetHoodState(openState == OpenState.Lifted ? OpenState.Open : OpenState.Lifted);
+			}
+		}
+
+		protected void SetHoodState(OpenState state)
+		{
+			JointSpring spring = hingeJoint.spring;
 			spring.spring = springSpeed;
 			spring.damper = springDamping;
-			spring.targetPosition = angle;
-			turboHoodHingeJoint.spring = spring;
+			spring.targetPosition = (float) state;
+			hingeJoint.spring = spring;
+
+			openState = state;
 		}
 	}
 }

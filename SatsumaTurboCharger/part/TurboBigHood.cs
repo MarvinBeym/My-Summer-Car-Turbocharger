@@ -25,8 +25,8 @@ namespace SatsumaTurboCharger.part
 			PaintingSystem
 				.Setup(partBaseInfo.mod, this)
 				.ApplyMaterial("CAR_PAINT_REGULAR");
-			HoodLogic hoodLogic = this.AddComponent<HoodLogic>();
-			//hoodLogic.Init(turboBig_hood_part);
+			HoodLogic hoodLogic = AddWhenInstalledBehaviour<HoodLogic>();
+			hoodLogic.Init(this);
 		}
 	}
 }

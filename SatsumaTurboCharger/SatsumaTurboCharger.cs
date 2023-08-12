@@ -203,6 +203,8 @@ namespace SatsumaTurboCharger
 		public GamePart twinCarb;
 		public GamePart steelHeaders;
 		public GamePart headers;
+		public GamePart hood;
+		public GamePart fiberglassHood;
 
 		internal static List<Part> partsList = new List<Part>();
 		public List<Part> bigPartsList;
@@ -300,6 +302,8 @@ namespace SatsumaTurboCharger
 				twinCarb = new GamePart("Twin Carburators");
 				steelHeaders = new GamePart("Steel Headers");
 				headers = new GamePart("Headers");
+				hood = new GamePart("Hood");
+				fiberglassHood = new GamePart("Fiberglass Hood");
 
 				racingExhaustPipe_inst = Cache.Find("Racing Exhaust").GetComponent<PlayMakerFSM>().FsmVariables
 					.FindFsmBool("Installed");
@@ -751,6 +755,38 @@ namespace SatsumaTurboCharger
 			headers.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
 			{
 				exhaustHeader.installBlocked = false;
+			});
+
+			turboBigHood.AddEventListener(EventTime.Post, EventType.Install, () =>
+			{
+				hood.installBlocked = true;
+				fiberglassHood.installBlocked = true;
+			});
+
+			turboBigHood.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
+			{
+				hood.installBlocked = false;
+				fiberglassHood.installBlocked = false;
+			});
+
+			hood.AddEventListener(EventTime.Post, EventType.Install, () =>
+			{
+				turboBigHood.installBlocked = true;
+			});
+
+			hood.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
+			{
+				turboBigHood.installBlocked = false;
+			});
+
+			fiberglassHood.AddEventListener(EventTime.Post, EventType.Install, () =>
+			{
+				turboBigHood.installBlocked = true;
+			});
+
+			fiberglassHood.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
+			{
+				turboBigHood.installBlocked = false;
 			});
 
 			weberCarb.AddEventListener(EventTime.Post, EventType.Install, () =>

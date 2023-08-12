@@ -58,6 +58,8 @@ namespace SatsumaTurboCharger.turbo
 		{
 			turboLoopAudio = audioHandler.Get("turboLoop");
 			blowoffAudio = audioHandler.Get("blowoff");
+			audioHandler.SetVolume(blowoffAudio, 0.3f);
+			audioHandler.SetPitch(blowoffAudio, 1.2f);
 			conditionStorage.DefineConditionsHaveUpdatedAction(() =>
 			{
 				float newCalculatedIncrease = 0;
@@ -180,8 +182,8 @@ namespace SatsumaTurboCharger.turbo
 				tmpSetBoost -= config.boostSettingSteps;
 			}
 
-			tmpSetBoost = tmpSetBoost >= boostMaxConfigured ? tmpSetBoost : boostMaxConfigured;
-			tmpSetBoost = tmpSetBoost <= config.minSettableBoost ? tmpSetBoost : config.minSettableBoost;
+			tmpSetBoost = tmpSetBoost >= boostMaxConfigured ? boostMaxConfigured : tmpSetBoost;
+			tmpSetBoost = tmpSetBoost <= config.minSettableBoost ? config.minSettableBoost : tmpSetBoost;
 
 			UserInteraction.GuiInteraction("" +
 				"[SCROLL UP] to increase boost\n" +
@@ -216,7 +218,7 @@ namespace SatsumaTurboCharger.turbo
 				backFireLogic.TriggerBackfire();
 			}
 
-			if (backfireTimer >= 0.1f)
+			if (backfireTimer >= config.backfireDelay)
 			{
 				if (rpm >= config.backfireThreshold && !UserInteraction.ThrottleDown)
 				{

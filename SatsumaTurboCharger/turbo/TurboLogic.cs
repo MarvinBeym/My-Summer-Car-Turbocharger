@@ -78,10 +78,28 @@ namespace SatsumaTurboCharger.turbo
 
 		protected void LateUpdate()
 		{
+
+			//Todo
+			/*
+            if (!turboBig.turbo.CheckAllRequiredInstalled() && !turboSmall.turbo.CheckAllRequiredInstalled() && CarH.hasPower)
+            {
+                //boostGaugeLogic.SetDigitalText("ERR");
+            }
+            else if (CarH.hasPower && boostGaugeLogic.gaugeMode != GaugeMode.Digital)
+            {
+                boostGaugeLogic.SetDigitalText("");
+            }*/
+
+
 			if (!requiredInstalledAndBolted || !CarH.running)
 			{
 				//Not all required installed RESET
 				audioHandler.StopAll();
+
+				if (!requiredInstalledAndBolted && boostGauge.installed && boostGauge.bolted)
+				{
+					boostGauge.SetDigitalText(CarH.hasPower ? "ERR" : "");
+				}
 				return;
 			}
 			blowoffTimer += Time.deltaTime;

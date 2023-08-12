@@ -28,5 +28,10 @@ namespace SatsumaTurboCharger.part
 		{
 			logic.SetBoost(boostGaugeTarget, boostBeforeRelease, config);
 		}
+
+		public void SetDigitalText(string text)
+		{
+			logic.SetDigitalText(text);
+		}
 	}
 }

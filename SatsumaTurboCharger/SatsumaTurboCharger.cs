@@ -114,19 +114,15 @@ namespace SatsumaTurboCharger
 		private const string wear_saveFile = "wear_saveFile.json";
 
 		//Parts
-		private GameObject racingExhaustPipe;
-		private GameObject racingExhaustMuffler;
 
-		private GameObject exhaustPipe;
-		private GameObject exhaustMuffler;
-
-		private GameObject originalCylinerHead;
 		private GameObject exhaustFromMuffler;
-		private GameObject exhaustFromEngine;
+		private GameObject exhaustFromHeaders;
 		private GameObject exhaustFromPipe;
-		private Vector3 originalExhaustPipeRacePosition;
-		private Quaternion originalExhaustPipeRaceRotation;
-		private Transform originalExhaustPipeRaceParent;
+		private GameObject exhaustFromEngine;
+		private Vector3 originalExhaustMufflerPosition;
+		private Quaternion originalExhaustMufflerRotation;
+		private Transform originalExhaustMufflerParent;
+
 
 		//Inspection
 		private PlayMakerFSM inspectionPlayMakerFsm;
@@ -203,6 +199,9 @@ namespace SatsumaTurboCharger
 		public GamePart twinCarb;
 		public GamePart steelHeaders;
 		public GamePart headers;
+		public GamePart racingExhaustPipe;
+		public GamePart racingExhaustMuffler;
+		public GamePart exhaustPipe;
 		public GamePart hood;
 		public GamePart fiberglassHood;
 
@@ -287,21 +286,22 @@ namespace SatsumaTurboCharger
 			{
 				CarH.drivetrain.clutchTorqueMultiplier = 10f;
 
-				exhaustFromEngine = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromEngine");
-				exhaustFromPipe = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromPipe");
 				exhaustFromMuffler = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromMuffler");
+				exhaustFromHeaders = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromHeaders");
+				exhaustFromPipe = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromPipe");
+				exhaustFromEngine = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromEngine");
 
-				originalExhaustPipeRaceParent = exhaustFromPipe.transform.parent;
-				originalExhaustPipeRacePosition = new Vector3(exhaustFromPipe.transform.localPosition.x,
-					exhaustFromPipe.transform.localPosition.y, exhaustFromPipe.transform.localPosition.z);
-				originalExhaustPipeRaceRotation = new Quaternion(exhaustFromPipe.transform.localRotation.x,
-					exhaustFromPipe.transform.localRotation.y, exhaustFromPipe.transform.localRotation.z,
-					exhaustFromPipe.transform.localRotation.w);
+				originalExhaustMufflerParent= exhaustFromMuffler.transform.parent;
+				originalExhaustMufflerPosition = exhaustFromMuffler.transform.localPosition;
+				originalExhaustMufflerRotation = exhaustFromMuffler.transform.localRotation;
 
 				weberCarb = new GamePart("Racing Carburators");
 				twinCarb = new GamePart("Twin Carburators");
 				steelHeaders = new GamePart("Steel Headers");
-				headers = new GamePart("Headers");
+				headers = new GamePart("Headers"); 
+				racingExhaustPipe = new GamePart("Racing Exhaust");
+				racingExhaustMuffler = new GamePart("Racing Muffler");
+				exhaustPipe = new GamePart("ExhaustPipe");
 				hood = new GamePart("Hood");
 				fiberglassHood = new GamePart("Fiberglass Hood");
 
@@ -316,14 +316,6 @@ namespace SatsumaTurboCharger
 					.FindFsmBool("Installed");
 				exhaustMufflerDualTip_inst = Cache.Find("ExhaustDualTip").GetComponent<PlayMakerFSM>().FsmVariables
 					.FindFsmBool("Installed");
-
-				racingExhaustPipe = Cache.Find("racing exhaust(Clone)");
-				racingExhaustMuffler = Cache.Find("racing muffler(Clone)");
-
-				exhaustPipe = Cache.Find("exhaust pipe(Clone)");
-				exhaustMuffler = Cache.Find("exhaust muffler(Clone)");
-
-				originalCylinerHead = Cache.Find("cylinder head(Clone)");
 			}
 			catch (Exception ex)
 			{
@@ -729,12 +721,26 @@ namespace SatsumaTurboCharger
 			{
 				steelHeaders.installBlocked = true;
 				headers.installBlocked = true;
+				exhaustPipe.installBlocked = true;
 			});
+
 
 			exhaustHeader.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
 			{
 				steelHeaders.installBlocked = false;
 				headers.installBlocked = false;
+				exhaustPipe.installBlocked = false;
+			});
+
+			exhaustPipe.AddEventListener(EventTime.Post, EventType.Install, () =>
+			{
+				exhaustHeader.installBlocked = true;
+			});
+
+
+			exhaustPipe.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
+			{
+				exhaustHeader.installBlocked = false;
 			});
 
 			steelHeaders.AddEventListener(EventTime.Post, EventType.Install, () =>
@@ -808,86 +814,95 @@ namespace SatsumaTurboCharger
 			{
 				turboBig.conditionStorage.UpdateCondition("twinCarb", false);
 			});
+
+			
 		}
+
+		protected bool carStarted = false;
 
 		private void HandleExhaustSystem()
 		{
-			bool allBig = AllBigInstalled();
-			bool allSmall = AllSmallInstalled();
-			bool allOther = AllOtherInstalled();
-
 			if (CarH.running)
 			{
-				if (turboBigExhaustOutletStraight.installed && allBig && allOther)
-				{
-					exhaustFromEngine.SetActive(false);
-					exhaustFromPipe.SetActive(true);
+				//Would benefit from a more "event" driven setup to avoid continuously checking installed state & SetActive() calls
+				carStarted = true;
 
-					exhaustFromPipe.transform.parent = turboBigExhaustOutletStraight.gameObject.transform;
-					//exhaustFromPipe.transform.localPosition = turboBig.backFireLogic.fireFXPosition;
-					//exhaustFromPipe.transform.localRotation = turboBig.backFireLogic.fireFxRotation;
+				if (
+					steelHeaders.installed 
+					|| headers.installed 
+					|| turboBigExhaustOutletTube.installed 
+					|| turboBigExhaustOutletStraight.installed
+					|| turboSmallExhaustOutletTube.installed
+				) {
+					if (turboBigExhaustOutletStraight.installed)
+					{
+						exhaustFromMuffler.transform.parent = turboBigExhaustOutletStraight.gameObject.transform;
+						exhaustFromMuffler.transform.localPosition = turboBig.backFireLogic.fireFXPosition;
+						exhaustFromMuffler.transform.localRotation = Quaternion.Euler(turboBig.backFireLogic.fireFxRotation);
+
+						exhaustFromEngine.SetActive(false);
+						exhaustFromHeaders.SetActive(false);
+						exhaustFromPipe.SetActive(false);
+						exhaustFromMuffler.SetActive(true);
+						return;
+					}
+					else
+					{
+						exhaustFromMuffler.transform.parent = originalExhaustMufflerParent;
+						exhaustFromMuffler.transform.localPosition = originalExhaustMufflerPosition;
+						exhaustFromMuffler.transform.localRotation = originalExhaustMufflerRotation;
+					}
+
+					if (racingExhaustMuffler.installed)
+					{
+						exhaustFromEngine.SetActive(false);
+						exhaustFromHeaders.SetActive(false);
+						exhaustFromPipe.SetActive(false);
+						exhaustFromMuffler.SetActive(true);
+						return;
+					}
+
+					if (racingExhaustPipe.installed || exhaustPipe.installed)
+					{
+						exhaustFromEngine.SetActive(false);
+						exhaustFromHeaders.SetActive(false);
+						exhaustFromPipe.SetActive(true);
+						exhaustFromMuffler.SetActive(false);
+						return;
+					}
+
+					exhaustFromEngine.SetActive(false);
+					exhaustFromHeaders.SetActive(true);
+					exhaustFromPipe.SetActive(false);
 					exhaustFromMuffler.SetActive(false);
 				}
 				else
 				{
-					exhaustFromPipe.transform.parent = originalExhaustPipeRaceParent;
-					exhaustFromPipe.transform.localPosition = originalExhaustPipeRacePosition;
-					exhaustFromPipe.transform.localRotation = originalExhaustPipeRaceRotation;
+					exhaustFromMuffler.transform.parent = originalExhaustMufflerParent;
+					exhaustFromMuffler.transform.localPosition = originalExhaustMufflerPosition;
+					exhaustFromMuffler.transform.localRotation = originalExhaustMufflerRotation;
 
-					if ((allBig || allSmall) && allOther)
-					{
-						if (racingExhaustPipe_inst.Value && racingExhaustMuffler_inst.Value)
-						{
-							exhaustFromEngine.SetActive(false);
-							exhaustFromPipe.SetActive(false);
-							exhaustFromMuffler.SetActive(true);
-						}
-						else if (racingExhaustPipe_inst.Value)
-						{
-							exhaustFromEngine.SetActive(false);
-							exhaustFromPipe.SetActive(true);
-							exhaustFromMuffler.SetActive(false);
-						}
-						else
-						{
-							exhaustFromEngine.SetActive(true);
-							exhaustFromPipe.SetActive(false);
-							exhaustFromMuffler.SetActive(false);
-						}
-					}
-					else
-					{
-						if ((steelHeaders.installed && racingExhaustPipe_inst.Value &&
-							 racingExhaustMuffler_inst.Value) || (headers.installed && exhaustPipe_inst.Value &&
-																  (exhaustMuffler_inst.Value ||
-																   exhaustMufflerDualTip_inst.Value)))
-						{
-							exhaustFromEngine.SetActive(false);
-							exhaustFromPipe.SetActive(false);
-							exhaustFromMuffler.SetActive(true);
-						}
-						else if ((steelHeaders.installed && racingExhaustPipe_inst.Value) ||
-								 (headers.installed && exhaustPipe_inst.Value))
-						{
-							exhaustFromEngine.SetActive(false);
-							exhaustFromPipe.SetActive(true);
-							exhaustFromMuffler.SetActive(false);
-						}
-						else
-						{
-							exhaustFromEngine.SetActive(true);
-							exhaustFromPipe.SetActive(false);
-							exhaustFromMuffler.SetActive(false);
-						}
-					}
+					exhaustFromEngine.SetActive(true);
+					exhaustFromHeaders.SetActive(false);
+					exhaustFromPipe.SetActive(false);
+					exhaustFromMuffler.SetActive(false);
 				}
 			}
-			else
+
+			if (!CarH.running && carStarted)
 			{
+				carStarted = false;
+
+				exhaustFromMuffler.transform.parent = originalExhaustMufflerParent;
+				exhaustFromMuffler.transform.localPosition = originalExhaustMufflerPosition;
+				exhaustFromMuffler.transform.localRotation = originalExhaustMufflerRotation;
+
 				exhaustFromEngine.SetActive(false);
+				exhaustFromHeaders.SetActive(false);
 				exhaustFromPipe.SetActive(false);
 				exhaustFromMuffler.SetActive(false);
 			}
+			return;
 		}
 
 		private void PosReset()
@@ -900,35 +915,6 @@ namespace SatsumaTurboCharger
 			{
 				Logger.New("Resetting positions failed", ex);
 			}
-		}
-
-		public bool AllBigInstalled(bool ignoreScrewable = false)
-		{
-			return turboBig.bolted &&
-				   turboBigIntercoolerTube.bolted &&
-				   turboBigExhaustInletTube.bolted &&
-				   (turboBigExhaustOutletTube.bolted ||
-					turboBigExhaustOutletStraight.bolted) &&
-				   turboBigBlowoffValve.bolted;
-		}
-
-		public bool AllSmallInstalled(bool ignoreScrewable = false)
-		{
-			return turboSmall.bolted &&
-				   turboSmallIntercoolerTube.bolted &&
-				   turboSmallExhaustInletTube.bolted &&
-				   turboSmallExhaustOutletTube.bolted;
-		}
-
-		public bool AllOtherInstalled(bool ignoreScrewable = false)
-		{
-			return (manifoldWeber.bolted || manifoldTwinCarb.bolted) &&
-				   (
-					   (intercooler.bolted &&
-						(intercoolerManifoldWeberTube.bolted ||
-						 intercoolerManifoldTwinCarbTube.bolted)
-					   ) &&
-					   exhaustHeader.bolted);
 		}
 	}
 }

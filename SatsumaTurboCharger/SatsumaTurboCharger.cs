@@ -532,7 +532,9 @@ namespace SatsumaTurboCharger
 			Settings.AddHeader(this, "Settings");
 			Settings.AddCheckBox(this, rotateTurbineSetting);
 			Settings.AddCheckBox(this, backfireEffectSetting);
+#if DEBUG
 			Settings.AddCheckBox(this, partsWearSetting);
+#endif
 			Settings.AddCheckBox(this, useCustomGearRatios);
 			Settings.AddHeader(this, "", Color.clear);
 			Settings.AddText(this, "New Gear ratios\n" +

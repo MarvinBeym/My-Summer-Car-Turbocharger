@@ -263,7 +263,7 @@ namespace SatsumaTurboCharger.turbo
 		{
 			if (turbine != null && (bool)SatsumaTurboCharger.rotateTurbineSetting.Value)
 			{
-				turbine.transform.Rotate(0, 0, (CarH.drivetrain.rpm / 500));
+				turbine.transform.Rotate(0, (CarH.drivetrain.rpm / 500), 0);
 			}
 		}
 

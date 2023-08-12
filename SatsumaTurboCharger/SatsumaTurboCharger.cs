@@ -109,12 +109,11 @@ namespace SatsumaTurboCharger
 
 		public Dictionary<string, float> boostSave;
 
-		//Files
-		private const string boost_saveFile = "boost_SaveFile.json";
-		private const string wear_saveFile = "wear_saveFile.json";
+		//saveFiles
+		private const string boostSaveFile = "boost_saveFile.json";
+		private const string wearSaveFile = "wear_saveFile.json";
 
-		//Parts
-
+		//Exhaust smoke handling
 		private GameObject exhaustFromMuffler;
 		private GameObject exhaustFromHeaders;
 		private GameObject exhaustFromPipe;
@@ -128,12 +127,7 @@ namespace SatsumaTurboCharger
 		private PlayMakerFSM inspectionPlayMakerFsm;
 		private FsmEvent inspectionFailedEvent;
 
-		//Parts installed
-		private FsmBool racingExhaustPipe_inst;
-		private FsmBool racingExhaustMuffler_inst;
-		private FsmBool exhaustPipe_inst;
-		private FsmBool exhaustMuffler_inst;
-		private FsmBool exhaustMufflerDualTip_inst;
+		protected bool carStarted = false;
 
 		//Engine Values
 		//private FsmState n2oBottle;
@@ -160,7 +154,7 @@ namespace SatsumaTurboCharger
 		public static Settings backfireEffectSetting =
 			new Settings("backfireEffectSetting", "Allow backfire effect for turbo", false);
 
-		private Settings useCustomGearRatios =
+		private static Settings useCustomGearRatios =
 			new Settings("useCustomGearRatios", "Use custom gear ratios", false, Helper.WorkAroundAction);
 
 		internal static PartBaseInfo partBaseInfo;
@@ -206,9 +200,6 @@ namespace SatsumaTurboCharger
 		public GamePart fiberglassHood;
 
 		internal static List<Part> partsList = new List<Part>();
-		public List<Part> bigPartsList;
-		public List<Part> smallPartsList;
-		public List<Part> otherPartsList;
 
 		//Wear
 		//private Wear racingTurboWear;
@@ -248,9 +239,10 @@ namespace SatsumaTurboCharger
 		public override void OnNewGame()
 		{
 			MscModApi.MscModApi.NewGameCleanUp(this);
+			TurboPart.Save(this, boostSaveFile, new TurboPart[0]);
 			//SaveLoad.SerializeSaveFile<Dictionary<string, bool>>(this, null, modsShop_saveFile);
 			//SaveLoad.SerializeSaveFile<BoostSave>(this, null, boost_saveFile);
-			//SaveLoad.SerializeSaveFile<Dictionary<string, float>>(this, null, wear_saveFile);
+			//SaveLoad.SerializeSaveFile<Dictionary<string, float>>(this, null, wearSaveFile);
 		}
 
 		public override void OnLoad()
@@ -282,52 +274,29 @@ namespace SatsumaTurboCharger
 			TurboPart.LoadAssets(assetsBundle);
 			partBaseInfo = new PartBaseInfo(this, assetsBundle, partsList);
 
-			try
-			{
-				CarH.drivetrain.clutchTorqueMultiplier = 10f;
+			exhaustFromMuffler = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromMuffler");
+			exhaustFromHeaders = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromHeaders");
+			exhaustFromPipe = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromPipe");
+			exhaustFromEngine = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromEngine");
 
-				exhaustFromMuffler = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromMuffler");
-				exhaustFromHeaders = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromHeaders");
-				exhaustFromPipe = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromPipe");
-				exhaustFromEngine = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromEngine");
+			originalExhaustMufflerParent = exhaustFromMuffler.transform.parent;
+			originalExhaustMufflerPosition = exhaustFromMuffler.transform.localPosition;
+			originalExhaustMufflerRotation = exhaustFromMuffler.transform.localRotation;
 
-				originalExhaustMufflerParent= exhaustFromMuffler.transform.parent;
-				originalExhaustMufflerPosition = exhaustFromMuffler.transform.localPosition;
-				originalExhaustMufflerRotation = exhaustFromMuffler.transform.localRotation;
-
-				weberCarb = new GamePart("Racing Carburators");
-				twinCarb = new GamePart("Twin Carburators");
-				steelHeaders = new GamePart("Steel Headers");
-				headers = new GamePart("Headers"); 
-				racingExhaustPipe = new GamePart("Racing Exhaust");
-				racingExhaustMuffler = new GamePart("Racing Muffler");
-				exhaustPipe = new GamePart("ExhaustPipe");
-				hood = new GamePart("Hood");
-				fiberglassHood = new GamePart("Fiberglass Hood");
-
-				racingExhaustPipe_inst = Cache.Find("Racing Exhaust").GetComponent<PlayMakerFSM>().FsmVariables
-					.FindFsmBool("Installed");
-				racingExhaustMuffler_inst = Cache.Find("Racing Muffler").GetComponent<PlayMakerFSM>().FsmVariables
-					.FindFsmBool("Installed");
-
-				exhaustPipe_inst = Cache.Find("ExhaustPipe").GetComponent<PlayMakerFSM>().FsmVariables
-					.FindFsmBool("Installed");
-				exhaustMuffler_inst = Cache.Find("ExhaustMuffler").GetComponent<PlayMakerFSM>().FsmVariables
-					.FindFsmBool("Installed");
-				exhaustMufflerDualTip_inst = Cache.Find("ExhaustDualTip").GetComponent<PlayMakerFSM>().FsmVariables
-					.FindFsmBool("Installed");
-			}
-			catch (Exception ex)
-			{
-				Logger.New("Error while trying to load required game objects/values",
-					"Gameobject.Find has failed to return the desired object", ex);
-			}
-
+			weberCarb = new GamePart("Racing Carburators");
+			twinCarb = new GamePart("Twin Carburators");
+			steelHeaders = new GamePart("Steel Headers");
+			headers = new GamePart("Headers");
+			racingExhaustPipe = new GamePart("Racing Exhaust");
+			racingExhaustMuffler = new GamePart("Racing Muffler");
+			exhaustPipe = new GamePart("ExhaustPipe");
+			hood = new GamePart("Hood");
+			fiberglassHood = new GamePart("Fiberglass Hood");
 
 			try
 			{
-				partsWearSave = Helper.LoadSaveOrReturnNew<Dictionary<string, float>>(this, wear_saveFile);
-				boostSave = Helper.LoadSaveOrReturnNew<Dictionary<string, float>>(this, boost_saveFile);
+				partsWearSave = Helper.LoadSaveOrReturnNew<Dictionary<string, float>>(this, wearSaveFile);
+				boostSave = Helper.LoadSaveOrReturnNew<Dictionary<string, float>>(this, boostSaveFile);
 			}
 			catch (Exception ex)
 			{
@@ -373,41 +342,6 @@ namespace SatsumaTurboCharger
 			turboSmallAirfilter = new TurboSmallAirfilter(turboSmall);
 
 			turboSmallExhaustOutletTube = new TurboSmallExhaustOutletTube();
-
-			bigPartsList = new List<Part>
-			{
-				turboBig,
-				turboBigIntercoolerTube,
-				turboBigExhaustInletTube,
-				turboBigExhaustOutletTube,
-				turboBigBlowoffValve,
-				turboBigExhaustOutletStraight,
-			};
-
-			smallPartsList = new List<Part>
-			{
-				turboSmall,
-				turboSmallIntercoolerTube,
-				turboSmallExhaustInletTube,
-				turboSmallExhaustOutletTube,
-				turboSmallAirfilter,
-			};
-
-			otherPartsList = new List<Part>
-			{
-				manifoldWeber,
-				manifoldTwinCarb,
-				boostGauge,
-				intercooler,
-				intercoolerManifoldWeberTube,
-				intercoolerManifoldTwinCarbTube,
-				turboBigHood,
-				exhaustHeader,
-			};
-
-			partsList.AddRange(bigPartsList);
-			partsList.AddRange(smallPartsList);
-			partsList.AddRange(otherPartsList);
 
 			TurboLogicRequiredParts turboBigRequiredParts = new TurboLogicRequiredParts();
 			turboBigRequiredParts.Add(turboBig);
@@ -613,7 +547,7 @@ namespace SatsumaTurboCharger
 
 		public override void OnSave()
 		{
-			TurboPart.Save(this, boost_saveFile, new TurboPart[]
+			TurboPart.Save(this, boostSaveFile, new TurboPart[]
 			{
 				turboBig,
 				turboSmall,
@@ -818,8 +752,6 @@ namespace SatsumaTurboCharger
 			
 		}
 
-		protected bool carStarted = false;
-
 		private void HandleExhaustSystem()
 		{
 			if (CarH.running)
@@ -902,7 +834,6 @@ namespace SatsumaTurboCharger
 				exhaustFromPipe.SetActive(false);
 				exhaustFromMuffler.SetActive(false);
 			}
-			return;
 		}
 
 		private void PosReset()

@@ -123,9 +123,9 @@ namespace SatsumaTurboCharger
 		private GameObject exhaustFromHeaders;
 		private GameObject exhaustFromPipe;
 		private GameObject exhaustFromEngine;
-		private Vector3 originalExhaustMufflerPosition;
-		private Quaternion originalExhaustMufflerRotation;
-		private Transform originalExhaustMufflerParent;
+		private Vector3 originalExhaustPipePosition;
+		private Quaternion originalExhaustPipeRotation;
+		private Transform originalExhaustPipeParent;
 
 
 		//Inspection
@@ -300,9 +300,9 @@ namespace SatsumaTurboCharger
 			exhaustFromPipe = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromPipe");
 			exhaustFromEngine = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromEngine");
 
-			originalExhaustMufflerParent = exhaustFromMuffler.transform.parent;
-			originalExhaustMufflerPosition = exhaustFromMuffler.transform.localPosition;
-			originalExhaustMufflerRotation = exhaustFromMuffler.transform.localRotation;
+			originalExhaustPipeParent = exhaustFromPipe.transform.parent;
+			originalExhaustPipePosition = exhaustFromPipe.transform.localPosition;
+			originalExhaustPipeRotation = exhaustFromPipe.transform.localRotation;
 
 			weberCarb = new GamePart("Racing Carburators");
 			twinCarb = new GamePart("Twin Carburators");
@@ -845,21 +845,21 @@ namespace SatsumaTurboCharger
 				) {
 					if (turboBigExhaustOutletStraight.installed)
 					{
-						exhaustFromMuffler.transform.parent = turboBigExhaustOutletStraight.gameObject.transform;
-						exhaustFromMuffler.transform.localPosition = turboBig.backFireLogic.fireFXPosition;
-						exhaustFromMuffler.transform.localRotation = Quaternion.Euler(turboBig.backFireLogic.fireFxRotation);
+						exhaustFromPipe.transform.parent = turboBigExhaustOutletStraight.gameObject.transform;
+						exhaustFromPipe.transform.localPosition = turboBig.backFireLogic.fireFXPosition;
+						exhaustFromPipe.transform.localRotation = Quaternion.Euler(turboBig.backFireLogic.fireFxRotation);
 
 						exhaustFromEngine.SetActive(false);
 						exhaustFromHeaders.SetActive(false);
-						exhaustFromPipe.SetActive(false);
-						exhaustFromMuffler.SetActive(true);
+						exhaustFromPipe.SetActive(true);
+						exhaustFromMuffler.SetActive(false);
 						return;
 					}
 					else
 					{
-						exhaustFromMuffler.transform.parent = originalExhaustMufflerParent;
-						exhaustFromMuffler.transform.localPosition = originalExhaustMufflerPosition;
-						exhaustFromMuffler.transform.localRotation = originalExhaustMufflerRotation;
+						exhaustFromPipe.transform.parent = originalExhaustPipeParent;
+						exhaustFromPipe.transform.localPosition = originalExhaustPipePosition;
+						exhaustFromPipe.transform.localRotation = originalExhaustPipeRotation;
 					}
 
 					if (racingExhaustMuffler.installed)
@@ -887,9 +887,9 @@ namespace SatsumaTurboCharger
 				}
 				else
 				{
-					exhaustFromMuffler.transform.parent = originalExhaustMufflerParent;
-					exhaustFromMuffler.transform.localPosition = originalExhaustMufflerPosition;
-					exhaustFromMuffler.transform.localRotation = originalExhaustMufflerRotation;
+					exhaustFromPipe.transform.parent = originalExhaustPipeParent;
+					exhaustFromPipe.transform.localPosition = originalExhaustPipePosition;
+					exhaustFromPipe.transform.localRotation = originalExhaustPipeRotation;
 
 					exhaustFromEngine.SetActive(true);
 					exhaustFromHeaders.SetActive(false);
@@ -902,9 +902,9 @@ namespace SatsumaTurboCharger
 			{
 				carStarted = false;
 
-				exhaustFromMuffler.transform.parent = originalExhaustMufflerParent;
-				exhaustFromMuffler.transform.localPosition = originalExhaustMufflerPosition;
-				exhaustFromMuffler.transform.localRotation = originalExhaustMufflerRotation;
+				exhaustFromPipe.transform.parent = originalExhaustPipeParent;
+				exhaustFromPipe.transform.localPosition = originalExhaustPipePosition;
+				exhaustFromPipe.transform.localRotation = originalExhaustPipeRotation;
 
 				exhaustFromEngine.SetActive(false);
 				exhaustFromHeaders.SetActive(false);

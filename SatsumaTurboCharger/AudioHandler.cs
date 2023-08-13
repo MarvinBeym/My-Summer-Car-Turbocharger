@@ -22,7 +22,10 @@ namespace SatsumaTurboCharger.turbo
 
 		protected void Add(string id, AudioSource audioSource)
 		{
+			audioSource.playOnAwake = false;
+			audioSource.Stop();
 			noiseStorage.Add(id, audioSource);
+
 		}
 
 		public void SetVolume(AudioSource audioSource, float volume)

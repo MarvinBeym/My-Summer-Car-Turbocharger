@@ -57,7 +57,7 @@ namespace SatsumaTurboCharger.part
 				boostMin = -0.10f,
 				minSettableBoost = 1.65f,
 				boostSteepness = 1.5f,
-				blowoffDelay = 0.8f,
+				blowoffDelay = 1.2f,
 				blowoffTriggerBoost = 0.75f,
 				backfireThreshold = 5500,
 				backfireRandomRange = 20,

@@ -58,7 +58,7 @@ namespace SatsumaTurboCharger.turbo
 		{
 			turboLoopAudio = audioHandler.Get("turboLoop");
 			blowoffAudio = audioHandler.Get("blowoff");
-			audioHandler.SetVolume(blowoffAudio, 0.3f);
+			audioHandler.SetVolume(blowoffAudio, 0.2f);
 			audioHandler.SetPitch(blowoffAudio, 1.2f);
 			conditionStorage.DefineConditionsHaveUpdatedAction(() =>
 			{
@@ -78,27 +78,20 @@ namespace SatsumaTurboCharger.turbo
 
 		protected void LateUpdate()
 		{
-
-			//Todo
-			/*
-            if (!turboBig.turbo.CheckAllRequiredInstalled() && !turboSmall.turbo.CheckAllRequiredInstalled() && CarH.hasPower)
-            {
-                //boostGaugeLogic.SetDigitalText("ERR");
-            }
-            else if (CarH.hasPower && boostGaugeLogic.gaugeMode != GaugeMode.Digital)
-            {
-                boostGaugeLogic.SetDigitalText("");
-            }*/
-
+			if (turboPart.parentPart == null || !turboPart.parentInstalled || !turboPart.parentPart.bolted)
+			{
+				//Avoids TurboLogic of big turbo to affect small turbo (and vise versa)
+				return;
+			}
 
 			if (!requiredInstalledAndBolted || !CarH.running)
 			{
 				//Not all required installed RESET
 				audioHandler.StopAll();
 
-				if (!requiredInstalledAndBolted && boostGauge.installed && boostGauge.bolted)
+				if (boostGauge.installed && boostGauge.bolted)
 				{
-					boostGauge.SetDigitalText(CarH.hasPower ? "ERR" : "");
+					boostGauge.SetDigitalText(!requiredInstalledAndBolted && CarH.hasPower ? "ERR" : "");
 				}
 				return;
 			}

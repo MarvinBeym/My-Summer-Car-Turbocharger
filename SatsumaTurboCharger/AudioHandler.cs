@@ -5,6 +5,7 @@ using MSCLoader;
 using MscModApi.Parts;
 using MscModApi.Tools;
 using UnityEngine;
+using EventType = MscModApi.Parts.EventType;
 
 namespace SatsumaTurboCharger.turbo
 {
@@ -58,7 +59,7 @@ namespace SatsumaTurboCharger.turbo
 			SetPitch(Get(id), pitch);
 		}
 
-		public void Add(string id, Part part, string fileName, bool loop = false)
+		public void Add(string id, Part part, string fileName, EventType eventTypeWhenActive, bool loop = false)
 		{
 			if (fileName == "")
 			{
@@ -66,7 +67,7 @@ namespace SatsumaTurboCharger.turbo
 				return;
 			}
 
-			AudioSource audioSource = part.AddWhenInstalledBehaviour<AudioSource>();
+			AudioSource audioSource = part.AddEventBehaviour<AudioSource>(eventTypeWhenActive);
 			ModAudio modAudio = new ModAudio
 			{
 				audioSource = audioSource

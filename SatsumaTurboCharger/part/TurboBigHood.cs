@@ -2,6 +2,7 @@
 using MscModApi.PaintingSystem;
 using MscModApi.Parts;
 using UnityEngine;
+using EventType = MscModApi.Parts.EventType;
 
 namespace SatsumaTurboCharger.part
 {
@@ -25,7 +26,7 @@ namespace SatsumaTurboCharger.part
 			PaintingSystem
 				.Setup(partBaseInfo.mod, this)
 				.ApplyMaterial("CAR_PAINT_REGULAR");
-			HoodLogic hoodLogic = AddWhenInstalledBehaviour<HoodLogic>();
+			HoodLogic hoodLogic = AddEventBehaviour<HoodLogic>(EventType.InstallOnCar);
 			hoodLogic.Init(this);
 		}
 	}

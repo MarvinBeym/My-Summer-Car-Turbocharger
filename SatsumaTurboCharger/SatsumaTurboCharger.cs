@@ -349,7 +349,7 @@ namespace SatsumaTurboCharger
 			turboBigExhaustOutletTube = new TurboBigExhaustOutletTube(turboBig);
 			turboBigExhaustOutletStraight = new TurboBigExhaustOutletStraight(turboBig);
 
-			turboBig.audioHandler.Add("backfire", turboBigExhaustOutletStraight, "backFire_once.wav");
+			turboBig.audioHandler.Add("backfire", turboBigExhaustOutletStraight, "backFire_once.wav", EventType.InstallOnCar);
 			turboBig.DefineBackfire(turboBigExhaustOutletStraight, turboBig.audioHandler.Get("backfire"));
 			turboBig.backFireLogic.fireFXPosition = new Vector3(0.0185f, 0.073f, 0.0217f);
 			turboBig.backFireLogic.fireFxRotation = new Vector3(-75, 0, 0);

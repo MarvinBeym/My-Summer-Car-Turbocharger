@@ -8,6 +8,7 @@ using MscModApi.Parts;
 using MscModApi.Tools;
 using SatsumaTurboCharger.turbo;
 using UnityEngine;
+using EventType = MscModApi.Parts.EventType;
 
 namespace SatsumaTurboCharger.part
 {
@@ -41,9 +42,9 @@ namespace SatsumaTurboCharger.part
 				);
 			DefineSpinningTurbineGameObject(gameObject.transform.FindChild("turboBig-center").FindChild("turboBig-compressor-turbine").gameObject);
 
-			audioHandler.Add("turboLoop", this, "turbocharger_loop.wav", true);
-			audioHandler.Add("grinding", this, "grinding sound.wav", true);
-			audioHandler.Add("blowoff", this, "turbocharger_blowoff.wav");
+			audioHandler.Add("turboLoop", this, "turbocharger_loop.wav", EventType.InstallOnCar, true);
+			audioHandler.Add("grinding", this, "grinding sound.wav", EventType.InstallOnCar, true);
+			audioHandler.Add("blowoff", this, "turbocharger_blowoff.wav", EventType.InstallOnCar);
 		}
 
 

@@ -70,7 +70,7 @@ namespace SatsumaTurboCharger.wear
 
 
 			activeLogic = part.AddWhenUninstalledBehaviour<WearLogic>();
-			rigidLogic = part.AddWhenInstalledBehaviour<WearLogic>();
+			rigidLogic = part.AddEventBehaviour<WearLogic>();
 			activeLogic.Init(this, wearConditions);
 			rigidLogic.Init(this, wearConditions);
 

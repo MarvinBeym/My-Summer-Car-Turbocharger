@@ -364,7 +364,7 @@ namespace SatsumaTurboCharger
 			turboSmallIntercoolerTube = new TurboSmallIntercoolerTube(intercooler);
 			turboSmallAirfilter = new TurboSmallAirfilter(turboSmall);
 
-			turboSmallExhaustOutletTube = new TurboSmallExhaustOutletTube();
+			turboSmallExhaustOutletTube = new TurboSmallExhaustOutletTube(turboSmall);
 
 			TurboLogicRequiredParts turboBigRequiredParts = new TurboLogicRequiredParts();
 			turboBigRequiredParts.Add(turboBig);
@@ -673,49 +673,20 @@ namespace SatsumaTurboCharger
 			turboBigExhaustOutletStraight.AddEventListener(EventTime.Post, EventType.Install, () =>
 			{
 				turboBigExhaustOutletTube.installBlocked = true;
-
-				turboSmallExhaustOutletTube.installBlocked = true;
 			});
 			turboBigExhaustOutletStraight.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
 			{
 				turboBigExhaustOutletTube.installBlocked = false;
-
-				turboSmallExhaustOutletTube.installBlocked = false;
 			});
 			turboBigExhaustOutletTube.AddEventListener(EventTime.Post, EventType.Install, () =>
 			{
-				turboBigExhaustOutletStraight.installBlocked = true;
-
 				turboSmallExhaustOutletTube.installBlocked = true;
 			});
 			turboBigExhaustOutletTube.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
 			{
-				if (turboSmallExhaustOutletTube.installed)
-				{
-					return;
-				}
-				turboBigExhaustOutletStraight.installBlocked = false;
-
 				turboSmallExhaustOutletTube.installBlocked = false;
 			});
 
-			//Block different exhausts for smallTurbo
-			turboSmallExhaustOutletTube.AddEventListener(EventTime.Post, EventType.Install, () =>
-			{
-				turboBigExhaustOutletTube.installBlocked = true;
-				turboBigExhaustOutletStraight.installBlocked = true;
-			});
-			turboSmallExhaustOutletTube.AddEventListener(EventTime.Post, EventType.Uninstall, () =>
-			{
-				if (turboBigExhaustOutletTube.installed || turboBigExhaustOutletStraight.installed)
-				{
-					return;
-				}
-				turboBigExhaustOutletTube.installBlocked = false;
-				turboBigExhaustOutletStraight.installBlocked = false;
-				
-			});
-			
 			//Allow only one inlet to be installed to race exhaust
 			turboBigExhaustInletTube.AddEventListener(EventTime.Post, EventType.Install, () => turboSmallExhaustInletTube.installBlocked = true);
 			turboBigExhaustInletTube.AddEventListener(EventTime.Post, EventType.Uninstall, () => turboSmallExhaustInletTube.installBlocked = false);

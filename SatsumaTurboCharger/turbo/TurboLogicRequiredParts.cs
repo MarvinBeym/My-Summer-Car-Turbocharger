@@ -15,7 +15,6 @@ namespace SatsumaTurboCharger.part
 
 		public bool requiredInstalledAndBolted => requiredPartsInstalledCount == totalRequiredPartsCount;
 
-
 		public void Add(Part part)
 		{
 			Add(part, null);
@@ -34,17 +33,14 @@ namespace SatsumaTurboCharger.part
 			}
 			requiredParts.Add(mainPart, alternativePart);
 			totalRequiredPartsCount++;
-			mainPart.AddEventListener(EventTime.Post, EventType.Bolted, () =>
+			mainPart.AddEventListener(EventTime.Post, EventType.BoltedOnCar, () =>
 			{
 				requiredPartsInstalledCount++;
 			});
 
-			mainPart.AddEventListener(EventTime.Pre, EventType.Unbolted, () =>
+			mainPart.AddEventListener(EventTime.Post, EventType.UnboltedOnCar, () =>
 			{
-				if (mainPart.bolted)
-				{
-					requiredPartsInstalledCount--;
-				}
+				requiredPartsInstalledCount--;
 			});
 
 			if (alternativePart == null)
@@ -57,12 +53,9 @@ namespace SatsumaTurboCharger.part
 				requiredPartsInstalledCount++;
 			});
 			
-			alternativePart.AddEventListener(EventTime.Pre, EventType.Unbolted, () =>
+			alternativePart.AddEventListener(EventTime.Post, EventType.UnboltedOnCar, () =>
 			{
-				if (alternativePart.bolted)
-				{
-					requiredPartsInstalledCount--;
-				}
+				requiredPartsInstalledCount--;
 			});
 
 

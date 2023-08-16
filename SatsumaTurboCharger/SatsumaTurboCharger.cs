@@ -202,6 +202,8 @@ namespace SatsumaTurboCharger
 		public GamePart exhaustPipe;
 		public GamePart hood;
 		public GamePart fiberglassHood;
+		public GamePart dashboard;
+		public GamePart cylinderHead;
 
 		internal static List<Part> partsList = new List<Part>();
 
@@ -304,15 +306,17 @@ namespace SatsumaTurboCharger
 			originalExhaustPipePosition = exhaustFromPipe.transform.localPosition;
 			originalExhaustPipeRotation = exhaustFromPipe.transform.localRotation;
 
-			weberCarb = new GamePart("Racing Carburators");
-			twinCarb = new GamePart("Twin Carburators");
-			steelHeaders = new GamePart("Steel Headers");
-			headers = new GamePart("Headers");
-			racingExhaustPipe = new GamePart("Racing Exhaust");
-			racingExhaustMuffler = new GamePart("Racing Muffler");
-			exhaustPipe = new GamePart("ExhaustPipe");
-			hood = new GamePart("Hood");
-			fiberglassHood = new GamePart("Fiberglass Hood");
+			weberCarb = new GamePart("Database/DatabaseOrders/Racing Carburators");
+			twinCarb = new GamePart("Database/DatabaseOrders/Twin Carburators");
+			steelHeaders = new GamePart("Database/DatabaseOrders/Steel Headers");
+			headers = new GamePart("Database/DatabaseMotor/Headers");
+			racingExhaustPipe = new GamePart("Database/DatabaseOrders/Racing Exhaust");
+			racingExhaustMuffler = new GamePart("Database/DatabaseOrders/Racing Muffler");
+			exhaustPipe = new GamePart("Database/DatabaseMechanics/ExhaustPipe");
+			hood = new GamePart("Database/DatabaseBody/Hood");
+			fiberglassHood = new GamePart("Database/DatabaseOrders/Fiberglass Hood");
+			dashboard = new GamePart("Database/DatabaseMechanics/Dashboard");
+			cylinderHead = new GamePart("Database/DatabaseMotor/Cylinderhead");
 
 			try
 			{
@@ -326,13 +330,13 @@ namespace SatsumaTurboCharger
 				Logger.New("Error while trying to deserialize save file", "Please check paths to save files", ex);
 			}
 
-			manifoldWeber = new ManifoldWeber();
-			manifoldTwinCarb = new ManifoldTwinCarb();
-			boostGauge = new BoostGauge();
+			manifoldWeber = new ManifoldWeber(weberCarb);
+			manifoldTwinCarb = new ManifoldTwinCarb(twinCarb);
+			boostGauge = new BoostGauge(dashboard);
 			intercooler = new Intercooler();
 			intercoolerManifoldWeberTube = new IntercoolerManifoldWeberTube(manifoldWeber);
 			intercoolerManifoldTwinCarbTube = new IntercoolerManifoldTwinCarbTube(manifoldTwinCarb);
-			exhaustHeader = new ExhaustHeader();
+			exhaustHeader = new ExhaustHeader(cylinderHead);
 
 			turboBigExhaustInletTube = new TurboBigExhaustInletTube(exhaustHeader);
 			turboBigIntercoolerTube = new TurboBigIntercoolerTube(intercooler);

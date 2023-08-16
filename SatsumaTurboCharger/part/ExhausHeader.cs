@@ -1,5 +1,6 @@
 ﻿using MscModApi.Caching;
 using MscModApi.Parts;
+using MscModApi.Parts.ReplacePart;
 using UnityEngine;
 
 namespace SatsumaTurboCharger.part
@@ -11,7 +12,7 @@ namespace SatsumaTurboCharger.part
 		protected override Vector3 partInstallPosition => new Vector3(-0.005f, -0.089f, -0.0658f);
 		protected override Vector3 partInstallRotation => new Vector3(90, 0, 0);
 
-		public ExhaustHeader() : base(Cache.Find("cylinder head(Clone)"), SatsumaTurboCharger.partBaseInfo)
+		public ExhaustHeader(GamePart parent) : base(parent, SatsumaTurboCharger.partBaseInfo)
 		{ 
 			AddScrews(new[]
 			{

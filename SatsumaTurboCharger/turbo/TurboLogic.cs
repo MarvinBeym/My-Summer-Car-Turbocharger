@@ -78,7 +78,7 @@ namespace SatsumaTurboCharger.turbo
 
 		protected void LateUpdate()
 		{
-			if (turboPart.parentPart == null || !turboPart.parentInstalled || !turboPart.parentPart.bolted)
+			if (!turboPart.parent.installed == null || !turboPart.parent.bolted)
 			{
 				//Avoids TurboLogic of big turbo to affect small turbo (and vise versa)
 				return;

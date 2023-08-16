@@ -48,7 +48,7 @@ namespace SatsumaTurboCharger.part
 				return;
 			}
 
-			alternativePart.AddEventListener(EventTime.Post, EventType.Bolted, () =>
+			alternativePart.AddEventListener(EventTime.Post, EventType.BoltedOnCar, () =>
 			{
 				requiredPartsInstalledCount++;
 			});

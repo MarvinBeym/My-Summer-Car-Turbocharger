@@ -3,7 +3,7 @@ using MscModApi.Parts;
 using MscModApi.Parts.ReplacePart;
 using SatsumaTurboCharger.turbo;
 using UnityEngine;
-using EventType = MscModApi.Parts.EventType;
+
 
 namespace SatsumaTurboCharger.part
 {
@@ -21,7 +21,7 @@ namespace SatsumaTurboCharger.part
 			AddScrew(new Screw(new Vector3(0f, -0.0270f, 0.003f), new Vector3(-90, 0, 0),
 				Screw.Type.Normal, 0.4f));
 
-			logic = AddEventBehaviour<BoostGaugeLogic>(EventType.InstallOnCar);
+			logic = AddEventBehaviour<BoostGaugeLogic>(PartEvent.Type.InstallOnCar);
 			logic.Init(this);
 		}
 

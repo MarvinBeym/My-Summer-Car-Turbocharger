@@ -33,12 +33,12 @@ namespace SatsumaTurboCharger.part
 			}
 			requiredParts.Add(mainPart, alternativePart);
 			totalRequiredPartsCount++;
-			mainPart.AddEventListener(EventTime.Post, EventType.BoltedOnCar, () =>
+			mainPart.AddEventListener(PartEvent.Time.Post, PartEvent.Type.BoltedOnCar, () =>
 			{
 				requiredPartsInstalledCount++;
 			});
 
-			mainPart.AddEventListener(EventTime.Post, EventType.UnboltedOnCar, () =>
+			mainPart.AddEventListener(PartEvent.Time.Post, PartEvent.Type.UnboltedOnCar, () =>
 			{
 				requiredPartsInstalledCount--;
 			});
@@ -48,12 +48,12 @@ namespace SatsumaTurboCharger.part
 				return;
 			}
 
-			alternativePart.AddEventListener(EventTime.Post, EventType.BoltedOnCar, () =>
+			alternativePart.AddEventListener(PartEvent.Time.Post, PartEvent.Type.BoltedOnCar, () =>
 			{
 				requiredPartsInstalledCount++;
 			});
 			
-			alternativePart.AddEventListener(EventTime.Post, EventType.UnboltedOnCar, () =>
+			alternativePart.AddEventListener(PartEvent.Time.Post, PartEvent.Type.UnboltedOnCar, () =>
 			{
 				requiredPartsInstalledCount--;
 			});

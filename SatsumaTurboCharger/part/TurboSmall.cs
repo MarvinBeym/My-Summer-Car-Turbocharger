@@ -3,7 +3,7 @@ using MscModApi.Caching;
 using MscModApi.Parts;
 using SatsumaTurboCharger.turbo;
 using UnityEngine;
-using EventType = MscModApi.Parts.EventType;
+
 
 namespace SatsumaTurboCharger.part
 {
@@ -23,8 +23,8 @@ namespace SatsumaTurboCharger.part
 
 			DefineBoostChangingGameObject(gameObject.transform.FindChild("turboSmall-wastegate").gameObject);
 
-			audioHandler.Add("turboLoop", this, "turbocharger_loop.wav", EventType.InstallOnCar, true);
-			audioHandler.Add("grinding", this, "grinding sound.wav", EventType.InstallOnCar, true);
+			audioHandler.Add("turboLoop", this, "turbocharger_loop.wav", PartEvent.Type.InstallOnCar, true);
+			audioHandler.Add("grinding", this, "grinding sound.wav", PartEvent.Type.InstallOnCar, true);
 		}
 
 		protected override TurboConfiguration SetupTurboConfig()

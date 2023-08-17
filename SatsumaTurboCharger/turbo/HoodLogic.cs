@@ -5,8 +5,6 @@ using MscModApi.Tools;
 using SatsumaTurboCharger.part;
 using UnityEngine;
 using static SatsumaTurboCharger.part.TurboBigHood;
-using EventType = MscModApi.Parts.EventType;
-
 
 namespace SatsumaTurboCharger
 {

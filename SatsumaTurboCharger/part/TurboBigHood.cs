@@ -8,7 +8,6 @@ using MscModApi.Parts;
 using MscModApi.Parts.ReplacePart;
 using MscModApi.Tools;
 using UnityEngine;
-using EventType = MscModApi.Parts.EventType;
 
 namespace SatsumaTurboCharger.part
 {
@@ -40,7 +39,7 @@ namespace SatsumaTurboCharger.part
 			PaintingSystem
 				.Setup(partBaseInfo.mod, this)
 				.ApplyMaterial("CAR_PAINT_REGULAR");
-			logic = AddEventBehaviour<HoodLogic>(EventType.Install);
+			logic = AddEventBehaviour<HoodLogic>(PartEvent.Type.Install);
 			logic.Init(this);
 
 			latchCollider = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -52,7 +51,7 @@ namespace SatsumaTurboCharger.part
 			latchCollider.transform.localEulerAngles = new Vector3(352f, 0f, 0f);
 			latchCollider.transform.localScale = new Vector3(1.21f, 0.05f, 0.85f);
 
-			AddEventListener(EventTime.Post, EventType.Install, () =>
+			AddEventListener(PartEvent.Time.Post, PartEvent.Type.Install, () =>
 			{
 				//Unknown why this is required, without it, the hinge joint will still be there after uninstall
 				Object.Destroy(GetComponent<HingeJoint>());
@@ -75,7 +74,7 @@ namespace SatsumaTurboCharger.part
 				logic.SetHoodState(OpenState.Closed);
 			});
 
-			AddEventListener(EventTime.Post, EventType.Uninstall, () =>
+			AddEventListener(PartEvent.Time.Post, PartEvent.Type.Uninstall, () =>
 			{
 				latchCollider.SetActive(false);
 				Object.Destroy(hingeJoint);

@@ -8,7 +8,7 @@ using MscModApi.Parts;
 using MscModApi.Tools;
 using SatsumaTurboCharger.turbo;
 using UnityEngine;
-using EventType = MscModApi.Parts.EventType;
+
 
 namespace SatsumaTurboCharger.part
 {
@@ -48,7 +48,7 @@ namespace SatsumaTurboCharger.part
 				}
 			}
 
-			logic = AddEventBehaviour<TurboLogic>(EventType.InstallOnCar);
+			logic = AddEventBehaviour<TurboLogic>(PartEvent.Type.InstallOnCar);
 			logic.Init(
 				audioHandler,
 				boostGauge, 
@@ -78,7 +78,7 @@ namespace SatsumaTurboCharger.part
 			GameObject backfireFxGameObject = GameObject.Instantiate(backfireFxModel);
 			backfireFxGameObject.transform.parent = backfirePart.transform;
 
-			logic.backFireLogic = backfirePart.AddEventBehaviour<BackfireLogic>(EventType.Install);
+			logic.backFireLogic = backfirePart.AddEventBehaviour<BackfireLogic>(PartEvent.Type.Install);
 			logic.backFireLogic.Init(backfireAudioSource);
 		}
 

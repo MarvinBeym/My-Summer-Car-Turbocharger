@@ -7,7 +7,7 @@ using MSCLoader;
 using MscModApi.Parts;
 using SatsumaTurboCharger.part;
 using UnityEngine;
-using EventType = MscModApi.Parts.EventType;
+
 using Random = System.Random;
 
 

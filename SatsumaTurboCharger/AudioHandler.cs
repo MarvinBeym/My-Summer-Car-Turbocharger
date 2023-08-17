@@ -5,7 +5,6 @@ using MSCLoader;
 using MscModApi.Parts;
 using MscModApi.Tools;
 using UnityEngine;
-using EventType = MscModApi.Parts.EventType;
 
 namespace SatsumaTurboCharger.turbo
 {
@@ -59,7 +58,7 @@ namespace SatsumaTurboCharger.turbo
 			SetPitch(Get(id), pitch);
 		}
 
-		public void Add(string id, Part part, string fileName, EventType eventTypeWhenActive, bool loop = false)
+		public void Add(string id, Part part, string fileName, PartEvent.Type eventTypeWhenActive, bool loop = false)
 		{
 			if (fileName == "")
 			{

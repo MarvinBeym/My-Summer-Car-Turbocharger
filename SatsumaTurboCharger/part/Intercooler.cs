@@ -1,6 +1,7 @@
 ﻿using MscModApi.Caching;
 using MscModApi.PaintingSystem;
 using MscModApi.Parts;
+using MscModApi.Parts.ReplacePart;
 using MscModApi.Tools;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ namespace SatsumaTurboCharger.part
 		protected override Vector3 partInstallPosition => new Vector3(0f, -0.162f, 1.6775f);
 		protected override Vector3 partInstallRotation => new Vector3(-5, 180, 0);
 
-		public Intercooler() : base(CarH.satsuma, SatsumaTurboCharger.partBaseInfo)
+		public Intercooler() : base(SatsumaGamePart.GetInstance(), SatsumaTurboCharger.partBaseInfo)
 		{
 			AddScrews(new[]
 			{

@@ -5,6 +5,7 @@ using UnityEngine;
 using MSCLoader;
 using MscModApi.Caching;
 using MscModApi.Parts;
+using MscModApi.Parts.ReplacePart;
 using MscModApi.Tools;
 using UnityEngine;
 using EventType = MscModApi.Parts.EventType;
@@ -26,7 +27,7 @@ namespace SatsumaTurboCharger.part
 		protected override Vector3 partInstallPosition => new Vector3(0, 0.2408085f, 1.68f);
 		protected override Vector3 partInstallRotation => new Vector3(0, 180, 0);
 
-		public TurboBigHood() : base(CarH.satsuma, SatsumaTurboCharger.partBaseInfo)
+		public TurboBigHood() : base(SatsumaGamePart.GetInstance(), SatsumaTurboCharger.partBaseInfo)
 		{ 
 			AddScrews(new[]
 			{

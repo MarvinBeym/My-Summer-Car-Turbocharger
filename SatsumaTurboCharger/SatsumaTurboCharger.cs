@@ -263,7 +263,7 @@ namespace SatsumaTurboCharger
 		public static SettingsCheckBox useCustomGearRatios;
 		public static SettingsDropDownList changeTransmission;
 
-		public static string transmissionTypeToSet;
+		public static Drivetrain.Transmissions transmissionTypeToSet = Drivetrain.Transmissions.FWD;
 		public static float[] gearRatiosToSet;
 
 
@@ -563,7 +563,20 @@ namespace SatsumaTurboCharger
 				Drivetrain.Transmissions.AWD.ToString(),
 			}, 0, () =>
 			{
-				transmissionTypeToSet = changeTransmission.GetSelectedItemName();
+				if (changeTransmission.GetSelectedItemName() == Drivetrain.Transmissions.FWD.ToString())
+				{
+					transmissionTypeToSet = Drivetrain.Transmissions.FWD;
+				}
+
+				if (changeTransmission.GetSelectedItemName() == Drivetrain.Transmissions.RWD.ToString())
+				{
+					transmissionTypeToSet = Drivetrain.Transmissions.RWD;
+				}
+
+				if (changeTransmission.GetSelectedItemName() == Drivetrain.Transmissions.AWD.ToString())
+				{
+					transmissionTypeToSet = Drivetrain.Transmissions.AWD;
+				}
 			});
 
 
@@ -642,29 +655,15 @@ namespace SatsumaTurboCharger
 		public override void Update()
 		{
 			//Required as ModLoader settings may call action at any time (Menu)
-			if (transmissionTypeToSet != null && CarH.drivetrain != null)
+			if (CarH.drivetrain != null && transmissionTypeToSet != CarH.drivetrain.transmission)
 			{
-				if (transmissionTypeToSet == Drivetrain.Transmissions.FWD.ToString())
-				{
-					CarH.drivetrain.SetTransmission(Drivetrain.Transmissions.FWD);
-				}
-
-				if (transmissionTypeToSet == Drivetrain.Transmissions.RWD.ToString())
-				{
-					CarH.drivetrain.SetTransmission(Drivetrain.Transmissions.RWD);
-				}
-
-				if (transmissionTypeToSet == Drivetrain.Transmissions.AWD.ToString())
-				{
-					CarH.drivetrain.SetTransmission(Drivetrain.Transmissions.AWD);
-				}
+				CarH.drivetrain.SetTransmission(transmissionTypeToSet);
 			}
 
 			//Required as ModLoader settings may call action at any time (Menu)
 			if (gearRatiosToSet != null && CarH.drivetrain != null)
 			{
 				CarH.drivetrain.gearRatios = gearRatiosToSet;
-
 			}
 
 			HandleExhaustSystem();

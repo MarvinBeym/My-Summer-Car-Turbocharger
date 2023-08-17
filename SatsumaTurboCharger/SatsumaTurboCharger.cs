@@ -150,7 +150,6 @@ namespace SatsumaTurboCharger
 		//Mod Settings
 
 		private Settings debugGuiSetting = new Settings("debugGuiSetting", "Show DEBUG GUI", false);
-		private Settings resetPosSetting = new Settings("resetPos", "Reset", Helper.WorkAroundAction);
 #if DEBUG
 		public Settings partsWearSetting = new Settings("partsWearSetting", "Use parts wear system", true);
 #endif
@@ -292,7 +291,6 @@ namespace SatsumaTurboCharger
 #endif
 			});
 
-			resetPosSetting.DoAction = PosReset;
 			assetsBundle = Helper.LoadAssetBundle(this, "turbochargermod.unity3d");
 			TurboPart.LoadAssets(assetsBundle);
 			partBaseInfo = new PartBaseInfo(this, assetsBundle, partsList);
@@ -345,7 +343,7 @@ namespace SatsumaTurboCharger
 
 			turboBig = new TurboBig(
 				this,
-				boostGauge, 
+				boostGauge,
 				turboBigBlowoffValve,
 				turboBigExhaustInletTube,
 				boostSave
@@ -361,7 +359,7 @@ namespace SatsumaTurboCharger
 			turboSmallExhaustInletTube = new TurboSmallExhaustInletTube(exhaustHeader);
 			turboSmall = new TurboSmall(
 				this,
-				boostGauge, 
+				boostGauge,
 				turboSmallExhaustInletTube,
 				boostSave
 				);
@@ -381,7 +379,7 @@ namespace SatsumaTurboCharger
 			turboBigRequiredParts.Add(intercoolerManifoldWeberTube, intercoolerManifoldTwinCarbTube);
 			turboBigRequiredParts.Add(intercooler);
 			turboBig.DefineRequiredParts(turboBigRequiredParts);
-			
+
 			TurboLogicRequiredParts turboSmallRequiredParts = new TurboLogicRequiredParts();
 			turboSmallRequiredParts.Add(turboSmall);
 			turboSmallRequiredParts.Add(turboSmallExhaustInletTube);
@@ -545,7 +543,7 @@ namespace SatsumaTurboCharger
 		{
 			Settings.AddHeader(this, "DEBUG");
 			Settings.AddCheckBox(this, debugGuiSetting);
-			Settings.AddButton(this, resetPosSetting, "Reset uninstalled part location");
+			Settings.AddButton(this, "resetPos", "Reset Part positions (uninstalled)", PosReset);
 			Settings.AddHeader(this, "Settings");
 			Settings.AddCheckBox(this, rotateTurbineSetting);
 			Settings.AddCheckBox(this, backfireEffectSetting);
@@ -553,7 +551,7 @@ namespace SatsumaTurboCharger
 			Settings.AddCheckBox(this, partsWearSetting);
 #endif
 
-			useCustomGearRatios = Settings.AddCheckBox(this, "useCustomGearRatios", "Use custom gear ratios", false, () => 
+			useCustomGearRatios = Settings.AddCheckBox(this, "useCustomGearRatios", "Use custom gear ratios", false, () =>
 			{
 				gearRatiosToSet = useCustomGearRatios.GetValue() ? newGearRatios : originalGearRatios;
 			});
@@ -618,7 +616,8 @@ namespace SatsumaTurboCharger
 				if (turboBig.installed)
 				{
 					turboInstalled = turboBig;
-				} else if (turboSmall.installed)
+				}
+				else if (turboSmall.installed)
 				{
 					turboInstalled = turboSmall;
 				}
@@ -801,7 +800,7 @@ namespace SatsumaTurboCharger
 				turboBig.conditionStorage.UpdateCondition("twinCarb", false);
 			});
 
-			
+
 		}
 
 		private void HandleExhaustSystem()
@@ -812,9 +811,9 @@ namespace SatsumaTurboCharger
 				carStarted = true;
 
 				if (
-					steelHeaders.installed 
-					|| headers.installed 
-					|| turboBigExhaustOutletTube.installed 
+					steelHeaders.installed
+					|| headers.installed
+					|| turboBigExhaustOutletTube.installed
 					|| turboBigExhaustOutletStraight.installed
 					|| turboSmallExhaustOutletTube.installed
 				) {

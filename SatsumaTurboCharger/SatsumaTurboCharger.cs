@@ -671,112 +671,36 @@ namespace SatsumaTurboCharger
 		private void SetupPartInstallBlocking()
 		{
 			//Block different exhausts for bigTurbo
-			turboBigExhaustOutletStraight.AddEventListener(PartEvent.Time.Post, PartEvent.Type.Install, () =>
-			{
-				turboBigExhaustOutletTube.installBlocked = true;
-			});
-			turboBigExhaustOutletStraight.AddEventListener(PartEvent.Time.Post, PartEvent.Type.Uninstall, () =>
-			{
-				turboBigExhaustOutletTube.installBlocked = false;
-			});
-			turboBigExhaustOutletTube.AddEventListener(PartEvent.Time.Post, PartEvent.Type.Install, () =>
-			{
-				turboSmallExhaustOutletTube.installBlocked = true;
-			});
-			turboBigExhaustOutletTube.AddEventListener(PartEvent.Time.Post, PartEvent.Type.Uninstall, () =>
-			{
-				turboSmallExhaustOutletTube.installBlocked = false;
-			});
+			turboBigExhaustOutletStraight.BlockOtherPartInstallOnEvent(PartEvent.Type.Install, turboBigExhaustOutletTube);
+			turboBigExhaustOutletTube.BlockOtherPartInstallOnEvent(PartEvent.Type.Install, turboBigExhaustOutletStraight);
 
 			//Allow only one inlet to be installed to race exhaust
-			turboBigExhaustInletTube.AddEventListener(PartEvent.Time.Post, PartEvent.Type.Install, () => turboSmallExhaustInletTube.installBlocked = true);
-			turboBigExhaustInletTube.AddEventListener(PartEvent.Time.Post, PartEvent.Type.Uninstall, () => turboSmallExhaustInletTube.installBlocked = false);
-			turboSmallExhaustInletTube.AddEventListener(PartEvent.Time.Post, PartEvent.Type.Install, () => turboBigExhaustInletTube.installBlocked = true);
-			turboSmallExhaustInletTube.AddEventListener(PartEvent.Time.Post, PartEvent.Type.Uninstall, () => turboBigExhaustInletTube.installBlocked = false);
+			turboBigExhaustInletTube.BlockOtherPartInstallOnEvent(PartEvent.Type.Install, turboSmallExhaustInletTube);
+			turboSmallExhaustInletTube.BlockOtherPartInstallOnEvent(PartEvent.Type.Install, turboBigExhaustInletTube);
 
 			//Allow only one intercooler tube to be installed to intercooler
-			turboBigIntercoolerTube.AddEventListener(PartEvent.Time.Post, PartEvent.Type.Install, () => turboSmallIntercoolerTube.installBlocked = true);
-			turboBigIntercoolerTube.AddEventListener(PartEvent.Time.Post, PartEvent.Type.Uninstall, () => turboSmallIntercoolerTube.installBlocked = false);
-			turboSmallIntercoolerTube.AddEventListener(PartEvent.Time.Post, PartEvent.Type.Install, () => turboBigIntercoolerTube.installBlocked = true);
-			turboSmallIntercoolerTube.AddEventListener(PartEvent.Time.Post, PartEvent.Type.Uninstall, () => turboBigIntercoolerTube.installBlocked = false);
+			turboBigIntercoolerTube.BlockOtherPartInstallOnEvent(PartEvent.Type.Install, turboSmallIntercoolerTube);
+			turboSmallIntercoolerTube.BlockOtherPartInstallOnEvent(PartEvent.Type.Install, turboBigIntercoolerTube);
 
-			exhaustHeader.AddEventListener(PartEvent.Time.Post, PartEvent.Type.InstallOnCar, () =>
+			exhaustHeader.BlockOtherPartInstallOnEvent(PartEvent.Type.InstallOnCar, new[]
 			{
-				steelHeaders.installBlocked = true;
-				headers.installBlocked = true;
-				exhaustPipe.installBlocked = true;
+				steelHeaders,
+				headers,
+				exhaustPipe
 			});
 
+			exhaustPipe.BlockOtherPartInstallOnEvent(PartEvent.Type.InstallOnCar, exhaustHeader);
+			steelHeaders.BlockOtherPartInstallOnEvent(PartEvent.Type.InstallOnCar, exhaustHeader);
+			headers.BlockOtherPartInstallOnEvent(PartEvent.Type.InstallOnCar, exhaustHeader);
 
-			exhaustHeader.AddEventListener(PartEvent.Time.Post, PartEvent.Type.UninstallFromCar, () =>
+			turboBigHood.BlockOtherPartInstallOnEvent(PartEvent.Type.InstallOnCar, new[]
 			{
-				steelHeaders.installBlocked = false;
-				headers.installBlocked = false;
-				exhaustPipe.installBlocked = false;
+				hood,
+				fiberglassHood,
 			});
 
-			exhaustPipe.AddEventListener(PartEvent.Time.Post, PartEvent.Type.InstallOnCar, () =>
-			{
-				exhaustHeader.installBlocked = true;
-			});
-
-
-			exhaustPipe.AddEventListener(PartEvent.Time.Post, PartEvent.Type.UninstallFromCar, () =>
-			{
-				exhaustHeader.installBlocked = false;
-			});
-
-			steelHeaders.AddEventListener(PartEvent.Time.Post, PartEvent.Type.InstallOnCar, () =>
-			{
-				exhaustHeader.installBlocked = true;
-			});
-
-			steelHeaders.AddEventListener(PartEvent.Time.Post, PartEvent.Type.UninstallFromCar, () =>
-			{
-				exhaustHeader.installBlocked = false;
-			});
-
-			headers.AddEventListener(PartEvent.Time.Post, PartEvent.Type.InstallOnCar, () =>
-			{
-				exhaustHeader.installBlocked = true;
-			});
-
-			headers.AddEventListener(PartEvent.Time.Post, PartEvent.Type.UninstallFromCar, () =>
-			{
-				exhaustHeader.installBlocked = false;
-			});
-
-			turboBigHood.AddEventListener(PartEvent.Time.Post, PartEvent.Type.InstallOnCar, () =>
-			{
-				hood.installBlocked = true;
-				fiberglassHood.installBlocked = true;
-			});
-
-			turboBigHood.AddEventListener(PartEvent.Time.Post, PartEvent.Type.UninstallFromCar, () =>
-			{
-				hood.installBlocked = false;
-				fiberglassHood.installBlocked = false;
-			});
-
-			hood.AddEventListener(PartEvent.Time.Post, PartEvent.Type.InstallOnCar, () =>
-			{
-				turboBigHood.installBlocked = true;
-			});
-
-			hood.AddEventListener(PartEvent.Time.Post, PartEvent.Type.UninstallFromCar, () =>
-			{
-				turboBigHood.installBlocked = false;
-			});
-
-			fiberglassHood.AddEventListener(PartEvent.Time.Post, PartEvent.Type.InstallOnCar, () =>
-			{
-				turboBigHood.installBlocked = true;
-			});
-
-			fiberglassHood.AddEventListener(PartEvent.Time.Post, PartEvent.Type.UninstallFromCar, () =>
-			{
-				turboBigHood.installBlocked = false;
-			});
+			hood.BlockOtherPartInstallOnEvent(PartEvent.Type.InstallOnCar, turboBigHood);
+			fiberglassHood.BlockOtherPartInstallOnEvent(PartEvent.Type.InstallOnCar, turboBigHood);
 
 			weberCarb.AddEventListener(PartEvent.Time.Post, PartEvent.Type.InstallOnCar, () =>
 			{
@@ -797,8 +721,6 @@ namespace SatsumaTurboCharger
 			{
 				turboBig.conditionStorage.UpdateCondition("twinCarb", false);
 			});
-
-
 		}
 
 		private void HandleExhaustSystem()

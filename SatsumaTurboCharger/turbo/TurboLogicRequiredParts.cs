@@ -11,9 +11,29 @@ namespace SatsumaTurboCharger.part
 		protected Dictionary<Part, Part> requiredParts = new Dictionary<Part, Part>();
 
 		protected int totalRequiredPartsCount = 0;
-		protected int requiredPartsInstalledCount = 0;
 
-		public bool requiredInstalledAndBolted => requiredPartsInstalledCount == totalRequiredPartsCount;
+		public bool requiredInstalledAndBolted
+		{
+			get
+			{
+				int partCount = 0;
+				foreach (KeyValuePair<Part, Part> keyValue in requiredParts)
+				{
+					Part mainPart = keyValue.Key;
+					Part alternativePart = keyValue.Value;
+
+					if (mainPart.bolted && mainPart.installedOnCar)
+					{
+						partCount++;
+					} else if (alternativePart != null && alternativePart.bolted && alternativePart.installedOnCar)
+					{
+						partCount++;
+					}
+				}
+
+				return partCount == totalRequiredPartsCount;
+			}
+		}
 
 		public void Add(Part part)
 		{
@@ -33,32 +53,6 @@ namespace SatsumaTurboCharger.part
 			}
 			requiredParts.Add(mainPart, alternativePart);
 			totalRequiredPartsCount++;
-			mainPart.AddEventListener(PartEvent.Time.Post, PartEvent.Type.BoltedOnCar, () =>
-			{
-				requiredPartsInstalledCount++;
-			});
-
-			mainPart.AddEventListener(PartEvent.Time.Post, PartEvent.Type.UnboltedOnCar, () =>
-			{
-				requiredPartsInstalledCount--;
-			});
-
-			if (alternativePart == null)
-			{
-				return;
-			}
-
-			alternativePart.AddEventListener(PartEvent.Time.Post, PartEvent.Type.BoltedOnCar, () =>
-			{
-				requiredPartsInstalledCount++;
-			});
-			
-			alternativePart.AddEventListener(PartEvent.Time.Post, PartEvent.Type.UnboltedOnCar, () =>
-			{
-				requiredPartsInstalledCount--;
-			});
-
-
 		}
 	}
 }

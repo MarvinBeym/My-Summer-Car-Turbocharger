@@ -9,7 +9,6 @@ namespace SatsumaTurboCharger.turbo
 	{
 		protected Dictionary<string, Condition> conditions = new Dictionary<string, Condition>();
 		protected Action conditionsHaveUpdatedAction;
-		private bool conditionsHaveUpdatedBeforeActionDefined = false;
 
 		public TurboConditionStorage()
 		{
@@ -24,12 +23,8 @@ namespace SatsumaTurboCharger.turbo
 			}
 
 			conditionsHaveUpdatedAction = action;
+			conditionsHaveUpdatedAction.Invoke();
 
-			if (conditionsHaveUpdatedBeforeActionDefined)
-			{
-				conditionsHaveUpdatedBeforeActionDefined = false;
-				conditionsHaveUpdatedAction.Invoke();
-			}
 
 		}
 
@@ -70,10 +65,6 @@ namespace SatsumaTurboCharger.turbo
 			}
 
 			condition.applyCondition = applyCondition;
-			if (conditionsHaveUpdatedAction == null)
-			{
-				conditionsHaveUpdatedBeforeActionDefined = true;
-			}
 			conditionsHaveUpdatedAction?.Invoke();
 		}
 	}

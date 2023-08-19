@@ -111,8 +111,10 @@ namespace SatsumaTurboCharger.turbo
 
 			RotateTurbine(spinningTurbineGameObject);
 
+			//Don't bother continuing with calculation, player can't interact with relevant parts anyway
 			if (!CarH.playerInCar)
 			{
+				boostGauge.SetBoost(config.boostMin, 0, config);
 				return;
 			}
 

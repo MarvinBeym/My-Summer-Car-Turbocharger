@@ -46,7 +46,7 @@ namespace SatsumaTurboCharger.part
 				boostSettingSteps = 0.05f,
 				soundboostMinVolume = 0.03f,
 				soundboostMaxVolume = 0.08f,
-				soundboostPitchMultiplicator = 4,
+				soundboostPitchMultiplicator = 3.5f,
 				backfireDelay = 0.05f,
 			};
 

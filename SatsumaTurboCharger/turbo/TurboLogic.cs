@@ -134,7 +134,7 @@ namespace SatsumaTurboCharger.turbo
 			{
 				try
 				{
-					boost = CalculateBoost(engineRpm);
+					boost = boost = Mathf.Clamp(CalculateBoost(engineRpm), config.boostMin, boostMaxConfigured);
 
 					if (boost > 0)
 					{
@@ -161,13 +161,10 @@ namespace SatsumaTurboCharger.turbo
 				boost = config.boostMin;
 			}
 
-			float boostGaugeTarget = UserInteraction.ThrottleDown ? boostBeforeRelease : config.boostMin;
-
-			boostGauge.SetBoost(boostGaugeTarget, boostBeforeRelease, config);
-
+			boostGauge.SetBoost(UserInteraction.ThrottleDown ? boostBeforeRelease : config.boostMin, boostBeforeRelease, config);
 
 			float finalMultiplication = boost * config.extraPowerMultiplicator;
-			CarH.drivetrain.powerMultiplier = 1f + Mathf.Clamp(finalMultiplication, config.boostMin, boostMaxConfigured);
+			CarH.drivetrain.powerMultiplier = 1f + finalMultiplication;
 
 		}
 

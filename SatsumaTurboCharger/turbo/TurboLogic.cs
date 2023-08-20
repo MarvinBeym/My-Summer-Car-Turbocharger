@@ -156,12 +156,7 @@ namespace SatsumaTurboCharger.turbo
 				boost = config.boostMin;
 			}
 
-			if (boost <= 0 || !UserInteraction.ThrottleDown)
-			{
-				boost = config.boostMin;
-			}
-
-			boostGauge.SetBoost(UserInteraction.ThrottleDown ? boostBeforeRelease : config.boostMin, boostBeforeRelease, config);
+			boostGauge.SetBoost(boostBeforeRelease, boostBeforeRelease, config);
 
 			float finalMultiplication = boost * config.extraPowerMultiplicator;
 			CarH.drivetrain.powerMultiplier = 1f + finalMultiplication;

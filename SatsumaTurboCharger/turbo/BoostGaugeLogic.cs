@@ -204,37 +204,8 @@ namespace SatsumaTurboCharger
 
 
 			float manipulatedBoostValue = 0;
-			if (cInput.GetKeyUp("Throttle") && cInput.GetKeyDown("Throttle"))
-			{
-				boostSaved = boost;
-			}
-
-			if (!UserInteraction.ThrottleDown && boostSaved > target)
-			{
-				time += Time.deltaTime;
-				if (time >= timeComparer)
-				{
-					time = 0;
-					boostSaved -= reducer;
-				}
-				boostSaved = boostSaved <= boostMin ? boostMin : boostSaved;
-				manipulatedBoostValue = boostSaved;
-			}
-			else if (UserInteraction.ThrottleDown && boostSaved < target)
-			{
-				time += Time.deltaTime;
-				if (time >= timeComparer)
-				{
-					time = 0;
-					boostSaved += reducer;
-				}
-				boostSaved = boostSaved <= boostMin ? boostMin : boostSaved;
-				manipulatedBoostValue = boostSaved;
-			}
-			else if (UserInteraction.ThrottleDown)
-			{
-				manipulatedBoostValue = boost;
-			}
+			
+			manipulatedBoostValue = boost;
 
 			switch (gaugeMode)
 			{

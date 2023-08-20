@@ -26,6 +26,8 @@ namespace SatsumaTurboCharger.part
 		protected override Vector3 partInstallPosition => new Vector3(0, 0.2408085f, 1.68f);
 		protected override Vector3 partInstallRotation => new Vector3(0, 180, 0);
 
+		protected override DisableCollision disableCollisionWhenInstalled => DisableCollision.InstalledOnParent;
+
 		public TurboBigHood() : base(SatsumaGamePart.GetInstance(), SatsumaTurboCharger.partBaseInfo)
 		{ 
 			AddScrews(new[]

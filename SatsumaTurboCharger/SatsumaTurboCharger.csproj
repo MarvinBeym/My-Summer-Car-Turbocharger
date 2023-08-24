@@ -83,6 +83,7 @@
   <ItemGroup>
     <Compile Include="part\BoostGauge.cs" />
     <Compile Include="part\TurboExhaustHandler.cs" />
+    <Compile Include="TransmissionHandler.cs" />
     <Compile Include="turbo\BoostGaugeLogic.cs" />
     <Compile Include="part\ExhausHeader.cs" />
     <Compile Include="gui\GuiDebug.cs" />

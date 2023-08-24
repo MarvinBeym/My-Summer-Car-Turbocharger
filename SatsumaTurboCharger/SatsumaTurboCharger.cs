@@ -260,9 +260,7 @@ namespace SatsumaTurboCharger
 		public static SettingsSlider backfireDelay;
 */
 		public static SettingsCheckBox useCustomGearRatios;
-		public static SettingsDropDownList changeTransmission;
 
-		public static Drivetrain.Transmissions transmissionTypeToSet = Drivetrain.Transmissions.FWD;
 		public static float[] gearRatiosToSet;
 
 
@@ -455,11 +453,11 @@ namespace SatsumaTurboCharger
 			/*
             List<WearCondition> wearConditions = new List<WearCondition>
             {
-                new WearCondition(75, WearCondition.Check.MoreThan, 1, "Looks brand new..."),
-                new WearCondition(50, WearCondition.Check.MoreThan, 1.1f, "Some scratches and a bit of damage. Should be fine I guess..."),
+                new WearCondition(75, WearCondition.Check.MoreThan, 1, "Looks brand new.."),
+                new WearCondition(50, WearCondition.Check.MoreThan, 1.1f, "Some scratches and a bit of damage. Should be fine I guess.."),
                 new WearCondition(25, WearCondition.Check.MoreThan, 1.3f, "I can hear air escaping more than before"),
                 new WearCondition(15, WearCondition.Check.MoreThan, 1.5f, "It sounds like a leaf blower"),
-                new WearCondition(15, WearCondition.Check.LessThan, 0, "Well... I think it's fucked"),
+                new WearCondition(15, WearCondition.Check.LessThan, 0, "Well.. I think it's fucked"),
             };
 
             racingTurboWear = new Wear(this, "racingTurbo", turboBig, wearConditions,
@@ -555,28 +553,7 @@ namespace SatsumaTurboCharger
 				gearRatiosToSet = useCustomGearRatios.GetValue() ? newGearRatios : originalGearRatios;
 			});
 
-			changeTransmission = Settings.AddDropDownList(this, "changeTransmission", "Change Car Transmission type", new string[]
-			{
-				Drivetrain.Transmissions.FWD.ToString(),
-				Drivetrain.Transmissions.RWD.ToString(),
-				Drivetrain.Transmissions.AWD.ToString(),
-			}, 0, () =>
-			{
-				if (changeTransmission.GetSelectedItemName() == Drivetrain.Transmissions.FWD.ToString())
-				{
-					transmissionTypeToSet = Drivetrain.Transmissions.FWD;
-				}
-
-				if (changeTransmission.GetSelectedItemName() == Drivetrain.Transmissions.RWD.ToString())
-				{
-					transmissionTypeToSet = Drivetrain.Transmissions.RWD;
-				}
-
-				if (changeTransmission.GetSelectedItemName() == Drivetrain.Transmissions.AWD.ToString())
-				{
-					transmissionTypeToSet = Drivetrain.Transmissions.AWD;
-				}
-			});
+			TransmissionHandler.SetupSettings(this);
 
 
 			/*
@@ -653,11 +630,7 @@ namespace SatsumaTurboCharger
 
 		public override void Update()
 		{
-			//Required as ModLoader settings may call action at any time (Menu)
-			if (CarH.drivetrain != null && transmissionTypeToSet != CarH.drivetrain.transmission)
-			{
-				CarH.drivetrain.SetTransmission(transmissionTypeToSet);
-			}
+			TransmissionHandler.Handle();
 
 			//Required as ModLoader settings may call action at any time (Menu)
 			if (gearRatiosToSet != null && CarH.drivetrain != null)

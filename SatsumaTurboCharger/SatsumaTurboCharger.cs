@@ -148,16 +148,16 @@ namespace SatsumaTurboCharger
 
 		//Mod Settings
 
-		private Settings debugGuiSetting = new Settings("debugGuiSetting", "Show DEBUG GUI", false);
 #if DEBUG
 		public Settings partsWearSetting = new Settings("partsWearSetting", "Use parts wear system", true);
 #endif
+		public static SettingsCheckBox debugGuiSetting;
+		public static SettingsCheckBox rotateTurbineSetting;
+		public static SettingsCheckBox backfireEffectSetting;
+		public static SettingsSliderInt turboVolumeSetting;
+		public static SettingsSliderInt blowoffVolumeSetting;
+		public static SettingsSliderInt backfireVolumeSetting;
 
-		public static Settings rotateTurbineSetting =
-			new Settings("rotateTurbineSetting", "Allow turbo turbine rotation", false);
-
-		public static Settings backfireEffectSetting =
-			new Settings("backfireEffectSetting", "Allow backfire effect for turbo", false);
 
 		internal static PartBaseInfo partBaseInfo;
 
@@ -512,11 +512,21 @@ namespace SatsumaTurboCharger
 		public override void ModSettings()
 		{
 			Settings.AddHeader(this, "DEBUG");
-			Settings.AddCheckBox(this, debugGuiSetting);
+			debugGuiSetting = Settings.AddCheckBox(this, "debugGuiSetting", "Show DEBUG GUI");
 			Settings.AddButton(this, "resetPos", "Reset Part positions (uninstalled)", PosReset);
 			Settings.AddHeader(this, "Settings");
-			Settings.AddCheckBox(this, rotateTurbineSetting);
-			Settings.AddCheckBox(this, backfireEffectSetting);
+
+			rotateTurbineSetting = Settings.AddCheckBox(this, "rotateTurbineSetting", "Allow turbo turbine rotation");
+			backfireEffectSetting = Settings.AddCheckBox(this, "backfireEffectSetting", "Allow backfire effect for turbo");
+
+			Settings.AddHeader(this, "Volume", Color.clear);
+			turboVolumeSetting =
+				Settings.AddSlider(this, "turboVolumeSetting", "Turbo Sound Volume (loop)", 0, 200, 100);
+			blowoffVolumeSetting =
+				Settings.AddSlider(this, "blowoffVolumeSetting", "Blowoff Sound Volume", 0, 200, 100);
+			backfireVolumeSetting =
+				Settings.AddSlider(this, "backfireVolumeSetting ", "Backfire Sound Volume", 0, 200, 100);
+
 #if DEBUG
 			Settings.AddCheckBox(this, partsWearSetting);
 #endif
@@ -556,7 +566,7 @@ namespace SatsumaTurboCharger
 
 		public override void OnGUI()
 		{
-			if ((bool)debugGuiSetting.Value)
+			if (debugGuiSetting.GetValue())
 			{
 				TurboPart turboInstalled = null;
 				if (turboBig.installed)

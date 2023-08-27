@@ -98,8 +98,12 @@ namespace SatsumaTurboCharger.turbo
 
 			soundBoost = soundBoost.Map(config.boostMin, boostMaxConfigured, config.soundboostMinVolume, config.soundboostMaxVolume);
 
-			audioHandler.SetVolume(turboLoopAudio, soundBoost);
+			audioHandler.SetVolume(turboLoopAudio, soundBoost * SatsumaTurboCharger.turboVolumeSetting.GetValue() / 100);
 			audioHandler.SetPitch(turboLoopAudio, soundBoost * config.soundboostPitchMultiplicator);
+			
+			audioHandler.SetVolume(blowoffAudio, 0.2f * SatsumaTurboCharger.blowoffVolumeSetting.GetValue() / 100);
+			audioHandler.SetVolume("backfire", (float) SatsumaTurboCharger.backfireVolumeSetting.GetValue() / 100);
+
 
 			HandleBoostChanging();
 
@@ -139,7 +143,7 @@ namespace SatsumaTurboCharger.turbo
 					if (boost > 0)
 					{
 						//if ((bool)mod.partsWearSetting.Value && (turbo.wears.Length > 0 || turbo.wears == null)) { boost = HandleWear(boost); }
-						if ((bool)SatsumaTurboCharger.backfireEffectSetting.Value)
+						if (SatsumaTurboCharger.backfireEffectSetting.GetValue())
 						{
 							HandleBackfire(engineRpm);
 						}
@@ -242,7 +246,7 @@ namespace SatsumaTurboCharger.turbo
 
 		private void RotateTurbine(GameObject turbine)
 		{
-			if (turbine != null && (bool)SatsumaTurboCharger.rotateTurbineSetting.Value)
+			if (turbine != null && SatsumaTurboCharger.rotateTurbineSetting.GetValue())
 			{
 				turbine.transform.Rotate(0, (CarH.drivetrain.rpm / 500), 0);
 			}

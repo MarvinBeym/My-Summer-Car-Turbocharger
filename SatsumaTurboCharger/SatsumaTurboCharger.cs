@@ -215,29 +215,6 @@ namespace SatsumaTurboCharger
 		//ECU-Mod Communication
 		private bool ecuModInstalled = false;
 
-		//Everything Else
-		private float[] originalGearRatios = new float[]
-		{
-			-4.093f,
-			0f,
-			3.673f,
-			2.217f,
-			1.448f,
-			1f,
-		};
-
-		private float[] newGearRatios = new float[]
-		{
-			-4.093f, // reverse
-            0f, // neutral
-            3.4f, // 1st
-            1.8f, // 2nd
-            1.4f, // 3rd
-            1.0f, // 4th
-            0.8f, // 5th
-            0.65f // 6th
-        };
-
 		public AssetBundle assetsBundle;
 
 		/*
@@ -259,10 +236,6 @@ namespace SatsumaTurboCharger
 		public static SettingsSlider soundboostPitchMultiplicator;
 		public static SettingsSlider backfireDelay;
 */
-		public static SettingsCheckBox useCustomGearRatios;
-
-		public static float[] gearRatiosToSet;
-
 
 		public override void OnNewGame()
 		{
@@ -547,14 +520,8 @@ namespace SatsumaTurboCharger
 #if DEBUG
 			Settings.AddCheckBox(this, partsWearSetting);
 #endif
-
-			useCustomGearRatios = Settings.AddCheckBox(this, "useCustomGearRatios", "Use custom gear ratios", false, () =>
-			{
-				gearRatiosToSet = useCustomGearRatios.GetValue() ? newGearRatios : originalGearRatios;
-			});
-
 			TransmissionHandler.SetupSettings(this);
-
+			GearRatiosHandler.SetupSettings(this);
 
 			/*
 			Settings.AddHeader(this, "", Color.clear);
@@ -576,16 +543,6 @@ namespace SatsumaTurboCharger
 			soundboostPitchMultiplicator = Settings.AddSlider(this,"soundboostPitchMultiplicatorSetting", "Soundboost Pitch Multiplicator", 0.5f, 8f, 5f);
 			backfireDelay = Settings.AddSlider(this, "backfireDelaySetting", "Delay between a backfire trigger", 0.001f, 0.5f, 0.1f, null, 4);
 			*/
-
-			Settings.AddHeader(this, "", Color.clear);
-			Settings.AddText(this, "New Gear ratios\n" +
-								   "1.Gear: " + newGearRatios[2] + "\n" +
-								   "2.Gear: " + newGearRatios[3] + "\n" +
-								   "3.Gear: " + newGearRatios[4] + "\n" +
-								   "4.Gear: " + newGearRatios[5] + "\n" +
-								   "5.Gear: " + newGearRatios[6] + "\n" +
-								   "6.Gear: " + newGearRatios[7]
-			);
 		}
 
 		public override void OnSave()
@@ -631,12 +588,7 @@ namespace SatsumaTurboCharger
 		public override void Update()
 		{
 			TransmissionHandler.Handle();
-
-			//Required as ModLoader settings may call action at any time (Menu)
-			if (gearRatiosToSet != null && CarH.drivetrain != null)
-			{
-				CarH.drivetrain.gearRatios = gearRatiosToSet;
-			}
+			GearRatiosHandler.Handle();
 
 			HandleExhaustSystem();
 		}

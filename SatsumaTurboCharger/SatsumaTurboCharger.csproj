@@ -81,6 +81,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GearRatiosHandler.cs" />
     <Compile Include="part\BoostGauge.cs" />
     <Compile Include="part\TurboExhaustHandler.cs" />
     <Compile Include="TransmissionHandler.cs" />

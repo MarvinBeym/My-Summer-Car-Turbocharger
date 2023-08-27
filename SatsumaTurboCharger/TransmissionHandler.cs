@@ -1,6 +1,7 @@
 ﻿using HutongGames.PlayMaker.Actions;
 using MSCLoader;
 using MscModApi.Caching;
+using UnityEngine;
 
 namespace SatsumaTurboCharger
 {
@@ -15,8 +16,7 @@ namespace SatsumaTurboCharger
 		}
 
 		private static SettingsDropDownList changeTransmission;
-		private static string[] availableOptions = new[]
-		{
+		private static string[] availableOptions = {
 			TransmissionType.IGNORE.ToString(),
 			TransmissionType.FWD.ToString(),
 			TransmissionType.RWD.ToString(),
@@ -30,7 +30,7 @@ namespace SatsumaTurboCharger
 				return;
 			}
 
-
+			Settings.AddHeader(mod, "Change Car Transmission type", Color.clear);
 			changeTransmission = Settings.AddDropDownList(mod, "changeTransmission", "Change Car Transmission type (Ignore disabled logic, allowing other mods to change)", availableOptions, 0, () =>
 			{
 				if (changeTransmission != null)

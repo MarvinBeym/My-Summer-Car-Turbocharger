@@ -200,20 +200,19 @@ namespace SatsumaTurboCharger
 		public void SetBoost(float target, float boost, TurboConfiguration turboConfig)
 		{
 			if (!CarH.hasPower || analogNeedleAnimation.isPlaying) { return; }
-			float boostMin = 0;
 
-
-			float manipulatedBoostValue = 0;
-			
-			manipulatedBoostValue = boost;
+			if (digitalText.text == "ERR")
+			{
+				digitalText.text = "";
+			}
 
 			switch (gaugeMode)
 			{
 				case GaugeMode.Analog:
-					analogNeedle.transform.localEulerAngles = new Vector3(0, 0, GetNeedleAngle(manipulatedBoostValue));
+					analogNeedle.transform.localEulerAngles = new Vector3(0, 0, GetNeedleAngle(boost));
 					break;
 				case GaugeMode.Digital:
-					SetDigitalText(manipulatedBoostValue.ToString("0.00"));
+					SetDigitalText(boost.ToString("0.00"));
 					break;
 			}
 		}

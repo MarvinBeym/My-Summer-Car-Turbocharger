@@ -21,7 +21,7 @@ namespace SatsumaTurboCharger.part
 				new Screw(new Vector3(-0.0028f, 0.0817f, -0.00746f), new Vector3(0, 0, 0), Screw.Type.Nut),
 				new Screw(new Vector3(-0.137f, 0.0317f, -0.00746f), new Vector3(0, 0, 0), Screw.Type.Nut),
 				new Screw(new Vector3(-0.173f, 0.0779f, -0.00746f), new Vector3(0, 0, 0), Screw.Type.Nut),
-			}, 0.7f);
+			}, 0.7f, 8);
 		}
 	}
 }

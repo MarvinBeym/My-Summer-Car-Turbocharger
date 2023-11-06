@@ -16,10 +16,12 @@ namespace SatsumaTurboCharger.part
 
 		protected BoostGaugeLogic logic;
 
+		public BoostGaugeLogic.GaugeMode gaugeMode => logic.gaugeMode;
+
 		public BoostGauge(GamePart parent) : base(parent, SatsumaTurboCharger.partBaseInfo)
 		{
 			AddScrew(new Screw(new Vector3(0f, -0.0270f, 0.003f), new Vector3(-90, 0, 0),
-				Screw.Type.Normal, 0.4f));
+				Screw.Type.Normal, 0.4f, 8));
 
 			logic = AddEventBehaviour<BoostGaugeLogic>(PartEvent.Type.InstallOnCar);
 			logic.Init(this);

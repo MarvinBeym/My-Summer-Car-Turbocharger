@@ -411,7 +411,7 @@ namespace SatsumaTurboCharger
 				new ShopItem("GT Turbocharger Airfilter", 800, shopSpawnLocation, turboSmallAirfilter),
 				new ShopItem("TwinCarb Manifold Kit", 1950, shopSpawnLocation, manifoldTwinCarb_kit),
 				new ShopItem("Weber Manifold Kit", 2250, shopSpawnLocation, manifoldWeber_kit),
-				new ShopItem("Intercooler", 3500, shopSpawnLocation, intercooler),
+				new ShopItem("Intercooler", 3000, shopSpawnLocation, intercooler),
 				new ShopItem("Boost Gauge", 180, shopSpawnLocation, boostGauge),
 				new ShopItem("Turbocharger Exhaust Header", 2100, shopSpawnLocation, exhaustHeader),
 			});

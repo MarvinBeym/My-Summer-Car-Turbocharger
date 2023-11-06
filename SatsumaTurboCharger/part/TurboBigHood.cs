@@ -36,7 +36,7 @@ namespace SatsumaTurboCharger.part
 				new Screw(new Vector3(-0.4075f, 0.0254f, 0.0032f), new Vector3(250, 0, 0)),
 				new Screw(new Vector3(0.4075f, 0.0353f, 0.0303f), new Vector3(250, 0, 0)),
 				new Screw(new Vector3(0.4075f, 0.0254f, 0.0032f), new Vector3(250, 0, 0)),
-			}, 0.6f);
+			}, 0.6f, 6);
 
 			PaintingSystem
 				.Setup(partBaseInfo.mod, this)

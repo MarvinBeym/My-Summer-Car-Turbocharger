@@ -41,29 +41,30 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="cInput">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\cInput.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\cInput.dll</HintPath>
     </Reference>
     <Reference Include="MSCLoader">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\MSCLoader.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\MSCLoader.dll</HintPath>
     </Reference>
-    <Reference Include="MscModApi">
-      <HintPath>..\..\MscModApi\Source code\MscModApi\bin\Debug\MscModApi.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="MscModApi, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\Mods\MscModApi.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PlayMaker">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\PlayMaker.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\PlayMaker.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -72,12 +73,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -127,13 +126,13 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if "$(ConfigurationName)" == "Debug" (
-copy "$(TargetPath)" "S:\Spiele\Steam\steamapps\common\My Summer Car\Mods" /y
-copy "$(TargetDir)$(TargetName).pdb" "S:\Spiele\Steam\steamapps\common\My Summer Car\Mods" /y
-cd "S:\Spiele\Steam\steamapps\common\My Summer Car\Mods"
-call "S:\Spiele\Steam\steamapps\common\My Summer Car\Mods\debug.bat"
+copy "$(TargetPath)" "D:\Spiele\Steam\steamapps\common\My Summer Car\Mods" /y
+copy "$(TargetDir)$(TargetName).pdb" "D:\Spiele\Steam\steamapps\common\My Summer Car\Mods" /y
+cd "D:\Spiele\Steam\steamapps\common\My Summer Car\Mods"
+call "D:\Spiele\Steam\steamapps\common\My Summer Car\Mods\debug.bat"
 ) ELSE (
 copy "$(TargetPath)" "D:\Programmierung\My Summer Car Modding\My-Summer-Car-Turbocharger\Project files\Current version" /y
-copy "$(TargetPath)" "S:\Spiele\Steam\steamapps\common\My Summer Car\Mods" /y
+copy "$(TargetPath)" "D:\Spiele\Steam\steamapps\common\My Summer Car\Mods" /y
 )</PostBuildEvent>
   </PropertyGroup>
   <Target Name="CopyLinkedFiles" BeforeTargets="Build">

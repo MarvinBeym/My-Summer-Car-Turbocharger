@@ -640,21 +640,25 @@ namespace SatsumaTurboCharger
 			weberCarb.AddEventListener(PartEvent.Time.Post, PartEvent.Type.InstallOnCar, () =>
 			{
 				turboBig.conditionStorage.UpdateCondition("weberCarb", true);
+				turboSmall.conditionStorage.UpdateCondition("weberCarb", true);
 			});
 
 			weberCarb.AddEventListener(PartEvent.Time.Post, PartEvent.Type.UninstallFromCar, () =>
 			{
 				turboBig.conditionStorage.UpdateCondition("weberCarb", false);
+				turboSmall.conditionStorage.UpdateCondition("weberCarb", false);
 			});
 
 			twinCarb.AddEventListener(PartEvent.Time.Post, PartEvent.Type.InstallOnCar, () =>
 			{
 				turboBig.conditionStorage.UpdateCondition("twinCarb", true);
+				turboSmall.conditionStorage.UpdateCondition("twinCarb", true);
 			});
 
 			twinCarb.AddEventListener(PartEvent.Time.Post, PartEvent.Type.UninstallFromCar, () =>
 			{
 				turboBig.conditionStorage.UpdateCondition("twinCarb", false);
+				turboSmall.conditionStorage.UpdateCondition("twinCarb", false);
 			});
 		}
 

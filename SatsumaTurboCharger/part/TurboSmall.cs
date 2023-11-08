@@ -35,7 +35,7 @@ namespace SatsumaTurboCharger.part
 				boostStartingRpm = 1200,
 				boostStartingRpmOffset = 1200,
 				boostMin = -0.10f,
-				minSettableBoost = 1.65f,
+				minSettableBoost = 0.6f,
 				boostSteepness = 1f,
 				blowoffDelay = 0.2f,
 				blowoffTriggerBoost = 0.6f,

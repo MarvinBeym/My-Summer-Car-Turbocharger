@@ -78,6 +78,8 @@ namespace SatsumaTurboCharger.turbo
 
 		protected void LateUpdate()
 		{
+			HandleBoostChanging();
+
 			if (!requiredInstalledAndBolted || !CarH.running)
 			{
 				//Not all required installed RESET
@@ -103,9 +105,6 @@ namespace SatsumaTurboCharger.turbo
 			
 			audioHandler.SetVolume(blowoffAudio, 0.2f * SatsumaTurboCharger.blowoffVolumeSetting.GetValue() / 100);
 			audioHandler.SetVolume("backfire", (float) SatsumaTurboCharger.backfireVolumeSetting.GetValue() / 100);
-
-
-			HandleBoostChanging();
 
 			RotateTurbine(spinningTurbineGameObject);
 

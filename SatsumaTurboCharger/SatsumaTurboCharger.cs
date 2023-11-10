@@ -750,6 +750,10 @@ namespace SatsumaTurboCharger
 		{
 			try
 			{
+				manifoldTwinCarb_kit.ResetToDefault();
+				manifoldWeber_kit.ResetToDefault();
+				turboBig_kit.ResetToDefault();
+				turboSmall_kit.ResetToDefault();
 				partsList.ForEach(delegate (Part part) { part.ResetToDefault(); });
 			}
 			catch (Exception ex)

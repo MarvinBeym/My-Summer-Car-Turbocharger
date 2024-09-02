@@ -3,6 +3,7 @@ using MscModApi.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using HutongGames.PlayMaker;
 using MSCLoader;
 using MscModApi.Parts;
 using SatsumaTurboCharger.part;
@@ -24,14 +25,28 @@ namespace SatsumaTurboCharger.turbo
 		protected BoostGauge boostGauge;
 		protected bool canBackfire = false;
 		protected bool blowoffAllowed = false;
+		private float _boost;
 
 		public BackfireLogic backFireLogic;
 		public GameObject spinningTurbineGameObject;
 		protected AudioHandler audioHandler;
 		private AudioSource turboLoopAudio;
 		private AudioSource blowoffAudio;
+		private FsmFloat setBoostFsm;
+		private FsmInt exhaustTempFsm;
+		private FsmInt intakeTempFsm;
+		private FsmInt rpmFsm;
+		private FsmFloat boostFsm;
 
-		public float boost { get; protected set; } = 0;
+		public float boost
+		{
+			get => _boost;
+			protected set
+			{
+				_boost = value;
+				boostFsm.Value = _boost;
+			}
+		}
 
 		public float rpm
 		{
@@ -42,10 +57,23 @@ namespace SatsumaTurboCharger.turbo
 				{
 					turboRpm = 0;
 				}
+				
+				rpmFsm.Value = (int) turboRpm;
 				return turboRpm;
 			}
 		}
-		public float setBoost { get; protected set; } = 0;
+
+		private float _setBoost;
+
+		public float setBoost
+		{
+			get => _setBoost;
+			protected set
+			{
+				_setBoost = value;
+				setBoostFsm.Value = _setBoost;
+			}
+		}
 
 		protected float engineRpm => CarH.drivetrain.rpm;
 
@@ -269,8 +297,24 @@ namespace SatsumaTurboCharger.turbo
 			return GetBoostCalculationFunction(rpm, config.boostStartingRpm, config.boostStartingRpmOffset, config.boostMin, newBoostMax, config.boostSteepness);
 		}
 
-		public void Init(AudioHandler audioHandler, BoostGauge boostGauge, TurboPart turboPart, TurboConditionStorage conditionStorage, float setBoost)
-		{
+		public void Init(
+			AudioHandler audioHandler, 
+			BoostGauge boostGauge, 
+			TurboPart turboPart, 
+			TurboConditionStorage conditionStorage, 
+			float setBoost, 
+			FsmFloat setBoostFsm, 
+			FsmInt exhaustTempFsm, 
+			FsmInt intakeTempFsm, 
+			FsmInt rpmFsm, 
+			FsmFloat boostFsm
+		) {
+						this.setBoostFsm = setBoostFsm;
+			this.exhaustTempFsm = exhaustTempFsm;
+			this.intakeTempFsm = intakeTempFsm;
+			this.rpmFsm = rpmFsm;
+			this.boostFsm = boostFsm;
+
 			this.audioHandler = audioHandler;
 			this.boostGauge = boostGauge;
 			this.turboPart = turboPart;

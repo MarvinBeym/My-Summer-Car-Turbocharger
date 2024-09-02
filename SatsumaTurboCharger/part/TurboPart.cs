@@ -54,7 +54,12 @@ namespace SatsumaTurboCharger.part
 				boostGauge, 
 				this, 
 				conditionStorage,
-				boostSave.TryGetValue(id, out var value) ? value : config.boostBase
+				boostSave.TryGetValue(id, out var value) ? value : config.boostBase,
+				fsmPartData.AddFsmVariable("setBoost", 0f),
+				fsmPartData.AddFsmVariable("exhaustTemp", 0), //ToDo: implement
+				fsmPartData.AddFsmVariable("intakeTemp", 0), //ToDo: implement
+				fsmPartData.AddFsmVariable("rpm", 0),
+				fsmPartData.AddFsmVariable("boost", 0f)
 			);
 		}
 

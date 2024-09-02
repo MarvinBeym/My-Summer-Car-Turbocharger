@@ -695,7 +695,7 @@ namespace SatsumaTurboCharger
 						exhaustFromPipe.transform.localRotation = originalExhaustPipeRotation;
 					}
 
-					if (racingExhaustMuffler.installed)
+					if (racingExhaustMuffler.installed /*Needs || check for the other "original" mufflers */)
 					{
 						exhaustFromEngine.SetActive(false);
 						exhaustFromHeaders.SetActive(false);

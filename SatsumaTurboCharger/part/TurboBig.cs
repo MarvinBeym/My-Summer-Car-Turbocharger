@@ -5,6 +5,7 @@ using System.Text;
 using MSCLoader;
 using MscModApi.PaintingSystem;
 using MscModApi.Parts;
+using MscModApi.Parts.EventSystem;
 using MscModApi.Tools;
 using SatsumaTurboCharger.turbo;
 using UnityEngine;

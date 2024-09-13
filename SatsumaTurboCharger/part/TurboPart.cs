@@ -5,6 +5,7 @@ using HutongGames.PlayMaker;
 using MSCLoader;
 using MscModApi.Caching;
 using MscModApi.Parts;
+using MscModApi.Parts.EventSystem;
 using MscModApi.Tools;
 using SatsumaTurboCharger.turbo;
 using UnityEngine;

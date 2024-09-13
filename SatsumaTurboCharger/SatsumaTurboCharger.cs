@@ -9,11 +9,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MscModApi.PaintingSystem;
+using MscModApi.Parts.EventSystem;
 using MscModApi.Parts.ReplacePart;
 using SatsumaTurboCharger.part;
 using SatsumaTurboCharger.turbo;
 using Tools.gui;
 using UnityEngine;
+using MscModApi.Parts.PartBox;
 
 namespace SatsumaTurboCharger
 {

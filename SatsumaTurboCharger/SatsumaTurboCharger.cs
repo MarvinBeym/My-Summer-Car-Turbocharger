@@ -94,7 +94,7 @@ namespace SatsumaTurboCharger
 		public override string ID => "SatsumaTurboCharger";
 		public override string Name => "DonnerTechRacing Turbocharger";
 		public override string Author => "DonnerPlays";
-		public override string Version => "2.3.0";
+		public override string Version => "2.2.3";
 		public override bool UseAssetsFolder => true;
 
 		public GuiDebug guiDebug;

@@ -41,37 +41,30 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="cInput">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\cInput.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="modapi_v0120-alpha">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\modapi_v0120-alpha.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="ModsShop">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\Mods\ModsShop.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\cInput.dll</HintPath>
     </Reference>
     <Reference Include="MSCLoader">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\MSCLoader.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\MSCLoader.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="MscModApi, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\Mods\MscModApi.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PlayMaker">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\PlayMaker.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="ScrewablePartAPI">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\Mods\ScrewablePartAPI.dll</HintPath>
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\PlayMaker.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -80,72 +73,51 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>S:\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Spiele\Steam\steamapps\common\My Summer Car\mysummercar_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\My Summer Car Modding\CarHelper.cs">
-      <Link>CarHelper.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\My Summer Car Modding\Extension.cs">
-      <Link>Extension.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\My Summer Car Modding\Game.cs">
-      <Link>Game.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\My Summer Car Modding\gui\GuiDebug.cs">
-      <Link>gui\GuiDebug.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\My Summer Car Modding\gui\GuiDebugElement.cs">
-      <Link>gui\GuiDebugElement.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\My Summer Car Modding\gui\GuiDebugInfo.cs">
-      <Link>gui\GuiDebugInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\My Summer Car Modding\Helper.cs">
-      <Link>Helper.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\My Summer Car Modding\Logger.cs">
-      <Link>Logger.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\My Summer Car Modding\parts\AdvPart.cs">
-      <Link>parts\AdvPart.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\My Summer Car Modding\parts\NewPart.cs">
-      <Link>parts\NewPart.cs</Link>
-    </Compile>
-    <Compile Include="..\..\..\My Summer Car Modding\parts\SimplePart.cs">
-      <Link>parts\SimplePart.cs</Link>
-    </Compile>
-    <Compile Include="BoostGauge_Logic.cs" />
-    <Compile Include="Hood_Logic.cs" />
-    <Compile Include="shop\BoxLogic.cs" />
-    <Compile Include="GT_Turbocharger_Logic.cs" />
-    <Compile Include="shop\Kit.cs" />
-    <Compile Include="shop\KitLogic.cs" />
+    <Compile Include="GearRatiosHandler.cs" />
+    <Compile Include="part\BoostGauge.cs" />
+    <Compile Include="part\TurboExhaustHandler.cs" />
+    <Compile Include="TransmissionHandler.cs" />
+    <Compile Include="turbo\BoostGaugeLogic.cs" />
+    <Compile Include="part\ExhausHeader.cs" />
+    <Compile Include="gui\GuiDebug.cs" />
+    <Compile Include="gui\GuiDebugElement.cs" />
+    <Compile Include="gui\GuiDebugInfo.cs" />
+    <Compile Include="turbo\HoodLogic.cs" />
     <Compile Include="BoostSave.cs" />
-    <Compile Include="old_file_checker\OldFileRenamer.cs" />
-    <Compile Include="painting_system\CustomColors.cs" />
-    <Compile Include="painting_system\PaintSystem.cs" />
-    <Compile Include="painting_system\PaintSystem_Logic.cs" />
-    <Compile Include="shop\Box.cs" />
-    <Compile Include="painting_system\SaveableColor.cs" />
-    <Compile Include="shop\ProductInformation.cs" />
-    <Compile Include="Racing_Exhaust_Outlet_Straight_Logic.cs" />
+    <Compile Include="part\Intercooler.cs" />
+    <Compile Include="part\IntercoolerManifoldTwinCarbTube.cs" />
+    <Compile Include="part\IntercoolerManifoldWeberTube.cs" />
+    <Compile Include="part\ManifoldTwinCarb.cs" />
+    <Compile Include="part\ManifoldWeber.cs" />
+    <Compile Include="part\TurboBig.cs" />
+    <Compile Include="part\TurboBigIntercoolerTube.cs" />
+    <Compile Include="turbo\TurboLogicRequiredParts.cs" />
+    <Compile Include="part\TurboPart.cs" />
     <Compile Include="SatsumaTurboCharger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="old_file_checker\SaveFileRenamer.cs" />
-    <Compile Include="shop\Shop.cs" />
-    <Compile Include="turbo\Backfire_Logic.cs" />
+    <Compile Include="part\TurboBigBlowoffValve.cs" />
+    <Compile Include="part\TurboBigExhaustOutletStraight.cs" />
+    <Compile Include="part\TurboBigExhaustInletTube.cs" />
+    <Compile Include="part\TurboBigExhaustOutletTube.cs" />
+    <Compile Include="part\TurboBigHood.cs" />
+    <Compile Include="part\TurboSmall.cs" />
+    <Compile Include="part\TurboSmallAirfilter.cs" />
+    <Compile Include="part\TurboSmallExhaustInletTube.cs" />
+    <Compile Include="part\TurboSmallExhaustOutletTube.cs" />
+    <Compile Include="part\TurboSmallIntercoolerTube.cs" />
+    <Compile Include="turbo\BackfireLogic.cs" />
     <Compile Include="turbo\Condition.cs" />
+    <Compile Include="AudioHandler.cs" />
+    <Compile Include="turbo\TurboConditionStorage.cs" />
     <Compile Include="turbo\TurboConfiguration.cs" />
-    <Compile Include="turbo\Turbo_Logic.cs" />
-    <Compile Include="turbo\Turbo.cs" />
+    <Compile Include="turbo\TurboLogic.cs" />
     <Compile Include="wear\Wear.cs" />
     <Compile Include="wear\WearCondition.cs" />
     <Compile Include="wear\WearLogic.cs" />
@@ -154,17 +126,16 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if "$(ConfigurationName)" == "Debug" (
-copy "$(TargetPath)" "S:\Spiele\Steam\steamapps\common\My Summer Car\Mods" /y
-copy "$(TargetDir)$(TargetName).pdb" "S:\Spiele\Steam\steamapps\common\My Summer Car\Mods" /y
-cd "S:\Spiele\Steam\steamapps\common\My Summer Car\Mods"
-call "S:\Spiele\Steam\steamapps\common\My Summer Car\Mods\debug.bat"
+copy "$(TargetPath)" "D:\Spiele\Steam\steamapps\common\My Summer Car\Mods" /y
+copy "$(TargetDir)$(TargetName).pdb" "D:\Spiele\Steam\steamapps\common\My Summer Car\Mods" /y
+cd "D:\Spiele\Steam\steamapps\common\My Summer Car\Mods"
+call "D:\Spiele\Steam\steamapps\common\My Summer Car\Mods\debug.bat"
 ) ELSE (
-copy "$(TargetPath)" "S:\Spiele\Steam\steamapps\common\My Summer Car\Mods" /y
+copy "$(TargetPath)" "D:\Programmierung\My Summer Car Modding\My-Summer-Car-Turbocharger\Project files\Current version" /y
+copy "$(TargetPath)" "D:\Spiele\Steam\steamapps\common\My Summer Car\Mods" /y
 )</PostBuildEvent>
   </PropertyGroup>
   <Target Name="CopyLinkedFiles" BeforeTargets="Build">
-	<Copy SourceFiles="%(Compile.Identity)" DestinationFiles="%(Compile.Link)" 
-	SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'%(Compile.Link)'
-	!= ''" />
+    <Copy SourceFiles="%(Compile.Identity)" DestinationFiles="%(Compile.Link)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'%(Compile.Link)'&#xD;&#xA;	!= ''" />
   </Target>
 </Project>

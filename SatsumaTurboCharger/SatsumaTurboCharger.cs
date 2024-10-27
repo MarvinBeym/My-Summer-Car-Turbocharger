@@ -555,6 +555,8 @@ namespace SatsumaTurboCharger
 			soundboostPitchMultiplicator = Settings.AddSlider(this,"soundboostPitchMultiplicatorSetting", "Soundboost Pitch Multiplicator", 0.5f, 8f, 5f);
 			backfireDelay = Settings.AddSlider(this, "backfireDelaySetting", "Delay between a backfire trigger", 0.001f, 0.5f, 0.1f, null, 4);
 			*/
+
+			Settings.AddText(this, "Copyright © Marvin Beym 2020-2024");
 		}
 
 		public override void OnSave()

@@ -1,0 +1,132 @@
+fileFormatVersion: 2
+guid: edbf2c25fc6bf694eb8a670b458c8718
+timeCreated: 1606510920
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: Compressor&Exhaust-Connector.001_NurbsPath.005
+    100002: Compressor-Turbine_TurboCharger_Compressor_Turbine.004
+    100004: Compressor_Circle.010
+    100006: Exhaust-Turbine_TurboCharger_Compressor_Turbine.003
+    100008: Exhaust_Circle.001
+    100010: //RootNode
+    100012: TurboSmall-Wastegate-Port_Blowoff_Valve_Port2.005
+    100014: Wastegate.001_Blowoff_Valve.004
+    100016: Wastegate_Adjuster.001_Blowoff_Valve_Adjuster.003
+    100018: Wastegate_Connector_Rod.001_BezierCurve.015
+    100020: Wastegate_Lever.001_Cube.010
+    100022: Wastegate_Mounting_Plate.001_Cube.009
+    100024: Wastegate_Port.001_Blowoff_Valve_Port2.004
+    100026: Wastegate_Tube.001_BezierCurve.016
+    400000: Compressor&Exhaust-Connector.001_NurbsPath.005
+    400002: Compressor-Turbine_TurboCharger_Compressor_Turbine.004
+    400004: Compressor_Circle.010
+    400006: Exhaust-Turbine_TurboCharger_Compressor_Turbine.003
+    400008: Exhaust_Circle.001
+    400010: //RootNode
+    400012: TurboSmall-Wastegate-Port_Blowoff_Valve_Port2.005
+    400014: Wastegate.001_Blowoff_Valve.004
+    400016: Wastegate_Adjuster.001_Blowoff_Valve_Adjuster.003
+    400018: Wastegate_Connector_Rod.001_BezierCurve.015
+    400020: Wastegate_Lever.001_Cube.010
+    400022: Wastegate_Mounting_Plate.001_Cube.009
+    400024: Wastegate_Port.001_Blowoff_Valve_Port2.004
+    400026: Wastegate_Tube.001_BezierCurve.016
+    2300000: Compressor&Exhaust-Connector.001_NurbsPath.005
+    2300002: Compressor-Turbine_TurboCharger_Compressor_Turbine.004
+    2300004: Compressor_Circle.010
+    2300006: Exhaust-Turbine_TurboCharger_Compressor_Turbine.003
+    2300008: Exhaust_Circle.001
+    2300010: TurboSmall-Wastegate-Port_Blowoff_Valve_Port2.005
+    2300012: Wastegate.001_Blowoff_Valve.004
+    2300014: Wastegate_Adjuster.001_Blowoff_Valve_Adjuster.003
+    2300016: Wastegate_Connector_Rod.001_BezierCurve.015
+    2300018: Wastegate_Lever.001_Cube.010
+    2300020: Wastegate_Mounting_Plate.001_Cube.009
+    2300022: Wastegate_Port.001_Blowoff_Valve_Port2.004
+    2300024: Wastegate_Tube.001_BezierCurve.016
+    3300000: Compressor&Exhaust-Connector.001_NurbsPath.005
+    3300002: Compressor-Turbine_TurboCharger_Compressor_Turbine.004
+    3300004: Compressor_Circle.010
+    3300006: Exhaust-Turbine_TurboCharger_Compressor_Turbine.003
+    3300008: Exhaust_Circle.001
+    3300010: TurboSmall-Wastegate-Port_Blowoff_Valve_Port2.005
+    3300012: Wastegate.001_Blowoff_Valve.004
+    3300014: Wastegate_Adjuster.001_Blowoff_Valve_Adjuster.003
+    3300016: Wastegate_Connector_Rod.001_BezierCurve.015
+    3300018: Wastegate_Lever.001_Cube.010
+    3300020: Wastegate_Mounting_Plate.001_Cube.009
+    3300022: Wastegate_Port.001_Blowoff_Valve_Port2.004
+    3300024: Wastegate_Tube.001_BezierCurve.016
+    4300000: Compressor&Exhaust-Connector.001_NurbsPath.005
+    4300002: Compressor-Turbine_TurboCharger_Compressor_Turbine.004
+    4300004: Compressor_Circle.010
+    4300006: Exhaust-Turbine_TurboCharger_Compressor_Turbine.003
+    4300008: Exhaust_Circle.001
+    4300010: TurboSmall-Wastegate-Port_Blowoff_Valve_Port2.005
+    4300012: Wastegate.001_Blowoff_Valve.004
+    4300014: Wastegate_Adjuster.001_Blowoff_Valve_Adjuster.003
+    4300016: Wastegate_Connector_Rod.001_BezierCurve.015
+    4300018: Wastegate_Lever.001_Cube.010
+    4300020: Wastegate_Mounting_Plate.001_Cube.009
+    4300022: Wastegate_Port.001_Blowoff_Valve_Port2.004
+    4300024: Wastegate_Tube.001_BezierCurve.016
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

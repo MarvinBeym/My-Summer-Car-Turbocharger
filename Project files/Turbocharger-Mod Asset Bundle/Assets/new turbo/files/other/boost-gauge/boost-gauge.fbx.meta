@@ -1,0 +1,112 @@
+fileFormatVersion: 2
+guid: 0e8d948ab36d45e448cc49fa46d8a2b3
+timeCreated: 1671321759
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: boost-gauge-button
+    100004: boost-gauge-casing
+    100006: boost-gauge-connector-1
+    100008: boost-gauge-connector-2
+    100010: boost-gauge-connector-3
+    100012: boost-gauge-main
+    100014: boost-gauge-mount
+    100016: boost-gauge-needle
+    100018: boost-gauge-panel
+    400000: //RootNode
+    400002: boost-gauge-button
+    400004: boost-gauge-casing
+    400006: boost-gauge-connector-1
+    400008: boost-gauge-connector-2
+    400010: boost-gauge-connector-3
+    400012: boost-gauge-main
+    400014: boost-gauge-mount
+    400016: boost-gauge-needle
+    400018: boost-gauge-panel
+    2300000: boost-gauge-button
+    2300002: boost-gauge-casing
+    2300004: boost-gauge-connector-1
+    2300006: boost-gauge-connector-2
+    2300008: boost-gauge-connector-3
+    2300010: boost-gauge-main
+    2300012: boost-gauge-mount
+    2300014: boost-gauge-needle
+    2300016: boost-gauge-panel
+    3300000: boost-gauge-button
+    3300002: boost-gauge-casing
+    3300004: boost-gauge-connector-1
+    3300006: boost-gauge-connector-2
+    3300008: boost-gauge-connector-3
+    3300010: boost-gauge-main
+    3300012: boost-gauge-mount
+    3300014: boost-gauge-needle
+    3300016: boost-gauge-panel
+    4300000: boost-gauge-mount
+    4300002: boost-gauge-main
+    4300004: boost-gauge-button
+    4300006: boost-gauge-casing
+    4300008: boost-gauge-connector-1
+    4300010: boost-gauge-connector-2
+    4300012: boost-gauge-connector-3
+    4300014: boost-gauge-needle
+    4300016: boost-gauge-panel
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

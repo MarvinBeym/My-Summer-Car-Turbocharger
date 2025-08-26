@@ -95,7 +95,6 @@ namespace SatsumaTurboCharger
 		public override string Name => "DonnerTechRacing Turbocharger";
 		public override string Author => "DonnerPlays";
 		public override string Version => "2.2.3";
-		public override bool UseAssetsFolder => true;
 
 		public GuiDebug guiDebug;
 
@@ -151,7 +150,7 @@ namespace SatsumaTurboCharger
 		//Mod Settings
 
 #if DEBUG
-		public Settings partsWearSetting = new Settings("partsWearSetting", "Use parts wear system", true);
+		public SettingsCheckBox partsWearSetting;
 #endif
 		public static SettingsCheckBox debugGuiSetting;
 		public static SettingsCheckBox rotateTurbineSetting;
@@ -238,8 +237,16 @@ namespace SatsumaTurboCharger
 		public static SettingsSlider soundboostPitchMultiplicator;
 		public static SettingsSlider backfireDelay;
 */
-
-		public override void OnNewGame()
+		public override void ModSetup()
+		{
+			SetupFunction(Setup.OnNewGame, OnNewGame);
+			SetupFunction(Setup.OnLoad, OnLoad);
+			SetupFunction(Setup.ModSettings, ModSettings);
+			SetupFunction(Setup.Update, Update);
+			SetupFunction(Setup.OnSave, OnSave);
+			SetupFunction(Setup.OnGUI, OnGUI);
+		}
+		public void OnNewGame()
 		{
 			MscModApi.MscModApi.NewGameCleanUp(this);
 			TurboPart.Save(this, boostSaveFile, new TurboPart[0]);
@@ -248,12 +255,15 @@ namespace SatsumaTurboCharger
 			//SaveLoad.SerializeSaveFile<Dictionary<string, float>>(this, null, wearSaveFile);
 		}
 
-		public override void OnLoad()
+		public void OnLoad()
 		{
 			ModConsole.Print(Name + $" [v{Version} started loading");
 			Logger.InitLogger(this);
 
 			ecuModInstalled = ModLoader.IsModPresent("DonnerTech_ECU_Mod");
+
+			GameObject buttonWipers = Cache.Find("dashboard meters(Clone)/Knobs/ButtonsDash/ButtonWipers");
+
 
 			guiDebug = new GuiDebug(Screen.width - 310, 50, 300, "TURBO MOD DEBUG", new[]
 			{
@@ -502,7 +512,7 @@ namespace SatsumaTurboCharger
 				}
 			}
 
-			FsmHook.FsmInject(inspectionProcess, "Results", () =>
+			inspectionProcess.FsmInject("Results", "Results", () =>
 			{
 				if (partsList.Any(part => part.installed))
 				{
@@ -511,9 +521,12 @@ namespace SatsumaTurboCharger
 			});
 		}
 
-		public override void ModSettings()
+		public void ModSettings()
 		{
 			Settings.AddHeader(this, "DEBUG");
+#if DEBUG
+			partsWearSetting = Settings.AddCheckBox(this, "partsWearSetting", "Use parts wear system", true);
+#endif
 			debugGuiSetting = Settings.AddCheckBox(this, "debugGuiSetting", "Show DEBUG GUI");
 			Settings.AddButton(this, "resetPos", "Reset Part positions (uninstalled)", PosReset);
 			Settings.AddHeader(this, "Settings");
@@ -529,9 +542,7 @@ namespace SatsumaTurboCharger
 			backfireVolumeSetting =
 				Settings.AddSlider(this, "backfireVolumeSetting ", "Backfire Sound Volume", 0, 200, 100);
 
-#if DEBUG
-			Settings.AddCheckBox(this, partsWearSetting);
-#endif
+
 			TransmissionHandler.SetupSettings(this);
 			GearRatiosHandler.SetupSettings(this);
 
@@ -559,7 +570,7 @@ namespace SatsumaTurboCharger
 			Settings.AddText(this, "Copyright © Marvin Beym 2020-2024");
 		}
 
-		public override void OnSave()
+		public void OnSave()
 		{
 			TurboPart.Save(this, boostSaveFile, new TurboPart[]
 			{
@@ -568,7 +579,7 @@ namespace SatsumaTurboCharger
 			});
 		}
 
-		public override void OnGUI()
+		public void OnGUI()
 		{
 			if (debugGuiSetting.GetValue())
 			{
@@ -599,7 +610,7 @@ namespace SatsumaTurboCharger
 			}
 		}
 
-		public override void Update()
+		public void Update()
 		{
 			TransmissionHandler.Handle();
 			GearRatiosHandler.Handle();
@@ -679,7 +690,8 @@ namespace SatsumaTurboCharger
 					|| turboBigExhaustOutletTube.installed
 					|| turboBigExhaustOutletStraight.installed
 					|| turboSmallExhaustOutletTube.installed
-				) {
+				)
+				{
 					if (turboBigExhaustOutletStraight.installed)
 					{
 						exhaustFromPipe.transform.parent = turboBigExhaustOutletStraight.gameObject.transform;

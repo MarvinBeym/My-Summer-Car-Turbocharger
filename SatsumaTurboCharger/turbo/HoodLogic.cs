@@ -20,7 +20,7 @@ namespace SatsumaTurboCharger
 
 		public void Start()
 		{
-			FsmHook.FsmInject(Cache.Find("HoodLocking").transform.FindChild("Trigger").gameObject, "Open", delegate ()
+			Cache.Find("HoodLocking").transform.FindChild("Trigger").gameObject.FsmInject("Use", "Open", delegate ()
 			{
 				if (openState == OpenState.Open)
 				{

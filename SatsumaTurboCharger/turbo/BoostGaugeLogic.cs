@@ -70,11 +70,11 @@ namespace SatsumaTurboCharger
 				MeshRenderer meshRenderer = digitalTextObject.GetComponent<MeshRenderer>();
 				digitalText = digitalTextObject.GetComponent<TextMesh>();
 
-				FsmHook.FsmInject(CarH.electricity, "ON", delegate ()
+				CarH.electricity.FsmInject("Power", "ON", delegate ()
 				{
 					if (lastElectricityState == false) { lastElectricityState = true; SwitchedElectricityOn(); };
 				});
-				FsmHook.FsmInject(CarH.electricity, "OFF", delegate ()
+				CarH.electricity.FsmInject("Power", "OFF", delegate ()
 				{
 					if (lastElectricityState == true) { lastElectricityState = false; SwitchedElectricityOff(); };
 				});

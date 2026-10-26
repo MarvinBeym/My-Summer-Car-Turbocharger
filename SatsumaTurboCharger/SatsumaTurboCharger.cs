@@ -275,6 +275,8 @@ namespace SatsumaTurboCharger
 
 			assetsBundle = Helper.LoadAssetBundle(this, "turbochargermod.unity3d");
 			TurboPart.LoadAssets(assetsBundle);
+			//partsList is static and survives "quit to menu", remove the parts of the previous load
+			partsList.Clear();
 			partBaseInfo = new PartBaseInfo(this, assetsBundle, partsList);
 
 			exhaustFromMuffler = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromMuffler");

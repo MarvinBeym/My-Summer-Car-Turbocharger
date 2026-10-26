@@ -308,6 +308,7 @@ namespace SatsumaTurboCharger
 			catch (Exception ex)
 			{
 				Logger.New("Error while trying to deserialize save file", "Please check paths to save files", ex);
+				boostSave = new Dictionary<string, float>();
 			}
 
 			manifoldWeber = new ManifoldWeber(weberCarb);

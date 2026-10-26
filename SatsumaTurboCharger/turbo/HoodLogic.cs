@@ -53,6 +53,12 @@ namespace SatsumaTurboCharger
 
 		public void SetHoodState(OpenState state)
 		{
+			//The hook injected in Start() stays active after the hood is uninstalled (hingeJoint destroyed)
+			if (turboHood.hingeJoint == null)
+			{
+				return;
+			}
+
 			JointSpring spring = turboHood.hingeJoint.spring;
 			spring.spring = springSpeed;
 			spring.damper = springDamping;

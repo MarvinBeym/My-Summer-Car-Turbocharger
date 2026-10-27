@@ -255,10 +255,19 @@ namespace SatsumaTurboCharger
 			//SaveLoad.SerializeSaveFile<Dictionary<string, float>>(this, null, wearSaveFile);
 		}
 
+		/// <summary>
+		/// Resets static data that is still defined from a previous load (quitting to the menu doesn't unload the mod)
+		/// </summary>
+		private void Cleanup()
+		{
+			partsList.Clear();
+		}
+
 		public void OnLoad()
 		{
 			ModConsole.Print(Name + $" [v{Version} started loading");
 			Logger.InitLogger(this);
+			Cleanup();
 
 			ecuModInstalled = ModLoader.IsModPresent("DonnerTech_ECU_Mod");
 
@@ -275,8 +284,6 @@ namespace SatsumaTurboCharger
 
 			assetsBundle = Helper.LoadAssetBundle(this, "turbochargermod.unity3d");
 			TurboPart.LoadAssets(assetsBundle);
-			//partsList is static and survives "quit to menu", remove the parts of the previous load
-			partsList.Clear();
 			partBaseInfo = new PartBaseInfo(this, assetsBundle, partsList);
 
 			exhaustFromMuffler = Cache.Find("SATSUMA(557kg, 248)/CarSimulation/Exhaust/FromMuffler");
@@ -300,11 +307,19 @@ namespace SatsumaTurboCharger
 			dashboard = new GamePart("Database/DatabaseMechanics/Dashboard");
 			cylinderHead = new GamePart("Database/DatabaseMotor/Cylinderhead");
 
+#if DEBUG
 			try
 			{
-#if DEBUG
 				partsWearSave = Helper.LoadSaveOrReturnNew<Dictionary<string, float>>(this, wearSaveFile);
+			}
+			catch (Exception ex)
+			{
+				Logger.New("Error while trying to deserialize save file", "Please check paths to save files", ex);
+			}
 #endif
+
+			try
+			{
 				boostSave = Helper.LoadSaveOrReturnNew<Dictionary<string, float>>(this, boostSaveFile);
 			}
 			catch (Exception ex)

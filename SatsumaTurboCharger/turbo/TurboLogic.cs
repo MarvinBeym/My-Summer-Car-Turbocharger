@@ -146,7 +146,7 @@ namespace SatsumaTurboCharger.turbo
 
 			float boostBeforeRelease = 0;
 
-			if (UserInteraction.ThrottleDown && engineRpm >= config.backfireThreshold && blowoffTimer > config.blowoffDelay)
+			if (UserInteraction.ThrottleDown && blowoffTimer > config.blowoffDelay)
 			{
 				blowoffAllowed = true;
 			}

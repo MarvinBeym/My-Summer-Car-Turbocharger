@@ -48,15 +48,18 @@ namespace SatsumaTurboCharger
 				return;
 			}
 
-			Settings.AddHeader(mod, "Change Car Transmission type", Color.clear);
-			changeGearRatios = Settings.AddDropDownList(mod, "changeGearRatios", "Change Car Gear ratios (IGNORE = disabled logic, allowing other mods to change)", availableOptions, 0, () =>
+			Settings.AddHeader("Change Car Transmission type", Color.clear);
+			changeGearRatios = Settings.AddDropDownList(
+				"changeGearRatios", 
+				"Change Car Gear ratios (IGNORE = disabled logic, allowing other mods to change)", availableOptions, 
+				0, () =>
 			{
 				if (changeGearRatios != null)
 				{
 					Set(StringToEnum(availableOptions[changeGearRatios.GetSelectedItemIndex()]));
 				}
 			});
-			Settings.AddText(mod, "Reapply by other mods may be required after setting this to 'IGNORE'");
+			Settings.AddText("Reapply by other mods may be required after setting this to 'IGNORE'");
 
 
 			string gearRatioHelpText = "New Gear Ratios: \n";
@@ -75,7 +78,7 @@ namespace SatsumaTurboCharger
 				gearRatioHelpText += $"{gearName}.Gear: {newGearRatios[i]}\n";
 			}
 
-			Settings.AddText(mod, gearRatioHelpText);
+			Settings.AddText(gearRatioHelpText);
 		}
 
 		private static void Set(GearRatioType gearRatioType)

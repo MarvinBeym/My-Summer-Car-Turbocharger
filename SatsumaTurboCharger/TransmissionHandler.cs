@@ -30,8 +30,8 @@ namespace SatsumaTurboCharger
 				return;
 			}
 
-			Settings.AddHeader(mod, "Change Car Transmission type", Color.clear);
-			changeTransmission = Settings.AddDropDownList(mod, "changeTransmission", "Change Car Transmission type (Ignore disabled logic, allowing other mods to change)", availableOptions, 0, () =>
+			Settings.AddHeader("Change Car Transmission type", Color.clear);
+			changeTransmission = Settings.AddDropDownList("changeTransmission", "Change Car Transmission type (Ignore disabled logic, allowing other mods to change)", availableOptions, 0, () =>
 			{
 				if (changeTransmission != null)
 				{

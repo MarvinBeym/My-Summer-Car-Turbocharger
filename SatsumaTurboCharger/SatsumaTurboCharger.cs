@@ -94,7 +94,7 @@ namespace SatsumaTurboCharger
 		public override string ID => "SatsumaTurboCharger";
 		public override string Name => "DonnerTechRacing Turbocharger";
 		public override string Author => "DonnerPlays";
-		public override string Version => "2.2.4";
+		public override string Version => "2.2.5";
 
 		public GuiDebug guiDebug;
 
@@ -541,24 +541,21 @@ namespace SatsumaTurboCharger
 
 		public void ModSettings()
 		{
-			Settings.AddHeader(this, "DEBUG");
+			Settings.AddHeader("DEBUG");
 #if DEBUG
 			partsWearSetting = Settings.AddCheckBox(this, "partsWearSetting", "Use parts wear system", true);
 #endif
-			debugGuiSetting = Settings.AddCheckBox(this, "debugGuiSetting", "Show DEBUG GUI");
-			Settings.AddButton(this, "resetPos", "Reset Part positions (uninstalled)", PosReset);
-			Settings.AddHeader(this, "Settings");
+			debugGuiSetting = Settings.AddCheckBox("debugGuiSetting", "Show DEBUG GUI");
+			Settings.AddButton("Reset Part positions (uninstalled)", PosReset);
+			Settings.AddHeader("Settings");
 
-			rotateTurbineSetting = Settings.AddCheckBox(this, "rotateTurbineSetting", "Allow turbo turbine rotation");
-			backfireEffectSetting = Settings.AddCheckBox(this, "backfireEffectSetting", "Allow backfire effect for turbo");
+			rotateTurbineSetting = Settings.AddCheckBox("rotateTurbineSetting", "Allow turbo turbine rotation");
+			backfireEffectSetting = Settings.AddCheckBox("backfireEffectSetting", "Allow backfire effect for turbo");
 
-			Settings.AddHeader(this, "Volume", Color.clear);
-			turboVolumeSetting =
-				Settings.AddSlider(this, "turboVolumeSetting", "Turbo Sound Volume (loop)", 0, 200, 100);
-			blowoffVolumeSetting =
-				Settings.AddSlider(this, "blowoffVolumeSetting", "Blowoff Sound Volume", 0, 200, 100);
-			backfireVolumeSetting =
-				Settings.AddSlider(this, "backfireVolumeSetting ", "Backfire Sound Volume", 0, 200, 100);
+			Settings.AddHeader("Volume", Color.clear);
+			turboVolumeSetting = Settings.AddSlider("turboVolumeSetting", "Turbo Sound Volume (loop)", 0, 200, 100);
+			blowoffVolumeSetting = Settings.AddSlider("blowoffVolumeSetting", "Blowoff Sound Volume", 0, 200, 100);
+			backfireVolumeSetting = Settings.AddSlider("backfireVolumeSetting ", "Backfire Sound Volume", 0, 200, 100);
 
 
 			TransmissionHandler.SetupSettings(this);
@@ -585,7 +582,7 @@ namespace SatsumaTurboCharger
 			backfireDelay = Settings.AddSlider(this, "backfireDelaySetting", "Delay between a backfire trigger", 0.001f, 0.5f, 0.1f, null, 4);
 			*/
 
-			Settings.AddText(this, "Copyright © Marvin Beym 2020-2024");
+			Settings.AddText("Copyright © Marvin Beym 2020-2026");
 		}
 
 		public void OnSave()

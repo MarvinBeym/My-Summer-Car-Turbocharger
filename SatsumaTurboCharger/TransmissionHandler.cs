@@ -104,13 +104,8 @@ namespace SatsumaTurboCharger
 			Drivetrain drivetrain = CarH.drivetrain;
 			Drivetrain.Transmissions gameTransmission;
 			TransmissionType transmissionType = StringToTransmissionEnum(transmissionToSet);
-			if (drivetrain == null || !TryGetGameTransmission(transmissionType, out gameTransmission))
-			{
-				return;
-			}
-
 			//Only apply when it differs (SetTransmission resets wheel values)
-			if (drivetrain.transmission == gameTransmission)
+			if (drivetrain == null || !TryGetGameTransmission(transmissionType, out gameTransmission) || drivetrain.transmission == gameTransmission)
 			{
 				return;
 			}

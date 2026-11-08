@@ -40,20 +40,37 @@ namespace SatsumaTurboCharger
 			});
 		}
 
-		private static void SetTransmission(TransmissionType transmissionType)
+		private static bool TryGetGameTransmission(TransmissionType transmissionType, out Drivetrain.Transmissions gameTransmission)
 		{
 			switch (transmissionType)
 			{
 				case TransmissionType.FWD:
-					CarH.drivetrain.SetTransmission(Drivetrain.Transmissions.FWD);
-					break;
+					gameTransmission = Drivetrain.Transmissions.FWD;
+					return true;
 				case TransmissionType.RWD:
-					CarH.drivetrain.SetTransmission(Drivetrain.Transmissions.RWD);
-					break;
+					gameTransmission = Drivetrain.Transmissions.RWD;
+					return true;
 				case TransmissionType.AWD:
-					CarH.drivetrain.SetTransmission(Drivetrain.Transmissions.AWD);
-					break;
+					gameTransmission = Drivetrain.Transmissions.AWD;
+					return true;
+				default:
+					gameTransmission = Drivetrain.Transmissions.FWD;
+					return false;
 			}
+		}
+
+		private static void SetTransmission(TransmissionType transmissionType)
+		{
+			Drivetrain drivetrain = CarH.drivetrain;
+			Drivetrain.Transmissions gameTransmission;
+			if (drivetrain == null || !TryGetGameTransmission(transmissionType, out gameTransmission))
+			{
+				return;
+			}
+
+			//Keep drivetrain.transmission in sync
+			drivetrain.transmission = gameTransmission;
+			drivetrain.SetTransmission(gameTransmission);
 		}
 
 		private static TransmissionType StringToTransmissionEnum(string value)
@@ -84,7 +101,16 @@ namespace SatsumaTurboCharger
 		    {
 			    return;
 		    }
-			SetTransmission(StringToTransmissionEnum(transmissionToSet));
+			Drivetrain drivetrain = CarH.drivetrain;
+			Drivetrain.Transmissions gameTransmission;
+			TransmissionType transmissionType = StringToTransmissionEnum(transmissionToSet);
+			//Only apply when it differs (SetTransmission resets wheel values)
+			if (drivetrain == null || !TryGetGameTransmission(transmissionType, out gameTransmission) || drivetrain.transmission == gameTransmission)
+			{
+				return;
+			}
+
+			SetTransmission(transmissionType);
 		}
 	}
 }
